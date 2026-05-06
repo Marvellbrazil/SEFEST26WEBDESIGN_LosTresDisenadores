@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -33,39 +33,30 @@ const Section2 = () => {
       if (!container || !textContainer) return;
       
       const letters = container.querySelectorAll('.letter');
-      const stickers = container.querySelectorAll('.horizontal-sticker');
       const arrowPaths = arrowRef.current ? arrowRef.current.querySelectorAll('path') : [];
 
-      const entranceDistance = window.innerHeight;
-      const pinnedDistance = 2500;
+      const pinnedDistance = window.innerWidth < 768 ? 2000 : 3500;
 
       const scrollTween = gsap.timeline({
         scrollTrigger: {
           trigger: container,
-          start: "top bottom",
-          end: () => `+=${entranceDistance + pinnedDistance}`,
+          start: "top top",
+          end: () => `+=${pinnedDistance}`,
           scrub: 1.2,
+          pin: true,
+          pinSpacing: true,
           invalidateOnRefresh: true,
         }
       });
 
       scrollTween
         .fromTo(textContainer,
-          { x: window.innerWidth },
-          { x: window.innerWidth * 0.5, ease: "none", duration: entranceDistance }
+          { x: "100vw" },
+          { x: "50vw", ease: "none", duration: 1 }
         )
         .to(textContainer,
-          { x: () => -(textContainer.scrollWidth - window.innerWidth * 0.5), ease: "none", duration: pinnedDistance }
+          { x: () => -(textContainer.scrollWidth - window.innerWidth / 2), ease: "none", duration: 2 }
         );
-
-      ScrollTrigger.create({
-        trigger: container,
-        start: "top top",
-        end: () => `+=${pinnedDistance}`,
-        pin: true,
-        pinSpacing: true,
-        invalidateOnRefresh: true
-      });
 
       letters.forEach((letter: Element) => {
         gsap.from(letter, {
@@ -75,7 +66,7 @@ const Section2 = () => {
           scrollTrigger: {
             trigger: letter,
             containerAnimation: scrollTween,
-            start: 'left 90%',
+            start: 'left 95%',
             end: 'left 50%',
             scrub: 0.8
           }
@@ -83,37 +74,20 @@ const Section2 = () => {
       });
 
       arrowPaths.forEach((arrowPath: SVGPathElement) => {
-        if (arrowPath.getTotalLength) {
-          const pathLen = arrowPath.getTotalLength();
-          gsap.set(arrowPath, { strokeDasharray: pathLen, strokeDashoffset: pathLen });
-          gsap.to(arrowPath, {
-            strokeDashoffset: 0,
-            duration: 1.5,
-            scrollTrigger: {
-              trigger: arrowPath,
-              containerAnimation: scrollTween,
-              start: 'left 90%',
-              end: 'left 50%',
-              scrub: 0.8
-            }
-          });
-        }
-      });
-
-      gsap.fromTo(bottomTextRef.current,
-        { opacity: 0, y: 50 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
+        const pathLen = arrowPath.getTotalLength();
+        gsap.set(arrowPath, { strokeDasharray: pathLen, strokeDashoffset: pathLen });
+        gsap.to(arrowPath, {
+          strokeDashoffset: 0,
+          duration: 1.5,
           scrollTrigger: {
-            trigger: container,
-            start: "top 60%",
-            end: "top 40%",
-            scrub: 0.5,
+            trigger: arrowPath,
+            containerAnimation: scrollTween,
+            start: 'left 90%',
+            end: 'left 50%',
+            scrub: 0.8
           }
-        }
-      );
+        });
+      });
 
     }, sectionRef);
 
@@ -123,21 +97,19 @@ const Section2 = () => {
   return (
     <section 
       ref={sectionRef} 
-      className="relative w-full min-h-screen bg-[#F4F3EE] overflow-hidden"
+      className="relative w-full h-screen bg-[#F4F3EE] overflow-hidden"
     >
-      
       <div className="relative w-full h-screen overflow-hidden">
-        
         <div 
           ref={textRef}
-          className="absolute top-1/2 left-0 -translate-y-1/2 whitespace-nowrap"
-          style={{ paddingLeft: '25vw', paddingRight: '25vw' }}
+          className="absolute top-1/2 left-0 -translate-y-1/2 whitespace-nowrap flex items-center"
+          style={{ paddingLeft: '0', paddingRight: '50vw' }}
         >
-          <div className="absolute -top-20 left-1/2 -translate-x-1/2">
+          <div className="absolute -top-16 md:-top-24 left-1/2 -translate-x-1/2">
             <svg 
               ref={arrowRef}
               xmlns="http://www.w3.org/2000/svg" 
-              className="w-24 md:w-32 lg:w-[200px]"
+              className="w-20 sm:w-28 md:w-32 lg:w-[200px]"
               viewBox="0 0 386 127" 
               fill="none"
             >
@@ -145,7 +117,7 @@ const Section2 = () => {
               <path d="M2 123C9 35.9999 84.5 17 124 25.9999C217.764 47.3635 207 115 177.5 123C105.777 142.45 110.737 1.99991 232.5 2C310.5 2.00006 366.5 79 376 118L384 97" stroke="#F28F3B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h2 className="text-[#2D2A26] text-[40px] md:text-[80px] lg:text-[120px] font-black uppercase tracking-tighter font-[family:var(--font-inter)]">
+          <h2 className="text-[#2D2A26] text-[32px] sm:text-[60px] md:text-[80px] lg:text-[120px] font-black uppercase tracking-tighter font-[family:var(--font-inter)] leading-none">
             {words.map((item, idx) => (
               <span
                 key={idx}
@@ -160,14 +132,13 @@ const Section2 = () => {
 
         <div 
           ref={bottomTextRef}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 py-20 translate-y-32 text-center z-20 w-full px-4"
+          className="absolute left-1/2 top-[70%] -translate-x-1/2 text-center z-20 w-full px-6"
         >
-          <p className="text-[#2D2A26]/60 text-sm md:text-base lg:text-xl font-[family:var(--font-jakarta)] font-medium max-w-2xl leading-relaxed mx-auto">
+          <p className="text-[#2D2A26]/60 text-xs sm:text-sm md:text-base lg:text-xl font-[family:var(--font-jakarta)] font-medium max-w-[280px] sm:max-w-md md:max-w-2xl leading-relaxed mx-auto">
             Every rescued meal creates a ripple effect of positive environmental change. 
             Join us in making <span className="text-[#F28F3B] font-bold">sustainable choices</span> that benefit both you and the planet.
           </p>
         </div>
-
       </div>
     </section>
   );

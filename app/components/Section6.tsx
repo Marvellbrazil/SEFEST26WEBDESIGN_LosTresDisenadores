@@ -1,276 +1,265 @@
-'use client';
+"use client";
 
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { 
-  Smartphone, ShoppingBag, Clock, BarChart3, 
-  Package, Bell, TrendingUp, ChevronRight, Building2,
-  Users, MapPin, Leaf, Zap, Store, Award, Heart
-} from 'lucide-react';
-import { consumerSteps, businessSteps, type StepIcon } from './data/howItWorks';
+import { useRef } from "react";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
-const stepIconMap: Record<StepIcon, React.ReactNode> = {
-  smartphone: <Smartphone size={24} />,
-  shoppingBag: <ShoppingBag size={24} />,
-  clock: <Clock size={24} />,
-  barChart3: <BarChart3 size={24} />,
-  package: <Package size={24} />,
-  bell: <Bell size={24} />,
-  trendingUp: <TrendingUp size={24} />,
-  building2: <Building2 size={24} />,
-};
+const img = (id: string, w = 600, h = 500) =>
+  `https://images.unsplash.com/${id}?w=${w}&h=${h}&fit=crop&auto=format&q=80`;
 
-const Section6 = () => {
-  const { scrollYProgress } = useScroll();
+const consumerSteps = [
+  {
+    num: "01",
+    icon: (
+      <svg
+        className="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        />
+      </svg>
+    ),
+    color: "bg-[#F28F3B]",
+    title: "Browse & Discover",
+    body: "Open the app and explore Surprise Bags from bakeries, restaurants, cafés, and grocery stores near you.",
+    imgId: "photo-1512621776951-a57141f2eefd",
+  },
+  {
+    num: "02",
+    icon: (
+      <svg
+        className="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+        />
+      </svg>
+    ),
+    color: "bg-[#F28F3B]",
+    title: "Reserve Your Bag",
+    body: "Found something you love? Reserve and pay directly in the app. Each bag is packed with daily surplus food.",
+    imgId: "photo-1607082348824-0a96f2a4b9da",
+  },
+  {
+    num: "03",
+    icon: (
+      <svg
+        className="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+        />
+      </svg>
+    ),
+    color: "bg-[#F28F3B]",
+    title: "Pick Up & Enjoy",
+    body: "Head over during the pickup window, show your receipt, and grab your delicious surprise bag.",
+    imgId: "photo-1504674900247-0877df9cc836",
+  },
+];
+
+const perks = [
+  {
+    title: "Extra Revenue Stream",
+    body: "Turn surplus food into profit easily.",
+    icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7",
+  },
+  {
+    title: "New Customers",
+    body: "Grow your loyal fanbase from FoodSaver.",
+    icon: "M17 20h5v-2a3 3 0 00-5.356-1.857",
+  },
+  {
+    title: "Sustainability Badge",
+    body: "Show customers you care about the planet.",
+    icon: "M3.055 11H5a2 2 0 012 2v1",
+  },
+  {
+    title: "Real-Time Dashboard",
+    body: "Track your impact and revenue in one place.",
+    icon: "M9 19v-6a2 2 0 00-2-2",
+  },
+];
+
+function StepItem({ step, idx }: { step: any; idx: number }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 80,
+    damping: 20,
+  });
+
+  const yText = useTransform(smoothProgress, [0, 1], [40, -40]);
+  const yImage = useTransform(smoothProgress, [0, 1], [-20, 20]);
+
+  return (
+    <div
+      ref={ref}
+      className={`flex flex-col gap-10 lg:gap-16 items-center ${idx % 2 === 1 ? "lg:flex-row-reverse" : "lg:flex-row"}`}
+    >
+      <motion.div style={{ y: yText }} className="flex-1 space-y-5">
+        <div className="flex items-center gap-4">
+          <div
+            className={`${step.color} w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-lg shadow-[#F28F3B]/20`}
+          >
+            {step.icon}
+          </div>
+          <span className="text-5xl font-black text-[#2D2A26]/5 select-none tracking-tighter">
+            {step.num}
+          </span>
+        </div>
+        <h3 className="text-3xl font-bold text-[#2D2A26]">{step.title}</h3>
+        <p className="text-base text-[#2D2A26]/60 leading-relaxed max-w-sm">
+          {step.body}
+        </p>
+      </motion.div>
+
+      <motion.div style={{ y: yImage }} className="flex-1 w-full">
+        <div className="relative rounded-3xl overflow-hidden shadow-xl border border-black/5">
+          <img
+            src={img(step.imgId, 500, 380)}
+            alt={step.title}
+            className="w-full object-cover h-64 sm:h-80"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+export default function HowItWorks() {
+  const mainRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: mainRef });
   const xBg = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"]);
 
   return (
-    <section className="relative w-full bg-[#F4F3EE] font-[family:var(--font-jakarta)]">
-      
-      <motion.div 
-        style={{ x: xBg }}
-        className="absolute top-0 left-0 whitespace-nowrap pointer-events-none opacity-[0.02] select-none z-0"
-      >
-        <h2 className="text-[200px] md:text-[300px] text-[#2D2A26]">
-          HOW IT WORKS • SAVE FOOD • 
-        </h2>
-      </motion.div>
+    <div
+      ref={mainRef}
+      className="bg-[#FAF9F6] font-[family:var(--font-jakarta)] overflow-hidden"
+    >
+      <section className="relative py-24 border-b border-black/5">
+        <motion.div
+          style={{ x: xBg }}
+          className="absolute top-10 left-0 whitespace-nowrap opacity-[0.02] select-none text-[150px] font-black text-[#2D2A26]"
+        >
+          SAVE FOOD • RESCUE MEALS •
+        </motion.div>
 
-      <div className="relative border-b border-black/5">
-        <div className="max-w-350 mx-auto flex flex-col md:flex-row px-6 md:px-16">
-          
-          <div className="md:w-1/2 md:h-screen md:sticky md:top-0 flex flex-col justify-center py-20 z-20">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#F28F3B]/10 rounded-full mb-6">
-                <Users size={14} className="text-[#F28F3B]" />
-                <span className="text-[#F28F3B] font-black text-[9px] uppercase tracking-[0.2em]">For Consumers</span>
-              </div>
-
-              <h2 className="text-[#2D2A26] font-black text-[40px] md:text-[70px] leading-[0.9] uppercase tracking-tighter mb-6">
-                Rescue Food <br /> 
-                <span className="text-[#F28F3B]">as a Consumer.</span>
-              </h2>
-              
-              <p className="text-[#2D2A26]/60 text-lg max-w-95 leading-relaxed">
-                Save up to 70% on delicious meals while helping reduce food waste. Every purchase makes a difference.
-              </p>
-              
-              <div className="mt-8 flex flex-col gap-3">
-                {[
-                  { text: "Save 50-70% on meals", icon: <Zap size={14} /> },
-                  { text: "Discover local restaurants", icon: <MapPin size={14} /> },
-                  { text: "Track your eco-impact", icon: <Leaf size={14} /> }
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <div className="text-[#F28F3B]">{item.icon}</div>
-                    <span className="text-xs text-[#2D2A26]/60">{item.text}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-12 hidden md:flex flex-col gap-3">
-                {consumerSteps.map((step) => (
-                  <div key={step.id} className="flex items-center gap-4 group">
-                    <span className="text-xs text-[#2D2A26]/20 group-hover:text-[#F28F3B] transition-colors">{step.id}</span>
-                    <div className="h-[1px] w-6 bg-[#2D2A26]/10" />
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-[#2D2A26]/40">{step.title}</span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-
-          <div className="md:w-1/2 flex flex-col gap-32 md:gap-64 py-20 md:py-40">
-            {consumerSteps.map((step, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.3 }}
-                transition={{ duration: 0.8 }}
-                className="group"
-              >
-                <div className="relative aspect-[4/5] overflow-hidden rounded-[40px] mb-8 shadow-2xl">
-                  <motion.img 
-                    whileHover={{ scale: 1.05 }}
-                    src={step.img} 
-                    className="w-full h-full object-cover transition-all duration-700"
-                    alt={step.title}
-                  />
-                  <div className="absolute top-6 left-6 bg-white p-3 rounded-xl shadow-lg text-[#F28F3B]">
-                    {stepIconMap[step.icon as StepIcon]}
-                  </div>
-                  <div className="absolute bottom-6 right-6 bg-[#F28F3B] text-white px-4 py-2 rounded-full">
-                    <div className="text-lg">{step.stat}</div>
-                    <div className="text-[8px] uppercase tracking-wider opacity-80">{step.statLabel}</div>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-5">
-                  <span className="text-5xl text-[#F28F3B] opacity-30 leading-none">
-                    {step.id}
-                  </span>
-                  <div>
-                    <h3 className="text-2xl md:text-3xl text-[#2D2A26] uppercase mb-3 tracking-tight">
-                      {step.title}
-                    </h3>
-                    <p className="text-[#2D2A26]/50 text-base md:text-lg leading-relaxed max-w-[450px]">
-                      {step.desc}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-            <div className="h-10" />
-          </div>
-        </div>
-      </div>
-
-      <div className="relative bg-[#F4F3EE]">
-        <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row px-6 md:px-16">
-          
-          <div className="md:w-1/2 md:h-screen md:sticky md:top-0 flex flex-col justify-center py-20 z-20">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#F28F3B]/10 rounded-full mb-6">
-                <Store size={14} className="text-[#F28F3B]" />
-                <span className="text-[#F28F3B] font-black text-[9px] uppercase tracking-[0.2em]">For Business</span>
-              </div>
-
-              <h2 className="text-[#2D2A26] font-black text-[40px] md:text-[70px] leading-[0.9] uppercase tracking-tighter mb-6">
-                Partner <br /> 
-                <span className="text-[#F28F3B]">Your Business.</span>
-              </h2>
-              
-              <p className="text-[#2D2A26]/60 text-lg max-w-[380px] leading-relaxed">
-                Reduce waste, attract eco-conscious customers, and turn surplus into revenue.
-              </p>
-              
-              <div className="mt-8 flex flex-col gap-3">
-                {[
-                  { text: "Reduce food waste costs", icon: <Zap size={14} /> },
-                  { text: "Attract new customers", icon: <Users size={14} /> },
-                  { text: "Get sustainability certified", icon: <Award size={14} /> }
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <div className="text-[#F28F3B]">{item.icon}</div>
-                    <span className="text-xs text-[#2D2A26]/60">{item.text}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-12 hidden md:flex flex-col gap-3">
-                {businessSteps.map((step) => (
-                  <div key={step.id} className="flex items-center gap-4 group">
-                    <span className="text-xs text-[#2D2A26]/20 group-hover:text-[#F28F3B] transition-colors">{step.id}</span>
-                    <div className="h-[1px] w-6 bg-[#2D2A26]/10" />
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-[#2D2A26]/40">{step.title}</span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-
-          <div className="md:w-1/2 flex flex-col gap-32 md:gap-64 py-20 md:py-40">
-            {businessSteps.map((step, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.3 }}
-                transition={{ duration: 0.8 }}
-                className="group"
-              >
-                <div className="relative aspect-[4/5] overflow-hidden rounded-[40px] mb-8 shadow-2xl">
-                  <motion.img 
-                    whileHover={{ scale: 1.05 }}
-                    src={step.img} 
-                    className="w-full h-full object-cover transition-all duration-700"
-                    alt={step.title}
-                  />
-                  <div className="absolute top-6 left-6 bg-white p-3 rounded-xl shadow-lg text-[#F28F3B]">
-                    {stepIconMap[step.icon as StepIcon]}
-                  </div>
-                  <div className="absolute bottom-6 right-6 bg-[#F28F3B] text-white px-4 py-2 rounded-full">
-                    <div className="text-lg">{step.stat}</div>
-                    <div className="text-[8px] uppercase tracking-wider opacity-80">{step.statLabel}</div>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-5">
-                  <span className="text-5xl text-[#F28F3B] opacity-30 leading-none">
-                    {step.id}
-                  </span>
-                  <div>
-                    <h3 className="text-2xl md:text-3xl text-[#2D2A26] uppercase mb-3 tracking-tight">
-                      {step.title}
-                    </h3>
-                    <p className="text-[#2D2A26]/50 text-base md:text-lg leading-relaxed max-w-[450px]">
-                      {step.desc}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-            <div className="h-10" />
-          </div>
-        </div>
-      </div>
-
-      <div className="relative py-20 md:py-32 px-6">
-        <div className="max-w-[1200px] mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm mb-6">
-              <Heart size={16} className="text-[#F28F3B]" />
-              <span className="text-[9px] font-bold uppercase tracking-wider text-[#2D2A26]/50">Ready to Make a Difference?</span>
-            </div>
-
-            <h2 className="text-[#2D2A26] text-[35px] md:text-[60px] font-black leading-[1.1] uppercase mb-6">
-              Start Your <span className="text-[#F28F3B]">Journey</span> Today
+        <div className="mx-auto max-w-5xl px-6 relative z-10">
+          <div className="text-center mb-20">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F28F3B] bg-[#F28F3B]/10 px-3 py-1 rounded-full">
+              How It Works
+            </span>
+            <h2 className="mt-6 text-4xl sm:text-5xl font-bold text-[#2D2A26] tracking-tight">
+              Fighting food waste
+              <span className="text-[#F28F3B]"> has never been easier</span>
             </h2>
+          </div>
 
-            <p className="text-[#2D2A26]/50 text-base md:text-lg max-w-2xl mx-auto mb-10">
-              Whether you want to rescue delicious food or partner your business, we're here to help you make a positive impact.
-            </p>
+          <div className="space-y-32">
+            {consumerSteps.map((step, idx) => (
+              <StepItem key={step.num} step={step} idx={idx} />
+            ))}
+          </div>
+        </div>
+      </section>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-[#F28F3B] text-white px-8 py-4 rounded-full font-bold text-[11px] uppercase tracking-widest shadow-xl flex items-center gap-2"
+      <section className="py-24 bg-white">
+        <div className="mx-auto max-w-5xl px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="relative">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="relative rounded-[2rem] overflow-hidden shadow-2xl"
               >
-                I Want to Rescue Food
-                <ChevronRight size={16} />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-[#2D2A26] text-white px-8 py-4 rounded-full font-bold text-[11px] uppercase tracking-widest shadow-xl flex items-center gap-2 hover:bg-[#F28F3B] transition-colors"
-              >
-                I Want to Partner My Business
-                <ChevronRight size={16} />
-              </motion.button>
+                <img
+                  src={img("photo-1556909114-f6e7ad7d3136", 600, 500)}
+                  alt="Business Partner"
+                  className="w-full object-cover h-[450px]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              </motion.div>
+
+              <div className="absolute -bottom-4 -right-4 bg-[#FAF9F6] p-5 rounded-2xl shadow-xl border border-black/5 max-w-[200px]">
+                <p className="text-[10px] font-bold text-[#F28F3B] uppercase tracking-wider mb-1">
+                  Partner Insight
+                </p>
+                <p className="text-xs text-[#2D2A26]/80 font-medium italic">
+                  "Rescued 4,000+ bags this year!"
+                </p>
+              </div>
             </div>
 
-            <p className="text-[9px] text-[#2D2A26]/30 mt-8 uppercase tracking-wider">
-              Join 5,000+ Food Rescuers & 200+ Business Partners • Every Meal Saved Makes a Difference
-            </p>
-          </motion.div>
+            <div className="space-y-8">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F28F3B]">
+                  For Business
+                </span>
+                <h2 className="text-4xl font-bold text-[#2D2A26] mt-4 tracking-tight">
+                  Turn waste into{" "}
+                  <span className="text-[#F28F3B]">opportunity</span>
+                </h2>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-5">
+                {perks.map((p) => (
+                  <div key={p.title} className="space-y-2">
+                    <div className="w-8 h-8 bg-[#F28F3B]/10 rounded-lg flex items-center justify-center text-[#F28F3B]">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2.5}
+                        viewBox="0 0 24 24"
+                      >
+                        <path d={p.icon} />
+                      </svg>
+                    </div>
+                    <h4 className="font-bold text-[#2D2A26] text-sm">
+                      {p.title}
+                    </h4>
+                    <p className="text-xs text-[#2D2A26]/50 leading-relaxed">
+                      {p.body}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <button className="bg-[#F28F3B] text-white font-bold px-6 py-3 rounded-full text-sm shadow-lg shadow-[#F28F3B]/20 hover:scale-105 transition-transform">
+                  Start Free
+                </button>
+                <button className="border border-[#2D2A26]/10 text-[#2D2A26] font-bold px-6 py-3 rounded-full text-sm hover:bg-black/5 transition-colors">
+                  Learn More
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-    </section>
+      </section>
+    </div>
   );
-};
-
-export default Section6;
+}

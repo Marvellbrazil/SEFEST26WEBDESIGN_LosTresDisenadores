@@ -85,7 +85,6 @@ const Section4 = () => {
   return (
     <section className="relative w-full py-16 sm:py-20 md:py-24 lg:py-32 px-4 sm:px-6 md:px-10 lg:px-16 overflow-hidden font-jakarta bg-[#F4F3EE]">
       
-      {/* --- DECORATIVE BACKGROUND --- */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div 
           animate={{ 
@@ -105,7 +104,6 @@ const Section4 = () => {
         />
       </div>
 
-      {/* Floating particles */}
       <div className="absolute inset-0 pointer-events-none">
         {[new Array(12)].map((_, i) => (
           <motion.div
@@ -129,11 +127,10 @@ const Section4 = () => {
         ))}
       </div>
 
-      <div className="max-w-[1400px] mx-auto relative z-10 px-4 sm:px-6 md:px-10 lg:px-16">
+      <div className="max-w-7xl mx-auto relative z-10 px-4 sm:px-6 md:px-10 lg:px-16">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
           
-          {/* LEFT: TEXT CONTENT */}
           <div className="lg:col-span-5 sticky top-32">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -141,7 +138,6 @@ const Section4 = () => {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              {/* Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-black/5 shadow-sm mb-6">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F28F3B] opacity-75"></span>
@@ -150,7 +146,6 @@ const Section4 = () => {
                 <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#2D2A26]/50">SDG 12.6 • Impact Transparency</span>
               </div>
 
-              {/* Title */}
               <h2 className="text-[#2D2A26] font-boldstrom text-[45px] md:text-[80px] leading-[0.85] uppercase tracking-tighter mb-6">
                 Small Acts, <br />
                 <span className="text-[#F28F3B] relative inline-block">
@@ -164,13 +159,11 @@ const Section4 = () => {
                 </span>
               </h2>
 
-              {/* Description */}
               <p className="text-[#2D2A26]/60 text-base md:text-lg leading-relaxed mb-8">
                 Every rescued meal creates a ripple effect of positive environmental change. 
                 See your real-time impact below — data-driven transparency for a sustainable future.
               </p>
 
-              {/* Fun Facts Row */}
               <div className="flex flex-wrap gap-3 mb-8">
                 {funFacts.map((fact, idx) => (
                   <motion.div
@@ -186,7 +179,6 @@ const Section4 = () => {
                 ))}
               </div>
 
-              {/* Button */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -202,7 +194,6 @@ const Section4 = () => {
                 </motion.span>
               </motion.button>
 
-              {/* SDG Progress */}
               <div className="mt-10 pt-6 border-t border-black/10">
                 <div className="flex items-center gap-2 mb-4">
                   <Shield size={16} className="text-[#F28F3B]" />
@@ -233,7 +224,6 @@ const Section4 = () => {
             </motion.div>
           </div>
 
-          {/* RIGHT: INTERACTIVE CALCULATOR */}
           <div className="lg:col-span-7">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
@@ -242,13 +232,10 @@ const Section4 = () => {
               transition={{ duration: 0.6 }}
               className="relative"
             >
-              {/* Main Calculator Card */}
               <div className="bg-white/40 backdrop-blur-xl rounded-[48px] p-6 md:p-10 border border-white/50 shadow-2xl relative overflow-hidden">
                 
-                {/* Decorative gradient overlay */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#F28F3B]/10 to-transparent rounded-full blur-3xl" />
                 
-                {/* Slider Section */}
                 <div className="relative mb-10">
                   <div className="flex justify-between items-end mb-6">
                     <div>
@@ -281,7 +268,6 @@ const Section4 = () => {
                         background: `linear-gradient(to right, #F28F3B 0%, #F28F3B ${meals}%, #EBE9E0 ${meals}%, #EBE9E0 100%)`
                       }}
                     />
-                    {/* Tick marks */}
                     <div className="absolute -bottom-2 left-0 right-0 flex justify-between px-2">
                       {[0, 25, 50, 75, 100].map((tick) => (
                         <div key={tick} className="relative">
@@ -299,7 +285,6 @@ const Section4 = () => {
                   </div>
                 </div>
 
-                {/* Impact Cards Grid - 3 Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <AnimatePresence>
                     {impactCards.map((data, idx) => (
@@ -311,12 +296,10 @@ const Section4 = () => {
                         whileHover={{ y: -5 }}
                         className={`${data.color} ${data.textColor} p-5 rounded-2xl shadow-lg border border-black/5 relative overflow-hidden group cursor-pointer`}
                       >
-                        {/* Icon */}
                         <div className={`mb-3 ${data.textColor === 'text-white' ? 'text-white/80' : 'text-[#F28F3B]'}`}>
                           {data.icon}
                         </div>
                         
-                        {/* Value */}
                         <div className="mb-1">
                           <motion.h5 
                             key={data.value}
@@ -329,17 +312,14 @@ const Section4 = () => {
                           <span className="text-[9px] font-bold opacity-60">{data.unit}</span>
                         </div>
                         
-                        {/* Label */}
                         <p className="text-[9px] font-bold uppercase tracking-wider opacity-70 mb-2">
                           {data.label}
                         </p>
                         
-                        {/* Comparison */}
                         <p className="text-[8px] leading-relaxed opacity-50">
                           {data.compare}
                         </p>
 
-                        {/* Hover Detail */}
                         <motion.div 
                           className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 rounded-2xl"
                           initial={{ opacity: 0 }}
@@ -355,7 +335,6 @@ const Section4 = () => {
                   </AnimatePresence>
                 </div>
 
-                {/* Total Impact Summary */}
                 <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -386,7 +365,6 @@ const Section4 = () => {
         </div>
       </div>
 
-      {/* Background Floating Text */}
       <motion.div 
         initial={{ x: 0 }}
         animate={{ x: [0, -100, 0] }}

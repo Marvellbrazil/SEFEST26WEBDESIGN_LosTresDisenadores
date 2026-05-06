@@ -1,511 +1,309 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Trash2, Flame, CloudRain, TreePine, DollarSign } from 'lucide-react';
-import { problemCardData, type IconName } from './data/problemCards';
+import { motion, useMotionValue, useTransform, animate, useScroll, useSpring, AnimatePresence } from 'framer-motion';
+import { Trash2, Flame, CloudRain, DollarSign, Info, Play, X } from 'lucide-react';
 
-const iconMap: Record<IconName, React.ReactNode> = {
-  trash2: <Trash2 size={28} />,
-  flame: <Flame size={28} />,
-  cloudRain: <CloudRain size={28} />,
-  treePine: <TreePine size={28} />,
-  dollarSign: <DollarSign size={28} />,
+const iconMap = {
+  trash2: <Trash2 size={24} />,
+  flame: <Flame size={24} />,
+  cloudRain: <CloudRain size={24} />,
+  dollarSign: <DollarSign size={24} />,
 };
+
+const problemCardData = [
+  {
+    id: 1,
+    title: "Food Waste Volume",
+    value: 1300,
+    unit: "Million Tons",
+    description: "Global food waste produced annually, contributing significantly to landfill overflow.",
+    color: "#F28F3B",
+    icon: "trash2",
+    leftOffset: "-600px",
+    top: "5%",
+    rotation: "-6deg",
+    parallaxSpeed: -100,
+    detail: "Equivalent to 1/3 of all food produced for human consumption."
+  },
+  {
+    id: 2,
+    title: "Carbon Footprint",
+    value: 3.3,
+    unit: "Billion Tons",
+    description: "CO2 equivalent greenhouse gases released from rotting food waste in landfills.",
+    color: "#10B981",
+    icon: "cloudRain",
+    leftOffset: "220px",
+    top: "8%",
+    rotation: "4deg",
+    parallaxSpeed: -150,
+    detail: "If food waste were a country, it would be the 3rd largest emitter."
+  },
+  {
+    id: 3,
+    title: "Economic Loss",
+    value: 940,
+    unit: "Billion USD",
+    description: "Total economic value lost globally due to food being discarded unnecessarily.",
+    color: "#F28F3B",
+    icon: "dollarSign",
+    leftOffset: "-550px",
+    top: "22%", 
+    rotation: "2deg",
+    parallaxSpeed: -50,
+    detail: "This loss impacts farmers, businesses, and households alike."
+  },
+  {
+    id: 4,
+    title: "Methane Impact",
+    value: 25,
+    unit: "Times Potency",
+    description: "Methane is far more potent than CO2 at trapping heat in the atmosphere.",
+    color: "#EF4444",
+    icon: "flame",
+    leftOffset: "150px",
+    top: "20%",
+    rotation: "-3deg",
+    parallaxSpeed: -80,
+    detail: "Food waste produces massive amounts of methane in anaerobic conditions."
+  }
+];
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Section3 = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const smileyRef = useRef<HTMLDivElement>(null);
-  const trackerAreaRef = useRef<HTMLDivElement>(null);
-  const leftEyeRef = useRef<HTMLImageElement>(null);
-  const rightEyeRef = useRef<HTMLImageElement>(null);
-  const mouthRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
-  
-  const [isMobile, setIsMobile] = useState(false);
+const AnimatedNumber = ({ value, unit }: { value: number; unit: string }) => {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) => 
+    value % 1 === 0 ? Math.floor(latest).toLocaleString() : latest.toFixed(1)
+  );
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const problemCards = problemCardData;
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(titleRef.current,
-        { y: 50, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 80%",
-            end: "top 60%",
-            scrub: 0.5,
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-
-      gsap.to('.title-underline-path', {
-        strokeDashoffset: 0,
-        duration: 1.2,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 70%',
-          toggleActions: 'play none none reverse'
-        }
-      });
-
-      gsap.fromTo(subtitleRef.current,
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          delay: 0.3,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 75%",
-            end: "top 60%",
-            scrub: 0.5,
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(smileyRef.current,
-        { scale: 0.8, opacity: 0, rotation: -10 },
-        {
-          scale: 1,
-          opacity: 1,
-          rotation: 0,
-          duration: 1.2,
-          ease: "back.out(0.4)",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 60%",
-            end: "top 40%",
-            scrub: 0.5,
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      cardsRef.current.forEach((card, index) => {
-        if (!card) return;
-        
-        const isLeft = problemCards[index].leftOffset.includes('-') && problemCards[index].leftOffset !== '-150px';
-        const isRight = !isLeft && problemCards[index].leftOffset !== '-150px';
-        
-        let fromX = 0;
-        if (!isMobile) {
-          if (isLeft) fromX = -100;
-          if (isRight) fromX = 100;
-        }
-        
-        gsap.fromTo(card,
-          { x: fromX, opacity: 0, rotation: parseFloat(problemCards[index].rotation) * 2 },
-          {
-            x: 0,
-            opacity: 1,
-            rotation: parseFloat(problemCards[index].rotation),
-            duration: 0.8,
-            delay: index * 0.15,
-            ease: "back.out(0.5)",
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 55%",
-              end: "top 30%",
-              scrub: 0.5,
-              toggleActions: "play none none reverse"
-            }
-          }
-        );
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [problemCards, isMobile]);
-
-  useEffect(() => {
-    cardsRef.current.forEach((card, i) => {
-      const data = problemCards[i];
-      if (!card) return;
-      
-      gsap.to(card, {
-        y: `+=${data.floatOffset}`,
-        duration: 2.5 + (i * 0.2),
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        delay: i * 0.2
-      });
-    });
-  }, [problemCards]);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo([leftEyeRef.current, rightEyeRef.current],
-        { scale: 0, opacity: 0 },
-        {
-          scale: 1,
-          opacity: 1,
-          duration: 0.6,
-          delay: 0.5,
-          ease: "elastic.out(1, 0.5)",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 55%",
-            end: "top 45%",
-            scrub: 0.5,
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-
-      gsap.fromTo(mouthRef.current,
-        { scaleY: 0, opacity: 0 },
-        {
-          scaleY: 1,
-          opacity: 1,
-          duration: 0.6,
-          delay: 0.7,
-          ease: "back.out(0.5)",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 55%",
-            end: "top 45%",
-            scrub: 0.5,
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  useEffect(() => {
-    const leftEye = leftEyeRef.current;
-    const rightEye = rightEyeRef.current;
-    
-    if (!leftEye || !rightEye) return;
-    
-    gsap.to([leftEye, rightEye], {
-      rotation: 360,
-      duration: 10,
-      repeat: -1,
-      ease: "none",
-      transformOrigin: "center center"
-    });
-    
-    return () => {
-      gsap.killTweensOf([leftEye, rightEye]);
-    };
-  }, []);
-
-  useEffect(() => {
-    const mouth = mouthRef.current;
-    if (!mouth) return;
-    
-    gsap.to(mouth, {
-      height: "55px",
-      duration: 2.5,
-      repeat: -1,
-      yoyo: true,
-      ease: "power1.inOut"
-    });
-    
-    return () => {
-      gsap.killTweensOf(mouth);
-    };
-  }, []);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!smileyRef.current || !trackerAreaRef.current || isMobile) return;
-    
-    const rect = trackerAreaRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    const x = (e.clientX - centerX) / (rect.width / 2);
-    const y = (e.clientY - centerY) / (rect.height / 2);
-    
-    const moveX = x * 20;
-    const moveY = y * 20;
-    
-    gsap.to(smileyRef.current, {
-      x: moveX,
-      y: moveY,
-      duration: 0.4,
-      ease: "power2.out"
-    });
-    
-    if (leftEyeRef.current && rightEyeRef.current && mouthRef.current) {
-      gsap.to([leftEyeRef.current, rightEyeRef.current, mouthRef.current], {
-        x: moveX * 0.3,
-        y: moveY * 0.3,
-        duration: 0.4,
-        ease: "power2.out"
-      });
-    }
-  };
-
-  const handleMouseLeave = () => {
-    gsap.to([smileyRef.current, leftEyeRef.current, rightEyeRef.current, mouthRef.current], {
-      x: 0,
-      y: 0,
-      duration: 0.6,
-      ease: "elastic.out(1, 0.5)"
-    });
-  };
-
-  const getCardPosition = (card: typeof problemCards[0]) => {
-    if (isMobile) {
-      return {
-        left: '50%',
-        top: `${150 + (card.id - 1) * 100}px`,
-        transform: `translateX(-50%) rotate(0deg)`,
-      };
-    }
-    return {
-      left: `calc(50% + ${card.leftOffset})`,
-      top: `calc(50% - 185px + ${card.top})`,
-      transform: `rotate(${card.rotation})`,
-    };
-  };
+    const controls = animate(count, value, { duration: 2, ease: "easeOut" });
+    return () => controls.stop();
+  }, [count, value]);
 
   return (
-    <section 
-      ref={sectionRef} 
-      className="relative w-full bg-[#F4F3EE] py-24 md:py-32 overflow-visible"
-    >
-      <div className="absolute inset-0 flex items-start justify-center pointer-events-none z-0 pt-8 md:pt-1">
-        <div className="text-center px-4">
-          <h2 
-            ref={titleRef}
-            className="text-[#2D2A26] text-[35px] md:text-[70px] font-black leading-[1.1] font-[family:var(--font-jakarta)]"
-          >
-            The Problem <span className="italic text-[#F28F3B]">We Face:</span>
-          </h2>
-          
-          <svg 
-            className="title-underline-svg w-[180px] md:w-[280px] mx-auto mt-4" 
-            viewBox="0 0 280 17" 
-            fill="none" 
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path 
-              className="title-underline-path"
-              d="M2 12.1515C93.0771 5.7187 184.529 2.30552 276 1.93652" 
-              stroke="#F28F3B" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-              strokeDasharray="300"
-              strokeDashoffset="300"
-            />
-            <path 
-              className="title-underline-path"
-              d="M52.2672 15.9461C111.19 12.8158 170.266 11.3583 229.33 11.5735" 
-              stroke="#F28F3B" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-              strokeDasharray="200"
-              strokeDashoffset="200"
-            />
-          </svg>
-          
-          <div className="text-center mt-2">
-            <p 
-              ref={subtitleRef}
-              className="mt-6 text-[#0F1A20]/60 text-sm md:text-base lg:text-lg max-w-2xl mx-auto px-4 font-[family:var(--font-jakarta)]"
-            >
-              Every year, millions of tons of food end up in landfills while people go hungry.
-              <br />
-              These are the <span className="font-bold text-[#F28F3B]">staggering facts</span> we cannot ignore.
-            </p>
-          </div>  
-        </div>
-      </div>
+    <div className="flex items-baseline gap-1.5">
+      <motion.span className="text-3xl md:text-5xl font-black text-gray-900 leading-none tracking-tighter">
+        {rounded}
+      </motion.span>
+      <span className="text-[10px] md:text-xs font-bold text-gray-400 uppercase">{unit}</span>
+    </div>
+  );
+};
 
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 right-0 w-96 h-96 bg-[#F28F3B]/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-0 w-80 h-80 bg-[#2D2A26]/5 rounded-full blur-3xl" />
-      </div>
+const Section3 = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const videoCardRef = useRef<HTMLDivElement>(null);
+  const leftEyeRef = useRef<HTMLDivElement>(null);
+  const rightEyeRef = useRef<HTMLDivElement>(null);
+  
+  const [isMobile, setIsMobile] = useState(false);
+  const [isHoveringVideo, setIsHoveringVideo] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-      {/* watchout guys ini problem kalau positionnya fixed */}
-      <div 
-        ref={trackerAreaRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        className={`absolute z-20 ${isMobile ? 'hidden' : ''}`}
-        style={{
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 'min(600px, 85vw)',
-          height: 'min(600px, 85vw)',
-          borderRadius: '50%',
-          pointerEvents: 'auto',
-          cursor: 'none',
-          backgroundColor: 'transparent',
-        }}
-      />
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const cursorSpringX = useSpring(mouseX, { stiffness: 500, damping: 40 });
+  const cursorSpringY = useSpring(mouseY, { stiffness: 500, damping: 40 });
 
-      <div className="relative z-10 max-w-400 mx-auto px-6 md:px-16 overflow-visible">
-        
-        <div className="flex items-center justify-center w-full" style={{ minHeight: '500px' }}>
-          <div 
-            ref={smileyRef}
-            className="relative z-10"
-            style={{
-              width: 'min(300px, 55vw)',
-              height: 'min(300px, 55vw)',
-              borderRadius: '100%',
-              backgroundImage: `url('/assets/Img-3.png')`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundColor: '#F28F3B',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-              boxShadow: '0 0 30px rgba(0,0,0,0.2)',
-            }}
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const springScroll = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  const titleY = useTransform(springScroll, [0, 1], [0, -100]);
+  const smileyY = useTransform(springScroll, [0, 1], [0, -150]);
+
+  useEffect(() => {
+    const checkDevice = () => setIsMobile(window.innerWidth < 768);
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+
+      if (isMobile) return;
+      
+      const eyes = [leftEyeRef.current, rightEyeRef.current];
+      eyes.forEach((eye) => {
+        if (!eye) return;
+        const rect = eye.getBoundingClientRect();
+        const angle = Math.atan2(e.clientY - (rect.top + rect.height/2), e.clientX - (rect.left + rect.width/2));
+        const dist = Math.min(6, Math.hypot(e.clientX - (rect.left + rect.width/2), e.clientY - (rect.top + rect.height/2)) / 15);
+        gsap.to(eye, { x: Math.cos(angle) * dist, y: Math.sin(angle) * dist, duration: 0.3 });
+      });
+
+      if (videoCardRef.current) {
+        const rect = videoCardRef.current.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        gsap.to(videoCardRef.current, {
+          rotateY: x * 10,
+          rotateX: -y * 10,
+          duration: 0.5,
+          ease: "power2.out"
+        });
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('resize', checkDevice);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [isMobile]);
+
+  return (
+    <section ref={sectionRef} className="relative w-full bg-[#FAF9F6] py-20 lg:pt-40 lg:pb-80 overflow-hidden font-[family:var(--font-jakarta)]">
+      
+      {!isMobile && (
+        <motion.div
+          style={{
+            left: cursorSpringX,
+            top: cursorSpringY,
+            x: "-50%",
+            y: "-50%",
+            pointerEvents: "none",
+          }}
+          animate={{
+            scale: isHoveringVideo ? 1 : 0,
+            opacity: isHoveringVideo ? 1 : 0,
+          }}
+          className="fixed z-[100] w-24 h-24 bg-[#F28F3B] rounded-full flex flex-col items-center justify-center text-white shadow-2xl"
+        >
+          <Play fill="white" size={24} className="ml-1" />
+          <span className="text-[10px] font-black uppercase tracking-tighter mt-1">Play</span>
+        </motion.div>
+      )}
+
+      <motion.div style={{ y: titleY }} className="relative z-30 text-center mb-16 px-4">
+        <h2 className="text-[#1A1A1A] text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight uppercase">
+          The Problem <span className="text-[#F28F3B]">We Face</span>
+        </h2>
+        <p className="mt-6 text-sm md:text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
+          Our current "take-make-waste" model is pushing the planet to its limits.
+        </p>
+      </motion.div>
+
+      <div className={`relative w-full max-w-7xl mx-auto ${isMobile ? 'flex flex-col gap-6 px-6' : 'h-[400px]'}`}>
+        {!isMobile && (
+          <motion.div 
+            style={{ y: smileyY }}
+            className="absolute left-1/2 top-0 -translate-x-1/2 w-64 h-64 rounded-full bg-[#F28F3B] border-[10px] border-white shadow-2xl flex items-center justify-center z-[25]"
           >
-            <div 
-              ref={leftEyeRef}
-              style={{
-                position: 'absolute',
-                top: '30%',
-                left: '20%',
-                width: 'min(3vw, 40px)',
-                height: 'auto',
-                pointerEvents: 'none',
-                minWidth: '25px',
-                maxWidth: '50px'
-              }}
-            >
-              <img 
-                src="/assets/Img-1.svg" 
-                alt="left eye" 
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-              />
+            <div className="absolute top-[35%] left-[25%] w-10 h-10 bg-white rounded-full flex items-center justify-center">
+              <div ref={leftEyeRef} className="w-4 h-4 bg-black rounded-full" />
             </div>
-            
-            <div 
-              ref={rightEyeRef}
-              style={{
-                position: 'absolute',
-                top: '30%',
-                right: '20%',
-                width: 'min(3vw, 40px)',
-                height: 'auto',
-                pointerEvents: 'none',
-                minWidth: '25px',
-                maxWidth: '50px'
-              }}
-            >
-              <img 
-                src="/assets/Img-1.svg" 
-                alt="right eye" 
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-              />
+            <div className="absolute top-[35%] right-[25%] w-10 h-10 bg-white rounded-full flex items-center justify-center">
+              <div ref={rightEyeRef} className="w-4 h-4 bg-black rounded-full" />
             </div>
-            
-            <div 
-              ref={mouthRef}
-              style={{
-                position: 'absolute',
-                bottom: '25%',
-                width: 'min(60px, 12vw)',
-                height: 'min(35px, 7vw)',
-                borderRadius: '35px',
-                backgroundColor: 'black',
-                pointerEvents: 'none'
-              }}
-            />
-          </div>
-        </div>
-      </div>
+            <div className="absolute bottom-[20%] w-24 h-5 bg-black/10 rounded-full" />
+          </motion.div>
+        )}
 
-      <div className="cards-wrapper absolute inset-0 w-full h-full overflow-visible" style={{ zIndex: 20 }}>
-        {problemCards.map((card, index) => {
-          const position = getCardPosition(card);
-          
+        {problemCardData.map((card) => {
+          const cardY = useTransform(springScroll, [0, 1], [0, card.parallaxSpeed]);
           return (
-            <div 
+            <motion.div 
               key={card.id}
-              ref={(el) => {
-                cardsRef.current[index] = el;
-              }}
-              className="card absolute rounded-2xl p-5 md:p-6 shadow-xl cursor-pointer group"
-              style={{ 
-                backgroundColor: card.bgColor,
-                width: 'clamp(260px, 80vw, 300px)',
-                left: position.left,
-                top: position.top,
-                transform: position.transform,
-                zIndex: 100 + index,
-                boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-                transition: 'box-shadow 0.3s ease'
-              }}
+              style={!isMobile ? {
+                position: 'absolute',
+                left: `calc(50% + ${card.leftOffset})`,
+                top: card.top,
+                rotate: card.rotation,
+                y: cardY,
+                zIndex: card.id > 2 ? 10 : 20,
+                width: '380px'
+              } : {}}
+              whileHover={!isMobile ? { zIndex: 50, scale: 1.05, rotate: 0 } : {}}
+              className="group bg-white rounded-[32px] border border-gray-100 shadow-xl p-7 cursor-pointer"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="card-icon p-2 rounded-xl transition-all duration-300" style={{ backgroundColor: `${card.color}20`, color: card.color }}>
-                  {iconMap[card.icon as IconName]}
-                </div>
-                <span className="card-title text-[10px] md:text-xs font-bold uppercase tracking-wider transition-all duration-300 font-[family:var(--font-jakarta)]" style={{ color: card.color }}>
-                  {card.title}
-                </span>
+              <div className="p-3 w-fit rounded-2xl mb-6" style={{ backgroundColor: `${card.color}15`, color: card.color }}>
+                {iconMap[card.icon as keyof typeof iconMap]}
               </div>
-              <div className="card-value text-2xl md:text-4xl mb-1 transition-all duration-300 font-[family:var(--font-jakarta)]" style={{ color: card.textColor }}>
-                {card.value}
-              </div>
-              <div className="text-[8px] md:text-[10px] uppercase tracking-wider mb-3 transition-all duration-300 font-[family:var(--font-jakarta)]" style={{ color: card.textColor }}>
-                {card.unit}
-              </div>
-              <p className="text-[11px] md:text-sm leading-relaxed transition-all duration-300 group-hover:opacity-100 font-[family:var(--font-jakarta)]" style={{ color: card.textColor }}>
-                {card.description}
-              </p>
-              
-              <div className="card-underline absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[#F28F3B] transition-all duration-500" />
-            </div>
+              <h3 className="text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">{card.title}</h3>
+              <AnimatedNumber value={card.value} unit={card.unit} />
+              <p className="mt-5 text-gray-500 text-sm font-medium">{card.description}</p>
+            </motion.div>
           );
         })}
       </div>
 
-      <div className="h-80 md:h-96" />
+      <div className="relative mt-40 perspective-[1500px] z-40 px-6">
+        <motion.div
+          ref={videoCardRef}
+          onMouseEnter={() => setIsHoveringVideo(true)}
+          onMouseLeave={() => setIsHoveringVideo(false)}
+          onClick={() => setShowModal(true)}
+          initial={{ rotateX: 15, scale: 0.8, opacity: 0 }}
+          whileInView={{ rotateX: 0, scale: 1, opacity: 1 }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: true }}
+          className="relative w-full max-w-5xl mx-auto aspect-video rounded-[30px] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.2)] bg-black border-[10px] border-white cursor-none"
+          style={{ transformStyle: "preserve-3d" }}
+        >
+          <motion.div 
+            style={{ y: useTransform(springScroll, [0.5, 1], [0, 100]), scale: 1.2 }}
+            className="absolute inset-0 w-full h-full"
+          >
+            <iframe
+              className="w-full h-full pointer-events-none"
+              src="https://www.youtube.com/embed/ishA6kry8nc?autoplay=1&mute=1&loop=1&playlist=ishA6kry8nc&controls=0&modestbranding=1&rel=0"
+              allow="autoplay; encrypted-media"
+            />
+          </motion.div>
+
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
+          
+          <div className="absolute bottom-10 left-10 z-20 text-white">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-1 w-12 bg-[#F28F3B] rounded-full" />
+              <span className="text-xs font-black uppercase tracking-[0.3em]">Click to Play with Sound</span>
+            </div>
+            <h3 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">
+              Saving Food,<br />Empowering Locals.
+            </h3>
+          </div>
+        </motion.div>
+      </div>
+
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-4 md:p-10"
+          >
+            <button 
+              onClick={() => setShowModal(false)}
+              className="absolute top-6 right-6 text-white hover:text-[#F28F3B] transition-colors z-[210]"
+            >
+              <X size={40} />
+            </button>
+            
+            <motion.div 
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="relative w-full max-w-6xl aspect-video rounded-3xl overflow-hidden shadow-2xl"
+            >
+              <iframe
+                className="w-full h-full"
+                src="https://www.youtube.com/embed/ishA6kry8nc?autoplay=1&mute=0&controls=1&rel=0"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

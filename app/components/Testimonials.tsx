@@ -30,7 +30,7 @@ export default function Testimonials() {
         <Quote className="absolute bottom-10 right-10 w-40 h-40 text-[#2D2A26] transform rotate-180" />
       </div>
 
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-10 lg:px-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 lg:px-16">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

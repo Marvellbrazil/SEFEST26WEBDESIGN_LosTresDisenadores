@@ -50,7 +50,7 @@ const WhySaverish = () => {
         <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[#F28F3B]/5 to-transparent" />
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 lg:px-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 lg:px-16">
         
         <motion.div
           initial={{ opacity: 0, y: 30 }}
