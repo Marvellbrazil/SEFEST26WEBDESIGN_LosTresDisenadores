@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import Intro from './components/Intro';
 import LoadingBar from './components/LoadingBar';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
+import Navbar from '../src/components/navbar/Navbar';
+import Hero from '../src/components/hero/Hero';
 import Section2 from './components/Section2';
 import Section3 from './components/Section3';
 import Section4 from './components/Section4';
@@ -14,7 +14,7 @@ import Section5 from './components/Section5';
 import Section6 from './components/Section6';
 import RescuedMeals from './components/RescuedMeals';
 import FAQ from './components/FAQ';
-import Footer from './components/Footer';
+import Footer from '../src/components/footer/Footer';
 import CustomCursor from './components/CustomCursor';
 import SmoothScroll from './components/SmoothScroll';
 

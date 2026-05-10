@@ -1,102 +1,19 @@
 'use client';
-
-import React, { useEffect, useState } from 'react';
-import { motion, useMotionValue, useTransform, animate, AnimatePresence, useSpring, useScroll } from 'framer-motion';
+import React from 'react';
+import { motion, useMotionValue, useTransform, useSpring, useScroll } from 'framer-motion';
 import { 
   RiArrowRightUpLine, 
   RiLeafLine, 
-  RiUserSmileLine, 
-  RiHeartLine, 
-  RiStarSFill, 
   RiStore2Line,
   RiMapPinLine,
   RiSearchLine,
   RiArrowLeftSLine,
   RiArrowRightSLine
 } from 'react-icons/ri';
-import { Trash2, BadgeDollarSign } from 'lucide-react';
-
-import { AnimationConfig, createSpring, createEase } from './utils/animation';
-
-interface TrustBadge {
-  icon: typeof RiUserSmileLine;
-  text: string;
-}
-
-interface StatCard {
-  icon?: typeof Trash2;
-  label: string;
-  numericValue: number;
-  suffix: string;
-  sub: string;
-  rotation: string;
-  color: string;
-}
-
-const trustBadges: TrustBadge[] = [
-  { icon: RiUserSmileLine, text: '10,000+ Happy Rescuers' },
-  { icon: RiHeartLine, text: '200+ Partner Stores' },
-  { icon: RiStarSFill, text: '4.9 Rating' },
-];
-
-const statCards: StatCard[] = [
-  { icon: Trash2, label: 'Food Waste Saved', numericValue: 50000, suffix: '+', sub: 'Meals rescued from landfill', rotation: '4deg', color: '#F28F3B' },
-  { label: 'CO₂ Prevented', numericValue: 125000, suffix: 'kg', sub: 'Carbon emissions prevented', rotation: '-3deg', color: '#10B981' }, 
-  { icon: BadgeDollarSign, label: 'Partner Revenue', numericValue: 150, suffix: 'M+', sub: 'Rupiah extra income generated', rotation: '2deg', color: '#F28F3B' }, 
-];
-
-const liveActivities = [
-  "🍕 @sara_h rescued 2 pizzas from Luigi's",
-  "🥐 @dimas99 saved 5 croissants!",
-  "🥗 @ana_zero reduced 1.2kg CO₂ emissions",
-  "💰 @kopi_senja gained 50k IDR today",
-];
-
-const AnimatedCounter = ({ to, suffix = '' }: { to: number; suffix?: string }) => {
-  const count = useMotionValue(0);
-  const rounded = useTransform(count, (latest) => Math.round(latest).toLocaleString() + suffix);
-
-  useEffect(() => {
-    const controls = animate(count, to, { duration: 2.5, ease: 'easeOut', delay: 1 });
-    return () => controls.stop();
-  }, [count, to]);
-
-  return <motion.span>{rounded}</motion.span>;
-};
-
-const LiveActivityTicker = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % liveActivities.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="absolute top-20 left-4 right-4 sm:left-auto sm:right-8 md:right-16 z-30 pointer-events-none flex justify-center sm:justify-end">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentIndex}
-          initial={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
-          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
-          transition={{ duration: 0.5 }}
-          className="bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full shadow-xl flex items-center gap-2 max-w-full"
-        >
-          <span className="relative flex h-2 w-2 shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-          </span>
-          <p className="text-white/90 text-[10px] sm:text-xs font-[family:var(--font-jakarta)] truncate">
-            {liveActivities[currentIndex]}
-          </p>
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  );
-};
+import { AnimationConfig, createSpring, createEase } from '../../utils/animation';
+import { trustBadges, statCards } from '../../constants/hero';
+import { AnimatedCounter } from './AnimatedCounter';
+import { LiveActivityTicker } from './LiveActivityTicker';
 
 export default function Hero() {
   const mouseX = useMotionValue(0);

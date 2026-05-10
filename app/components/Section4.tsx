@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { Zap, BarChart3, Recycle, ArrowRight, CheckCircle, TrendingUp, Award } from 'lucide-react';
-import { useIsMobile } from './utils/device';
+import { useIsMobile } from '../../src/utils/device';
 
 const cardsData = [
   {

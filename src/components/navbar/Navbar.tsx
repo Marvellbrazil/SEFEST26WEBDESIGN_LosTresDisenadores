@@ -1,13 +1,10 @@
 'use client';
-
-import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent, useSpring } from 'framer-motion';
+import { motion, AnimatePresence, useSpring, useScroll } from 'framer-motion';
 import { 
   RiSearchLine, 
   RiCloseLine, 
   RiMapPinLine, 
-  RiArrowDownSLine, 
   RiMenuLine,
   RiShoppingBag3Line,
   RiUser3Line,
@@ -16,103 +13,28 @@ import {
   RiArrowRightLine
 } from 'react-icons/ri';
 import { ChevronDown } from 'lucide-react';
-
-interface DropdownItem {
-  label: string;
-  href: string;
-  icon: string;
-  desc: string;
-}
-
-interface NavLink {
-  label: string;
-  href: string;
-  hasDropdown: boolean;
-  dropdownItems?: DropdownItem[];
-}
-
-interface Location {
-  name: string;
-  code: string;
-}
-
-const navLinks: NavLink[] = [
-  { label: 'Home', href: '/', hasDropdown: false },
-  { 
-    label: 'Explore', 
-    href: '/explore',
-    hasDropdown: true,
-    dropdownItems: [
-      { label: 'Browse Bags', href: '/browse', icon: '🛍️', desc: 'Find surplus food near you' },
-      { label: 'Categories', href: '/categories', icon: '🍕', desc: 'Browse by food type' },
-      { label: 'Top Rated', href: '/top-rated', icon: '⭐', desc: 'Best reviewed stores' },
-      { label: 'New Arrivals', href: '/new', icon: '🆕', desc: 'Recently added stores' },
-    ]
-  },
-  { label: 'Impact', href: '/impact', hasDropdown: false },
-  { label: 'Partnership', href: '/partnership', hasDropdown: false },
-  { label: 'About', href: '/about', hasDropdown: false },
-];
-
-const locations: Location[] = [
-  { name: 'Surabaya', code: 'SBY' },
-  { name: 'Jakarta', code: 'JKT' },
-  { name: 'Bandung', code: 'BDG' },
-];
+import { useNavbar } from '../../hooks/useNavbar';
+import { navLinks, locations } from '../../constants/navbar';
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<Location>(locations[0]);
-  const [searchQuery, setSearchQuery] = useState('');
-  
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const {
+    isScrolled,
+    isMobileOpen,
+    setIsMobileOpen,
+    isSearchOpen,
+    setIsSearchOpen,
+    activeDropdown,
+    handleDropdownEnter,
+    handleDropdownLeave,
+    selectedLocation,
+    setSelectedLocation,
+    searchQuery,
+    setSearchQuery,
+    searchInputRef
+  } = useNavbar();
 
-  const { scrollY, scrollYProgress } = useScroll();
+  const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-
-  useMotionValueEvent(scrollY, "change", (latest) => setIsScrolled(latest > 50));
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        setIsSearchOpen((prev) => !prev);
-      }
-      if (e.key === 'Escape') {
-        setIsSearchOpen(false);
-        setIsMobileOpen(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  useEffect(() => {
-    if (isSearchOpen && searchInputRef.current) {
-      setTimeout(() => searchInputRef.current?.focus(), 100);
-    }
-  }, [isSearchOpen]);
-
-  useEffect(() => {
-    if (isMobileOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-  }, [isMobileOpen]);
-
-  const handleDropdownEnter = (label: string) => {
-    if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
-    setActiveDropdown(label);
-  };
-
-  const handleDropdownLeave = () => {
-    dropdownTimeoutRef.current = setTimeout(() => setActiveDropdown(null), 150);
-  };
 
   return (
     <>

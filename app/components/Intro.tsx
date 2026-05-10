@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { AnimationConfig, createSpring, createEase } from './utils/animation';
+import { AnimationConfig, createSpring, createEase } from '../../src/utils/animation';
 
 interface IntroProps {
   setFinished: (v: boolean) => void;
