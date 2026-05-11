@@ -1,339 +1,202 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { Zap, BarChart3, Recycle, ArrowRight, CheckCircle, TrendingUp, Award } from 'lucide-react';
-import { useIsMobile } from '../../src/utils/device';
+import { motion } from 'framer-motion';
+import { Search, CreditCard, ShoppingBag, Leaf, ArrowRight, Clock, ShieldCheck, BarChart3 } from 'lucide-react';
 
 const cardsData = [
   {
     id: 1,
-    title1: "Flash Sale",
+    title1: "Browse",
     title2: "Surplus",
-    info: "SDG 12.3 • Reduce Food Waste",
-    description: "Restaurants and cafes can list their surplus food at 50-70% discount before closing time. Customers get great deals, businesses reduce waste, and the planet wins.",
-    linkText: "Explore Flash Sale",
-    image: "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=800",
-    icon: <Zap size={28} />,
-    bgColor: "#1a1a1a",
-    textColor: "#FFFFFF",
+    info: "Step 01 • Find Local Deals",
+    description: "Explore our interactive map or list to find bakeries, cafes, and restaurants near you offering perfectly good surplus food at 50-70% off.",
+    linkText: "Find Food Near Me",
+    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800",
+    icon: <Search size={24} />,
     accentColor: "#F28F3B",
-    stats: "50-70% OFF",
-    impact: "Up to 40% waste reduction",
-    statIcon: <Zap size={16} />
+    stats: "Real-time Map",
+    impact: "Location Based",
+    statIcon: <Search size={16} />
   },
   {
     id: 2,
-    title1: "Impact",
-    title2: "Transparency",
-    info: "SDG 12.6 • Sustainable Practices",
-    description: "Every rescued meal is converted into measurable impact data: CO₂ emissions avoided, water conserved, and land preserved. Transparent reporting for conscious consumers.",
-    linkText: "View Impact Data",
-    image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=800",
-    icon: <BarChart3 size={28} />,
-    bgColor: "#FFFFFF",
-    textColor: "#1a1a1a",
-    accentColor: "#F28F3B",
-    stats: "Real-time Data",
-    impact: "Live carbon & water tracking",
-    statIcon: <TrendingUp size={16} />
+    title1: "Reserve",
+    title2: "Your Bag",
+    info: "Step 02 • Secure Checkout",
+    description: "Found something delicious? Reserve your Surprise Bag or specific items instantly through our platform. Secure your meal before it sells out.",
+    linkText: "Payment Options",
+    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=800",
+    icon: <CreditCard size={24} />,
+    accentColor: "#3B82F6",
+    stats: "100% Secure",
+    impact: "Instant Confirmation",
+    statIcon: <ShieldCheck size={16} />
   },
   {
     id: 3,
-    title1: "Circular",
-    title2: "Economy",
-    info: "SDG 12.5 • Waste Reduction",
-    description: "We transform potential landfill waste into economic value. Creating win-win solutions for businesses, consumers, and the environment through resource optimization.",
-    linkText: "Learn Circularity",
-    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800",
-    icon: <Recycle size={28} />,
-    bgColor: "#F28F3B",
-    textColor: "#1a1a1a",
-    accentColor: "#FFFFFF",
-    stats: "Zero Waste",
-    impact: "Circular ecosystem model",
-    statIcon: <Award size={16} />
+    title1: "Pick Up",
+    title2: "In-Store",
+    info: "Step 03 • Collect & Connect",
+    description: "Head to the store during the specified pickup window. Simply show your digital receipt to the staff, grab your rescued food, and say hi to local business owners.",
+    linkText: "Pickup Guide",
+    image: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?q=80&w=800",
+    icon: <ShoppingBag size={24} />,
+    accentColor: "#10B981",
+    stats: "Quick & Easy",
+    impact: "Meet Local Owners",
+    statIcon: <Clock size={16} />
+  },
+  {
+    id: 4,
+    title1: "Enjoy",
+    title2: "& Impact",
+    info: "Step 04 • See The Difference",
+    description: "Enjoy your delicious rescued meal. Check your dashboard to see exactly how much CO2, water, and money you've saved by making a sustainable choice.",
+    linkText: "View Dashboard",
+    image: "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=800",
+    icon: <Leaf size={24} />,
+    accentColor: "#8B5CF6",
+    stats: "Track Impact",
+    impact: "Save the Planet",
+    statIcon: <BarChart3 size={16} />
   }
 ];
 
 export default function Section4() {
-  const headerRef = useRef(null);
-  const mainContainer = useRef(null);
-  const isMobile = useIsMobile();
-  const [mounted, setMounted] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const { scrollYProgress: headerScroll } = useScroll({
-    target: headerRef,
-    offset: ["start end", "end start"]
-  });
-
-  const smoothHeaderScroll = useSpring(headerScroll, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
-
-  const headerX = useTransform(smoothHeaderScroll, [0, 1], ["30%", "0%"]);
-  const headerOpacity = useTransform(smoothHeaderScroll, [0, 3, 1], [1, 0.6, 0]);
-
   return (
-    <section ref={mainContainer} className="relative w-full bg-[#F4F3EE]">
-      <div
-        ref={headerRef}
-        className="relative w-full overflow-hidden"
-        style={{ height: isMobile ? '20vh' : '30vh' }}
-      >
-        <motion.div
-          style={{ x: isMobile ? 0 : headerX, opacity: isMobile ? 1 : headerOpacity }}
-          className="absolute inset-0 flex items-center"
+    <section ref={containerRef} className="relative w-full bg-[#F4F3EE] font-[family:var(--font-jakarta)] pb-[20vh] pt-[10vh]">
+
+      <div 
+        className="absolute inset-0 z-0 opacity-[0.25] pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)',
+          backgroundSize: '32px 32px'
+        }}
+      />
+      
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#F4F3EE]/40 to-[#F4F3EE] pointer-events-none z-[1]" />
+
+      <motion.div 
+        animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.25, 0.15] }} 
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#F28F3B] rounded-full blur-[150px] z-0 pointer-events-none" 
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8">
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10%" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="flex flex-col items-center justify-center mb-[10vh]"
         >
-          <div className="flex items-center gap-4 md:gap-8 whitespace-nowrap px-4 md:px-8 py-8">
-            <h1 className="text-[#2D2A26] text-[36px] sm:text-[50px] md:text-[80px] lg:text-[100px] font-black uppercase tracking-tighter leading-none">
-              Our<span className="text-[#F28F3B]"> Solutions</span>
-            </h1>
-            <p className="text-[#2D2A26]/60 text-sm md:text-lg font-medium hidden sm:block">
-              Three innovative approaches <span className='block'>To tackle food waste</span>
-            </p>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-md border border-white/50 rounded-full shadow-sm mb-6">
+            <span className="w-2 h-2 rounded-full bg-[#F28F3B] animate-pulse" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2D2A26]/60">Step by Step Guide</span>
           </div>
+          <h2 className="text-[50px] sm:text-[70px] md:text-[100px] lg:text-[130px] font-black uppercase tracking-tighter text-[#2D2A26] leading-[0.85] text-center">
+            How It <span className="text-[#F28F3B]">Works</span>
+          </h2>
         </motion.div>
 
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#F28F3B]/30 to-transparent" />
-      </div>
-
-      <div className="relative px-4 sm:px-6 md:px-10 lg:px-16 -mt-4">
-        {isMobile ? (
-          <div className="flex flex-col gap-6 py-8">
-            {cardsData.map((card, i) => (
-              <div
-                key={card.id}
-                className="relative w-full rounded-[24px] shadow-xl overflow-hidden"
-                style={{ backgroundColor: card.bgColor }}
-              >
-                <div className="absolute inset-0 w-full h-full">
-                  <img
-                    src={card.image}
-                    alt="background"
-                    className="w-full h-full object-cover"
-                  />
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      backgroundColor: card.bgColor,
-                      opacity: card.bgColor === "#FFFFFF" ? 0.75 : 0.88
-                    }}
-                  />
-                </div>
-
-                <div className="relative w-full p-6 sm:p-8 flex flex-col gap-5 z-10 min-h-[400px]">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-sm" style={{ color: card.accentColor }}>
-                      {card.icon}
-                    </div>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.15em]" style={{ color: card.textColor, opacity: 0.8 }}>
-                      {card.info}
-                    </span>
-                  </div>
-
-                  <div>
-                    <h2 className="text-[40px] sm:text-[50px] font-black leading-[0.85] tracking-tight" style={{ color: card.textColor }}>
-                      {card.title1}
-                    </h2>
-                    <h2 className="text-[40px] sm:text-[50px] font-black leading-[0.85] tracking-tight mt-1" style={{ color: card.accentColor }}>
-                      {card.title2}
-                    </h2>
-                  </div>
-
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full w-fit backdrop-blur-sm" style={{ backgroundColor: `${card.accentColor}25`, border: `1px solid ${card.accentColor}40` }}>
-                    {card.statIcon}
-                    <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: card.accentColor }}>
-                      {card.stats}
-                    </span>
-                  </div>
-
-                  <p className="text-sm sm:text-base leading-relaxed max-w-md" style={{ color: card.textColor, opacity: 0.85 }}>
-                    {card.description}
-                  </p>
-
-                  <div className="flex-1" />
-
-                  <div className="p-3.5 rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${card.accentColor}15`, border: `1px solid ${card.accentColor}25` }}>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle size={16} style={{ color: card.accentColor }} />
-                      <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: card.textColor }}>
-                        {card.impact}
-                      </span>
-                    </div>
-                  </div>
-
-                  <button
-                    className="group flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all duration-300 shadow-lg w-fit active:scale-95"
-                    style={{
-                      backgroundColor: card.accentColor,
-                      color: card.bgColor === "#FFFFFF" ? "#1a1a1a" : "#FFFFFF",
-                    }}
-                  >
-                    {card.linkText}
-                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform duration-300" />
-                  </button>
-                </div>
-
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#F28F3B] to-transparent opacity-50" />
-
-                <div className="absolute top-6 right-6 z-10">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: card.textColor, opacity: 0.25 }}>
-                    {String(i + 1).padStart(2, '0')}/{String(cardsData.length).padStart(2, '0')}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          cardsData.map((card, i) => (
-            <SingleCard key={card.id} card={card} index={i} totalCards={cardsData.length} />
-          ))
-        )}
-      </div>
-
-      <div className={isMobile ? 'h-[5vh]' : 'h-[10vh]'} />
-    </section>
-  );
-}
-
-function SingleCard({ card, index, totalCards }: { card: typeof cardsData[0], index: number, totalCards: number }) {
-  const container = useRef(null);
-
-  const { scrollYProgress } = useScroll({
-    target: container,
-    offset: ["start end", "start start"]
-  });
-
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
-
-  const contentOpacity = useTransform(smoothProgress, [0, 0.5, 1], [0, 1, 1]);
-
-  const topOffset = `calc(-5vh + ${index * 50}px)`;
-
-  return (
-    <div
-      ref={container}
-      className="h-auto flex items-center justify-center w-full sticky top-40"
-    >
-      <motion.div
-        className="relative w-full max-w-full h-[700px] rounded-[30px] shadow-2xl flex flex-col md:flex-row overflow-hidden transform origin-top"
-        style={{
-          '--card-color': card.accentColor,
-          '--card-bg': card.bgColor,
-          '--card-text': card.textColor,
-          backgroundColor: card.bgColor,
-          top: topOffset,
-          scale: 1,
-        } as React.CSSProperties}
-      >
-        <div className="absolute inset-0 w-full h-full">
-          <img
-            src={card.image}
-            alt="background"
-            className="w-full h-full object-cover"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundColor: card.bgColor,
-              opacity: card.bgColor === "#FFFFFF" ? 0.7 : 0.85
-            }}
-          />
-        </div>
-
-        <div className="relative w-full md:w-1/2 h-full p-8 md:p-12 flex flex-col justify-between z-10">
-          <motion.div
-            className="flex flex-col gap-5"
-            style={{ opacity: contentOpacity }}
-          >
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl backdrop-blur-sm" style={{ backgroundColor: `${card.accentColor}20` }}>
-                {card.icon}
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.15em]" style={{ color: card.textColor, opacity: 0.8 }}>
-                {card.info}
-              </span>
-            </div>
-
-            <div>
-              <h2 className="text-section-md leading-tightest tracking-tight" style={{ color: card.textColor }}>
-                {card.title1}
-              </h2>
-              <h2 className="text-section-md leading-tightest tracking-tight mt-2" style={{ color: card.accentColor }}>
-                {card.title2}
-              </h2>
-            </div>
-
-            <div className="card-badge card-accent backdrop-blur-sm">
-              {card.statIcon}
-              <span className="card-label" style={{ color: card.accentColor }}>
-                {card.stats}
-              </span>
-            </div>
-
-            <p className="text-base max-w-md leading-normal-sm" style={{ color: card.textColor, opacity: 0.85 }}>
-              {card.description}
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="mt-3 p-3 rounded-card-sm card-content-bg backdrop-blur-sm"
-            style={{ opacity: contentOpacity }}
-          >
-            <div className="flex items-center gap-2">
-              <CheckCircle size={16} style={{ color: card.accentColor }} />
-              <span className="card-label" style={{ color: card.textColor }}>
-                {card.impact}
-              </span>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="w-fit mt-3"
-            style={{ opacity: contentOpacity }}
-          >
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="group flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-all duration-300 shadow-lg"
+        <div className="relative flex flex-col w-full">
+          {cardsData.map((card, index) => (
+            <div 
+              key={card.id}
+              className="sticky w-full flex items-center justify-center mb-[5vh] lg:mb-[15vh] last:mb-0"
               style={{
-                backgroundColor: card.accentColor,
-                color: card.bgColor === "#FFFFFF" ? "#1a1a1a" : "#FFFFFF",
-                boxShadow: `0 10px 25px -5px ${card.accentColor}40`
+                top: `calc(15vh + ${index * 40}px)`
               }}
             >
-              {card.linkText}
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform duration-300" />
-            </motion.button>
-          </motion.div>
-        </div>
+              <motion.div 
+                initial={{ opacity: 0, y: 80 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-10%" }}
+                transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+                className="w-full max-w-5xl h-auto md:h-[65vh] min-h-[500px] bg-white/80 backdrop-blur-2xl rounded-[32px] md:rounded-[48px] border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] flex flex-col md:flex-row overflow-hidden relative group"
+              >
+                
+                <div className="w-full md:w-1/2 h-[280px] md:h-full relative overflow-hidden">
+                  <motion.img 
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    src={card.image}
+                    alt={card.title1}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#2D2A26]/80 via-[#2D2A26]/30 to-transparent pointer-events-none" />
+                  
+                  <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between">
+                    <div className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-4 py-2 rounded-2xl shadow-lg">
+                      <p className="text-[10px] uppercase tracking-wider font-bold opacity-80 mb-0.5">Action</p>
+                      <div className="flex items-center gap-2">
+                        {card.statIcon}
+                        <span className="text-sm font-black">{card.stats}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-        <div className="relative w-full md:w-1/2 h-full flex items-end justify-end p-6 z-10">
-          <div className="flex flex-col items-end gap-3">
-            <div className="w-12 h-12 rounded-full backdrop-blur-md flex items-center justify-center" style={{ backgroundColor: `${card.accentColor}25` }}>
-              {card.icon}
-            </div>
-            <div className="text-right">
-              <p className="text-label-xs uppercase tracking-wider font-bold" style={{ color: card.textColor, opacity: 0.3 }}>
-                {String(index + 1).padStart(2, '0')}/{String(totalCards).padStart(2, '0')}
-              </p>
-            </div>
-          </div>
-        </div>
+                <div className="w-full md:w-1/2 h-full p-6 sm:p-8 md:p-12 flex flex-col justify-between bg-gradient-to-br from-white/50 to-transparent relative">
+                  
+                  <div className="absolute top-6 right-8 pointer-events-none select-none">
+                    <span className="text-[80px] md:text-[120px] font-black leading-none text-[#2D2A26] opacity-[0.03]">
+                      0{index + 1}
+                    </span>
+                  </div>
 
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#F28F3B] to-transparent opacity-50" />
-      </motion.div>
-    </div>
+                  <div className="relative z-10">
+                    <div className="w-12 h-12 rounded-full mb-6 flex items-center justify-center text-white shadow-lg" style={{ backgroundColor: card.accentColor }}>
+                      {card.icon}
+                    </div>
+                    <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mb-4 md:mb-6" style={{ color: card.accentColor }}>
+                      {card.info}
+                    </p>
+                    <h3 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#2D2A26] uppercase tracking-tighter leading-[0.9] mb-4 md:mb-6">
+                      {card.title1}<br />
+                      <span style={{ color: card.accentColor }}>{card.title2}</span>
+                    </h3>
+                    <p className="text-[#2D2A26]/60 text-sm md:text-base font-medium leading-relaxed max-w-sm">
+                      {card.description}
+                    </p>
+                  </div>
+
+                  <div className="mt-8 relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#2D2A26]/10 pt-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: card.accentColor }} />
+                      <span className="text-[10px] font-bold text-[#2D2A26]/50 uppercase tracking-wider">{card.impact}</span>
+                    </div>
+
+                    <button 
+                      className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group/btn"
+                      style={{ 
+                        backgroundColor: card.accentColor,
+                        boxShadow: `0 10px 25px -5px ${card.accentColor}60`
+                      }}
+                    >
+                      {card.linkText}
+                      <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
+
+                </div>
+              </motion.div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

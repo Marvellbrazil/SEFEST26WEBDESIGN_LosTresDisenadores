@@ -1,23 +1,439 @@
 'use client';
-import React from 'react';
-import { motion, useMotionValue, useTransform, useSpring, useScroll } from 'framer-motion';
-import { 
-  RiArrowRightUpLine, 
-  RiLeafLine, 
+
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import {
+  RiLeafLine,
   RiStore2Line,
   RiMapPinLine,
   RiSearchLine,
-  RiArrowLeftSLine,
-  RiArrowRightSLine
+  RiPieChart2Line,
+  RiLineChartLine,
+  RiArrowRightUpLine,
+  RiCheckDoubleLine
 } from 'react-icons/ri';
-import { AnimationConfig, createSpring, createEase } from '../../utils/animation';
-import { trustBadges, statCards } from '../../constants/hero';
+import { gsap } from 'gsap';
+import { InertiaPlugin } from 'gsap/InertiaPlugin';
 import { AnimatedCounter } from './AnimatedCounter';
-import { LiveActivityTicker } from './LiveActivityTicker';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(InertiaPlugin);
+}
+
+const throttle = (func: (...args: any[]) => void, limit: number) => {
+  let lastCall = 0;
+  return function (this: any, ...args: any[]) {
+    const now = performance.now();
+    if (now - lastCall >= limit) {
+      lastCall = now;
+      func.apply(this, args);
+    }
+  };
+};
+
+interface Dot {
+  cx: number;
+  cy: number;
+  xOffset: number;
+  yOffset: number;
+  _inertiaApplied: boolean;
+}
+
+export interface DotGridProps {
+  dotSize?: number;
+  gap?: number;
+  baseColor?: string;
+  activeColor?: string;
+  proximity?: number;
+  speedTrigger?: number;
+  shockRadius?: number;
+  shockStrength?: number;
+  maxSpeed?: number;
+  resistance?: number;
+  returnDuration?: number;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+function hexToRgb(hex: string) {
+  const m = hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+  if (!m) return { r: 0, g: 0, b: 0 };
+  return {
+    r: parseInt(m[1], 16),
+    g: parseInt(m[2], 16),
+    b: parseInt(m[3], 16)
+  };
+}
+
+const DotGrid: React.FC<DotGridProps> = ({
+  dotSize = 16,
+  gap = 32,
+  baseColor = '#5227FF',
+  activeColor = '#5227FF',
+  proximity = 150,
+  speedTrigger = 100,
+  shockRadius = 250,
+  shockStrength = 5,
+  maxSpeed = 5000,
+  resistance = 750,
+  returnDuration = 1.5,
+  className = '',
+  style
+}) => {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const dotsRef = useRef<Dot[]>([]);
+  const pointerRef = useRef({
+    x: 0,
+    y: 0,
+    vx: 0,
+    vy: 0,
+    speed: 0,
+    lastTime: 0,
+    lastX: 0,
+    lastY: 0
+  });
+
+  const baseRgb = useMemo(() => hexToRgb(baseColor), [baseColor]);
+  const activeRgb = useMemo(() => hexToRgb(activeColor), [activeColor]);
+
+  const circlePath = useMemo(() => {
+    if (typeof window === 'undefined' || !window.Path2D) return null;
+
+    const p = new Path2D();
+    p.arc(0, 0, dotSize / 2, 0, Math.PI * 2);
+    return p;
+  }, [dotSize]);
+
+  const buildGrid = useCallback(() => {
+    const wrap = wrapperRef.current;
+    const canvas = canvasRef.current;
+    if (!wrap || !canvas) return;
+
+    const { width, height } = wrap.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    const ctx = canvas.getContext('2d');
+    if (ctx) ctx.scale(dpr, dpr);
+
+    const cols = Math.floor((width + gap) / (dotSize + gap));
+    const rows = Math.floor((height + gap) / (dotSize + gap));
+    const cell = dotSize + gap;
+
+    const gridW = cell * cols - gap;
+    const gridH = cell * rows - gap;
+
+    const extraX = width - gridW;
+    const extraY = height - gridH;
+
+    const startX = extraX / 2 + dotSize / 2;
+    const startY = extraY / 2 + dotSize / 2;
+
+    const dots: Dot[] = [];
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const cx = startX + x * cell;
+        const cy = startY + y * cell;
+        dots.push({ cx, cy, xOffset: 0, yOffset: 0, _inertiaApplied: false });
+      }
+    }
+    dotsRef.current = dots;
+  }, [dotSize, gap]);
+
+  useEffect(() => {
+    if (!circlePath) return;
+
+    let rafId: number;
+    const proxSq = proximity * proximity;
+
+    const draw = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const { x: px, y: py } = pointerRef.current;
+
+      for (const dot of dotsRef.current) {
+        const ox = dot.cx + dot.xOffset;
+        const oy = dot.cy + dot.yOffset;
+        const dx = dot.cx - px;
+        const dy = dot.cy - py;
+        const dsq = dx * dx + dy * dy;
+
+        let style = baseColor;
+        if (dsq <= proxSq) {
+          const dist = Math.sqrt(dsq);
+          const t = 1 - dist / proximity;
+          const r = Math.round(baseRgb.r + (activeRgb.r - baseRgb.r) * t);
+          const g = Math.round(baseRgb.g + (activeRgb.g - baseRgb.g) * t);
+          const b = Math.round(baseRgb.b + (activeRgb.b - baseRgb.b) * t);
+          style = `rgb(${r},${g},${b})`;
+        }
+
+        ctx.save();
+        ctx.translate(ox, oy);
+        ctx.fillStyle = style;
+        ctx.fill(circlePath);
+        ctx.restore();
+      }
+
+      rafId = requestAnimationFrame(draw);
+    };
+
+    draw();
+    return () => cancelAnimationFrame(rafId);
+  }, [proximity, baseColor, activeRgb, baseRgb, circlePath]);
+
+  useEffect(() => {
+    buildGrid();
+    let ro: ResizeObserver | null = null;
+    if ('ResizeObserver' in window) {
+      ro = new ResizeObserver(buildGrid);
+      wrapperRef.current && ro.observe(wrapperRef.current);
+    } else {
+      window.addEventListener('resize', buildGrid);
+    }
+    return () => {
+      if (ro) ro.disconnect();
+      else window.removeEventListener('resize', buildGrid);
+    };
+  }, [buildGrid]);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      const now = performance.now();
+      const pr = pointerRef.current;
+      const dt = pr.lastTime ? now - pr.lastTime : 16;
+      const dx = e.clientX - pr.lastX;
+      const dy = e.clientY - pr.lastY;
+      let vx = (dx / dt) * 1000;
+      let vy = (dy / dt) * 1000;
+      let speed = Math.hypot(vx, vy);
+      if (speed > maxSpeed) {
+        const scale = maxSpeed / speed;
+        vx *= scale;
+        vy *= scale;
+        speed = maxSpeed;
+      }
+      pr.lastTime = now;
+      pr.lastX = e.clientX;
+      pr.lastY = e.clientY;
+      pr.vx = vx;
+      pr.vy = vy;
+      pr.speed = speed;
+
+      const rect = canvasRef.current!.getBoundingClientRect();
+      pr.x = e.clientX - rect.left;
+      pr.y = e.clientY - rect.top;
+
+      for (const dot of dotsRef.current) {
+        const dist = Math.hypot(dot.cx - pr.x, dot.cy - pr.y);
+        if (speed > speedTrigger && dist < proximity && !dot._inertiaApplied) {
+          dot._inertiaApplied = true;
+          gsap.killTweensOf(dot);
+          const pushX = dot.cx - pr.x + vx * 0.005;
+          const pushY = dot.cy - pr.y + vy * 0.005;
+          gsap.to(dot, {
+            inertia: { xOffset: pushX, yOffset: pushY, resistance },
+            onComplete: () => {
+              gsap.to(dot, {
+                xOffset: 0,
+                yOffset: 0,
+                duration: returnDuration,
+                ease: 'elastic.out(1,0.75)'
+              });
+              dot._inertiaApplied = false;
+            }
+          });
+        }
+      }
+    };
+
+    const onClick = (e: MouseEvent) => {
+      const rect = canvasRef.current!.getBoundingClientRect();
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
+      for (const dot of dotsRef.current) {
+        const dist = Math.hypot(dot.cx - cx, dot.cy - cy);
+        if (dist < shockRadius && !dot._inertiaApplied) {
+          dot._inertiaApplied = true;
+          gsap.killTweensOf(dot);
+          const falloff = Math.max(0, 1 - dist / shockRadius);
+          const pushX = (dot.cx - cx) * shockStrength * falloff;
+          const pushY = (dot.cy - cy) * shockStrength * falloff;
+          gsap.to(dot, {
+            inertia: { xOffset: pushX, yOffset: pushY, resistance },
+            onComplete: () => {
+              gsap.to(dot, {
+                xOffset: 0,
+                yOffset: 0,
+                duration: returnDuration,
+                ease: 'elastic.out(1,0.75)'
+              });
+              dot._inertiaApplied = false;
+            }
+          });
+        }
+      }
+    };
+
+    const throttledMove = throttle(onMove, 50);
+    window.addEventListener('mousemove', throttledMove, { passive: true });
+    window.addEventListener('click', onClick);
+
+    return () => {
+      window.removeEventListener('mousemove', throttledMove);
+      window.removeEventListener('click', onClick);
+    };
+  }, [maxSpeed, speedTrigger, proximity, resistance, returnDuration, shockRadius, shockStrength]);
+
+  return (
+    <div className={`p-4 flex items-center justify-center h-full w-full relative ${className}`} style={style}>
+      <div ref={wrapperRef} className="w-full h-full relative">
+        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
+      </div>
+    </div>
+  );
+};
+
+
+const floatingCards = [
+  {
+    id: 'card-1',
+    position: 'top-[15%] left-[5%] xl:left-[10%]',
+    parallaxFactor: 25,
+    delay: 0,
+    content: (
+      <div className="w-56 bg-white/95 backdrop-blur-xl border border-white rounded-[20px] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] p-4">
+        <div className="flex items-center gap-3 mb-3 border-b border-[#2D2A26]/5 pb-3">
+          <div className="w-8 h-8 rounded-xl bg-[#F28F3B]/10 flex items-center justify-center text-[#F28F3B]">
+            <RiLeafLine size={16} />
+          </div>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-wider text-[#2D2A26]/50">Meals Rescued</p>
+            <p className="text-[10px] font-bold text-[#2D2A26]/40">Last 30 Days</p>
+          </div>
+        </div>
+        <div className="flex items-end gap-2">
+          <span className="text-2xl font-black text-[#2D2A26] tracking-tighter">
+            <AnimatedCounter to={50000} />
+          </span>
+          <span className="text-sm font-black text-[#2D2A26] mb-1">+</span>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: 'card-2',
+    position: 'top-[12%] right-[5%] xl:right-[10%]',
+    parallaxFactor: -20,
+    delay: 0.2,
+    content: (
+      <div className="w-52 bg-white/95 backdrop-blur-xl border border-white rounded-[20px] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] p-4">
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-[10px] font-black uppercase tracking-wider text-[#2D2A26]/50">CO₂ Prevented</p>
+          <RiPieChart2Line className="text-[#F28F3B]" size={16} />
+        </div>
+        <div className="flex items-end gap-1 mb-2">
+          <span className="text-3xl font-black text-[#2D2A26] tracking-tighter">
+            <AnimatedCounter to={1250} />
+          </span>
+          <span className="text-sm font-black text-[#2D2A26] mb-1">kg</span>
+        </div>
+        <div className="w-full h-1.5 bg-[#F4F3EE] rounded-full overflow-hidden">
+          <motion.div 
+            initial={{ width: 0 }} 
+            animate={{ width: '75%' }} 
+            transition={{ duration: 1.5, delay: 1 }}
+            className="h-full bg-[#F28F3B] rounded-full" 
+          />
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: 'card-3',
+    position: 'bottom-[25%] left-[4%] xl:left-[8%]',
+    parallaxFactor: 15,
+    delay: 0.4,
+    content: (
+      <div className="w-60 bg-white/95 backdrop-blur-xl border border-white rounded-[20px] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-[10px] font-black uppercase tracking-wider text-[#2D2A26]/50">Live Schedule</span>
+        </div>
+        <div className="space-y-2">
+          {[
+            { time: '18:00', label: 'Bakery Surplus', status: 'Ready' },
+            { time: '20:30', label: 'Sushi Boxes', status: 'Soon' }
+          ].map((item, idx) => (
+            <div key={idx} className="flex items-center justify-between bg-[#F4F3EE]/50 p-2 rounded-xl border border-[#2D2A26]/5">
+              <div className="flex items-center gap-3">
+                <span className="text-[11px] font-bold text-[#2D2A26]/40">{item.time}</span>
+                <span className="text-[11px] font-black text-[#2D2A26]">{item.label}</span>
+              </div>
+              <span className={`text-[9px] font-bold px-2 py-1 rounded-md ${item.status === 'Ready' ? 'bg-[#F28F3B]/10 text-[#F28F3B]' : 'bg-[#2D2A26]/5 text-[#2D2A26]/40'}`}>
+                {item.status}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: 'card-4',
+    position: 'bottom-[22%] right-[4%] xl:right-[8%]',
+    parallaxFactor: -25,
+    delay: 0.6,
+    content: (
+      <div className="w-56 bg-white/95 backdrop-blur-xl border border-white rounded-[20px] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] p-4">
+        <div className="flex items-center justify-between mb-4 border-b border-[#2D2A26]/5 pb-3">
+          <p className="text-[10px] font-black uppercase tracking-wider text-[#2D2A26]/50">Partner Revenue</p>
+          <RiLineChartLine className="text-[#F28F3B]" size={16} />
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex-1">
+            <div className="flex items-end gap-1">
+              <span className="text-xl font-black text-[#2D2A26] tracking-tighter">Rp</span>
+              <span className="text-3xl font-black text-[#2D2A26] tracking-tighter">
+                <AnimatedCounter to={150} />
+              </span>
+              <span className="text-sm font-black text-[#2D2A26] mb-1">M+</span>
+            </div>
+            <p className="text-[10px] font-bold text-[#2D2A26]/40 mt-1">Extra income generated</p>
+          </div>
+          <div className="w-10 h-10 rounded-full bg-[#F28F3B]/10 flex items-center justify-center text-[#F28F3B]">
+            <RiArrowRightUpLine size={20} />
+          </div>
+        </div>
+      </div>
+    ),
+  },
+];
+
+const floatingAppIcons = [
+  { icon: RiStore2Line, pos: 'bottom-[12%] left-[30%]', delay: 0 },
+  { icon: RiLeafLine, pos: 'bottom-[8%] left-[45%]', delay: 0.2 },
+  { icon: RiCheckDoubleLine, pos: 'bottom-[10%] right-[40%]', delay: 0.4 },
+  { icon: RiMapPinLine, pos: 'bottom-[15%] right-[25%]', delay: 0.6 },
+];
 
 export default function Hero() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -25,269 +441,187 @@ export default function Hero() {
     mouseY.set(e.clientY - rect.top - rect.height / 2);
   };
 
-  const tiltX = useTransform(mouseY, [-500, 500], [10, -10]);
-  const tiltY = useTransform(mouseX, [-500, 500], [-10, 10]);
-  
-  const springX = useSpring(tiltX, { stiffness: 150, damping: 30 });
-  const springY = useSpring(tiltY, { stiffness: 150, damping: 30 });
-
-  const { scrollY } = useScroll();
-  
-  const yBg = useTransform(scrollY, [0, 1000], [0, 250]);
-  
-  const yText = useTransform(scrollY, [0, 1000], [0, -100]);
-  const opacityText = useTransform(scrollY, [0, 600], [1, 0]);
-  
-  const yCards = useTransform(scrollY, [0, 1000], [0, -180]);
+  const springConfig = { stiffness: 40, damping: 20, mass: 1 };
+  const mouseXSpring = useSpring(mouseX, springConfig);
+  const mouseYSpring = useSpring(mouseY, springConfig);
 
   return (
-    <section 
-      className="relative w-full h-screen min-h-[750px] sm:min-h-[800px] md:min-h-[850px] lg:min-h-[950px] overflow-hidden bg-[#1a1a1a]"
+    <section
+      ref={containerRef}
+      className="relative w-full min-h-[100svh] flex flex-col items-center justify-center overflow-hidden bg-[#F4F3EE] pt-28 pb-16 lg:py-0 font-[family:var(--font-jakarta)]"
       onMouseMove={handleMouseMove}
-      style={{ perspective: 1200 }}
     >
-      <motion.div className="absolute inset-0 -z-10" style={{ y: yBg }}>
-        <div className="absolute inset-0 hero-bg animate-slow-zoom" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-transparent z-10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
-      </motion.div>
-
-      <LiveActivityTicker />
-
-      <div className="relative z-10 h-full w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-10 lg:px-16 flex flex-col justify-between py-8 sm:py-10 md:py-12 pointer-events-none">
-        <div className="flex-1" />
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-12 items-center pointer-events-auto">
-          
-          <motion.div 
-            style={{ y: yText, opacity: opacityText }}
-            className="lg:col-span-7 xl:col-span-8 flex flex-col items-start w-full"
-          >
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={createEase({ duration: AnimationConfig.duration.fast })}
-              className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-[#F28F3B]/30 px-3 py-1.5 rounded-full mb-4 mt-8 sm:mt-0 shadow-[0_0_15px_rgba(242,143,59,0.2)]"
-            >
-              <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                <RiLeafLine className="text-[#F28F3B] size-3 sm:size-4" />
-              </motion.div>
-              <span className="text-white/90 text-[8px] sm:text-[9px] md:text-[10px] font-[family:var(--font-jakarta)] font-black uppercase tracking-[0.15em]">
-                SDG 12: Responsible Consumption
-              </span>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={createEase({ duration: AnimationConfig.duration.slow })}
-              className="font-[family:var(--font-jakarta)] text-white text-[38px] xs:text-[44px] sm:text-[55px] md:text-[80px] lg:text-[100px] leading-[1.1] sm:leading-[1.05] md:leading-[0.95] font-bold tracking-tighter"
-            >
-              Rescue Delicious <br className="hidden xs:block" /> Food. <br /> Empower Local.
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={createEase({ duration: AnimationConfig.duration.default })}
-              className="text-white/60 font-[family:var(--font-jakarta)] text-xs sm:text-sm md:text-lg lg:text-xl max-w-xl leading-relaxed mt-4 sm:mt-6 md:mt-8 mb-6 sm:mb-8"
-            >
-              Turning daily surplus into sustainable value. Join the movement to end food waste, save the planet, and boost local economy at flash-sale prices.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...createEase({ duration: AnimationConfig.duration.slow }), delay: 0.2 }}
-              className="w-full max-w-xl mb-6 sm:mb-8"
-            >
-              <form 
-                onSubmit={(e) => e.preventDefault()}
-                className="flex flex-row items-center w-full bg-white rounded-full p-1 sm:p-1.5 shadow-xl focus-within:ring-2 focus-within:ring-[#F28F3B] transition-shadow"
-              >
-                <div className="flex-1 flex items-center gap-2 sm:gap-3 pl-3 sm:pl-4">
-                  <RiMapPinLine className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 shrink-0" aria-hidden="true" />
-                  <input
-                    type="text"
-                    placeholder="Enter city or zip code..."
-                    className="w-full text-xs sm:text-sm text-slate-700 placeholder-slate-400 outline-none bg-transparent font-[family:var(--font-jakarta)] py-1 sm:py-2"
-                    aria-label="Search location for surplus food"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  aria-label="Search"
-                  className="bg-[#F28F3B] hover:bg-[#E07A2B] text-white font-black px-4 py-2.5 sm:px-7 sm:py-3 rounded-full transition-all duration-300 shadow-md shadow-[#F28F3B]/30 hover:scale-105 whitespace-nowrap font-[family:var(--font-jakarta)] flex items-center justify-center gap-1.5 sm:gap-2 shrink-0"
-                >
-                  <RiSearchLine className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  <span className="text-xs sm:text-sm hidden xs:block">Find Food</span>
-                </button>
-              </form>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ...createEase({ duration: AnimationConfig.duration.slow }), delay: 0.3 }}
-              className="flex flex-wrap gap-3 sm:gap-4 md:gap-5"
-            >
-              <motion.button
-                whileHover={{ scale: 1.03, backgroundColor: 'rgba(255,255,255,0.15)' }}
-                whileTap={{ scale: 0.97 }}
-                aria-label="Browse all rescued food offers"
-                className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-2 sm:px-7 sm:py-3 rounded-xl font-[family:var(--font-jakarta)] font-bold text-xs sm:text-sm md:text-base flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F28F3B]"
-              >
-                <span>Browse Offers</span>
-                <RiArrowRightUpLine size={16} aria-hidden="true" />
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.03, borderColor: 'rgba(255,255,255,0.3)' }}
-                whileTap={{ scale: 0.97 }}
-                aria-label="Become a Partner as Business"
-                className="bg-transparent border border-white/10 text-white/70 hover:text-white px-4 py-2 sm:px-7 sm:py-3 rounded-xl font-[family:var(--font-jakarta)] font-bold text-xs sm:text-sm md:text-base flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F28F3B] transition-colors"
-              >
-                <RiStore2Line size={16} className="sm:w-[18px] sm:h-[18px]" />
-                <span>Become a Partner</span>
-              </motion.button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-              className="hidden sm:flex flex-wrap items-center gap-4 md:gap-6 mt-8 sm:mt-10 pt-4 border-t border-white/10"
-            >
-              {trustBadges.map((badge, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <badge.icon className="text-[#F28F3B] size-4" aria-hidden="true" />
-                  <span className="text-white/40 font-[family:var(--font-jakarta)] text-xs font-bold">{badge.text}</span>
-                </div>
-              ))}
-            </motion.div>
-          </motion.div>
-
-          <motion.div 
-            style={{ y: yCards }}
-            className="relative lg:col-span-5 xl:col-span-4 w-full mt-4 lg:mt-0 flex flex-col pointer-events-auto"
-          >
-            
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
-              className="flex lg:hidden items-center justify-center gap-2 mb-3 w-full opacity-60"
-            >
-              <motion.div animate={{ x: [-3, 3, -3] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
-                <RiArrowLeftSLine className="text-white/70" size={14} />
-              </motion.div>
-              <span className="text-[8px] text-white/70 font-[family:var(--font-jakarta)] uppercase tracking-[0.2em] font-bold">
-                Swipe
-              </span>
-              <motion.div animate={{ x: [3, -3, 3] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
-                <RiArrowRightSLine className="text-white/70" size={14} />
-              </motion.div>
-            </motion.div>
-
-            <motion.div 
-              style={{ rotateX: springX, rotateY: springY, transformStyle: "preserve-3d" }}
-              className="flex lg:flex-col gap-3 sm:gap-4 relative w-full overflow-x-auto pb-12 lg:pb-0 pt-2 lg:pt-4 px-1 lg:px-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
-            >
-              <div className="shrink-0 w-2 lg:hidden"></div>
-              
-              {statCards.map((stat, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 40, rotate: i === 0 ? 5 : i === 1 ? -5 : 0 }}
-                  animate={{ opacity: 1, y: 0, rotate: stat.rotation }}
-                  transition={{ delay: 0.6 + i * 0.2, ...createSpring() }}
-                  whileHover={{ rotate: 0, scale: 1.05, zIndex: 20 }}
-                  style={{ transform: `translateZ(${i === 1 ? 50 : 20}px)` }}
-                  className={`shrink-0 snap-center min-w-[220px] sm:min-w-[260px] ${i === 2 ? 'bg-[#F28F3B]/10 backdrop-blur-xl border border-[#F28F3B]/30' : i === 1 ? 'bg-white/5 backdrop-blur-xl border border-white/10' : 'bg-white/10 backdrop-blur-xl border border-white/10'} p-3.5 sm:p-5 rounded-2xl w-56 sm:w-64 ${i === 0 ? 'lg:self-end' : i === 1 ? 'lg:self-start' : 'lg:self-end'} shadow-2xl group transition-all duration-300 cursor-default`}
-                >
-                  {stat.icon && (
-                    <div className="flex items-center gap-3 mb-2 sm:mb-3">
-                      <motion.div
-                        className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center ${i === 2 ? 'bg-[#F28F3B]/20 text-[#F28F3B]' : 'bg-white/10 text-white'} group-hover:bg-[#F28F3B] group-hover:text-white transition-colors duration-300`}
-                        animate={{ rotate: [0, 10, -10, 0] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      >
-                        <stat.icon size={14} className="sm:w-[18px] sm:h-[18px]" aria-hidden="true" />
-                      </motion.div>
-                      <span className="text-white/50 text-[8px] sm:text-[9px] font-[family:var(--font-jakarta)] font-black uppercase tracking-wider">{stat.label}</span>
-                    </div>
-                  )}
-                  <h4 className={`text-lg sm:text-2xl font-[family:var(--font-jakarta)] font-black ${i === 1 ? 'text-[#10B981]' : 'text-white'}`}>
-                    <AnimatedCounter to={stat.numericValue} suffix={stat.suffix} />
-                  </h4>
-                  <p className="text-white/40 text-[9px] sm:text-[10px] mt-1 font-[family:var(--font-jakarta)]">{stat.sub}</p>
-                </motion.div>
-              ))}
-              
-              <div className="shrink-0 w-4 lg:hidden"></div>
-            </motion.div>
-          </motion.div>
-        </div>
-
-        <div className="flex-1 pointer-events-none" />
-
-        <div className="flex items-center justify-between w-full mt-2 sm:mt-6 md:mt-8 pointer-events-none">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="flex -space-x-2">
-              {[1, 2, 3].map((i) => (
-                <motion.div
-                  key={i}
-                  className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full border-2 border-black bg-gray-500 overflow-hidden"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.8 + i * 0.1 }}
-                >
-                  <img src={`https://i.pravatar.cc/100?img=${i + 15}`} alt={`Community member ${i}`} className="w-full h-full object-cover" />
-                </motion.div>
-              ))}
-            </div>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
-              className="text-white/40 text-[6px] sm:text-[8px] md:text-[9px] font-[family:var(--font-jakarta)] font-black uppercase tracking-wider"
-            >
-              <span className="text-white">10k+</span> Community
-            </motion.p>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 0.6 }}
-            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
-          >
-            <motion.div
-              className="relative w-4 h-6 sm:w-5 sm:h-8 rounded-full border border-white/30 flex justify-center"
-              animate={{ y: [0, 3, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <motion.div
-                className="absolute w-1 h-1 bg-white/50 rounded-full top-1 sm:top-1.5"
-                animate={{ y: [0, 6, 0], opacity: [1, 0.3, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-              />
-            </motion.div>
-            <motion.span
-              className="text-white/40 text-[5px] sm:text-[7px] font-[family:var(--font-jakarta)] font-black uppercase tracking-wider hidden sm:block"
-              animate={{ opacity: [0.4, 0.8, 0.4] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              SCROLL
-            </motion.span>
-          </motion.div>
-
-          <div className="w-[40px] sm:w-[70px]" />
-        </div>
+      <div className="absolute inset-0 z-0">
+        <DotGrid 
+          baseColor="#C2C1BC" 
+          activeColor="#F28F3B" 
+          dotSize={2} 
+          gap={32} 
+          proximity={150}
+          speedTrigger={50}
+        />
       </div>
 
-      <div className="absolute bottom-0 right-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-tl from-[#F28F3B]/10 to-transparent rounded-tl-full pointer-events-none" />
-      <div className="absolute top-0 left-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-br from-[#F28F3B]/5 to-transparent rounded-br-full pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#F4F3EE]/40 via-transparent to-[#F4F3EE]" />
+
+      <svg className="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-[0.15]" preserveAspectRatio="none">
+        {[
+          { path: "M 50% 40% Q 30% 25% 15% 18%" },
+          { path: "M 50% 40% Q 70% 25% 85% 15%" },
+          { path: "M 50% 40% Q 30% 60% 15% 70%" },
+          { path: "M 50% 40% Q 70% 60% 85% 72%" }
+        ].map((line, index) => (
+          <motion.path
+            key={index}
+            d={line.path}
+            stroke="#2D2A26"
+            strokeWidth="1.5"
+            strokeDasharray="6 6"
+            fill="none"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: index * 0.2 }}
+          />
+        ))}
+      </svg>
+
+      <motion.div 
+        animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }} 
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#F28F3B] rounded-full blur-[140px] z-0 pointer-events-none" 
+      />
+
+      <div className="hidden lg:block absolute inset-0 z-20 pointer-events-none">
+        {floatingCards.map((card) => {
+          const px = useTransform(mouseXSpring, [-500, 500], [card.parallaxFactor, -card.parallaxFactor]);
+          const py = useTransform(mouseYSpring, [-500, 500], [card.parallaxFactor, -card.parallaxFactor]);
+
+          return (
+            <motion.div
+              key={card.id}
+              initial={{ opacity: 0, scale: 0.8, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 + card.delay, type: 'spring', bounce: 0.4 }}
+              style={isMounted ? { x: px, y: py } : {}}
+              className={`absolute ${card.position} pointer-events-auto cursor-default hover:z-50`}
+            >
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: card.delay }}
+              >
+                {card.content}
+              </motion.div>
+            </motion.div>
+          );
+        })}
+
+        {floatingAppIcons.map((item, i) => {
+          const px = useTransform(mouseXSpring, [-500, 500], [10, -10]);
+          const py = useTransform(mouseYSpring, [-500, 500], [10, -10]);
+
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 1.2 + item.delay, type: 'spring' }}
+              style={isMounted ? { x: px, y: py } : {}}
+              className={`absolute ${item.pos} pointer-events-none`}
+            >
+              <motion.div
+                animate={{ y: [0, -12, 0], rotate: [-5, 5, -5] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: item.delay }}
+                className="w-12 h-12 bg-white/90 backdrop-blur-md rounded-2xl shadow-xl flex items-center justify-center border border-black/5 text-[#2D2A26]"
+              >
+                <item.icon size={22} />
+              </motion.div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      <div className="relative z-30 w-full max-w-5xl mx-auto px-4 flex flex-col items-center text-center mt-[-4vh]">
+        
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, type: 'spring', bounce: 0.5 }}
+          className="w-16 h-16 bg-white rounded-3xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)] flex items-center justify-center mb-10 border border-[#2D2A26]/5 relative z-40"
+        >
+          <RiLeafLine className="text-[#2D2A26] w-8 h-8" />
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className="text-[#2D2A26] text-[44px] sm:text-[64px] md:text-[80px] leading-[1.05] font-black tracking-tight"
+        >
+          Rescue Delicious Food<br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F28F3B] to-[#FF6B35]">
+            Save Our Planet
+          </span>
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-[#2D2A26]/60 text-sm sm:text-base md:text-lg max-w-2xl mt-6 mb-8 font-medium leading-relaxed"
+        >
+          A circular economy platform that connects conscious consumers with local eateries to save perfectly good food at flash-sale prices. 10x Impact. Automated.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="flex items-center gap-4 mb-10 bg-white/50 backdrop-blur-md px-5 py-2.5 rounded-full border border-black/5 shadow-sm"
+        >
+          <div className="flex -space-x-3">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 overflow-hidden shadow-sm">
+                <img src={`https://i.pravatar.cc/100?img=${i + 15}`} alt="user" className="w-full h-full object-cover" />
+              </div>
+            ))}
+          </div>
+          <span className="text-[#2D2A26]/80 text-[11px] font-bold">12,000+ trusted users</span>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="w-full flex flex-col items-center gap-3 relative z-50"
+        >
+          <div className="flex items-center w-[500px] max-w-[280px] sm:max-w-[300px] bg-white rounded-full p-1 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.1)] border border-[#2D2A26]/5 focus-within:ring-4 focus-within:ring-[#F28F3B]/20 transition-all">
+            <div className="flex-1 flex items-center gap-1.5 pl-3">
+              <RiMapPinLine className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#F28F3B] shrink-0" />
+              <input
+                type="text"
+                placeholder="City or zip code..."
+                className="w-full text-xs sm:text-sm text-[#2D2A26] placeholder-[#2D2A26]/40 outline-none bg-transparent font-semibold py-1.5"
+              />
+            </div>
+            <button className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white font-bold px-4 py-2 rounded-full transition-all hover:shadow-[0_10px_25px_-5px_rgba(242,143,59,0.4)] flex items-center justify-center gap-1.5 text-xs whitespace-nowrap shrink-0">
+              <RiSearchLine className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline-block">Search</span>
+            </button>
+          </div>
+          <p className="text-[9px] sm:text-[10px] text-[#2D2A26]/40 font-bold tracking-wide">
+            No credit card required. Cancel anytime.
+          </p>
+        </motion.div>
+
+      </div>
+      
+      <div className="lg:hidden w-full overflow-x-auto pb-8 pt-12 px-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden flex gap-4 mt-4 relative z-40">
+        {floatingCards.map((card) => (
+          <div key={card.id} className="shrink-0 snap-center w-64">
+             {card.content}
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

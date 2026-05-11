@@ -1,380 +1,287 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useSpring, useTransform } from 'framer-motion';
-import { Leaf, Droplets, Trees, BarChart3, TrendingUp, Award, Zap, Shield } from 'lucide-react';
-import { sdgData, funFactsData, IMPACT_FACTORS, type FunFactIcon } from './data/impactData';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useSpring, useTransform, useMotionValue, animate } from 'framer-motion';
+import { Cloud, Droplets, Map, Car, Bath, Leaf } from 'lucide-react';
 
-const funFactIconMap: Record<FunFactIcon, React.ReactNode> = {
-  leaf: <Leaf size={14} />,
-  droplets: <Droplets size={14} />,
-  trees: <Trees size={14} />,
+const IMPACT_FACTORS = {
+  co2: 2.5,
+  water: 840,
+  land: 1.5,
+  carKm: 10,
+  showers: 15,
 };
 
-const Section4 = () => {
-  const [meals, setMeals] = useState(25);
-  
-  const springMeals = useSpring(meals, { stiffness: 100, damping: 20 });
-  const displayMeals = useTransform(springMeals, (latest) => Math.round(latest));
+const AnimatedCounter = ({ value, isDecimal = false, className = "" }: { value: number, isDecimal?: boolean, className?: string }) => {
+  const motionValue = useMotionValue(0);
+  const display = useTransform(motionValue, (latest) => 
+    isDecimal ? latest.toFixed(1) : Math.round(latest).toLocaleString()
+  );
 
+  useEffect(() => {
+    const controls = animate(motionValue, value, {
+      duration: 0.8,
+      ease: "easeOut",
+    });
+    return () => controls.stop();
+  }, [value, motionValue]);
+
+  return <motion.span className={className}>{display}</motion.span>;
+};
+
+export default function Section5() {
+  const [meals, setMeals] = useState(50);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const springMeals = useSpring(meals, { stiffness: 120, damping: 20 });
+  
   useEffect(() => {
     springMeals.set(meals);
   }, [meals, springMeals]);
 
-  const calculateImpact = () => {
-    const co2Num = meals * IMPACT_FACTORS.co2;
-    const waterNum = meals * IMPACT_FACTORS.water;
-    const landNum = meals * IMPACT_FACTORS.land;
-    return {
-      co2: co2Num.toFixed(1),
-      water: waterNum.toLocaleString(),
-      land: landNum.toFixed(1),
-      co2Num,
-      waterNum,
-      landNum,
-      trees: Math.round(meals * IMPACT_FACTORS.trees),
-      showers: Math.round(meals * IMPACT_FACTORS.showers),
-      carKm: Math.round(meals * IMPACT_FACTORS.carKm),
-      lightbulbs: Math.round(meals * IMPACT_FACTORS.lightbulbs),
-      mealsEquivalent: meals
-    };
+  const fillWidth = useTransform(springMeals, [1, 500], ["0%", "100%"]);
+  const glowX = useTransform(springMeals, [1, 500], ["-20vw", "80vw"]);
+  
+  const moodColor = useTransform(
+    springMeals, 
+    [1, 250, 500], 
+    ["#EF4444", "#F28F3B", "#10B981"]
+  );
+
+  const cardBg = useTransform(
+    springMeals,
+    [1, 250, 500],
+    ["rgba(239, 68, 68, 0.08)", "rgba(255, 255, 255, 0.8)", "rgba(16, 185, 129, 0.08)"]
+  );
+
+  const cardBorder = useTransform(
+    springMeals,
+    [1, 250, 500],
+    ["rgba(239, 68, 68, 0.3)", "rgba(255, 255, 255, 0.6)", "rgba(16, 185, 129, 0.3)"]
+  );
+
+  const mouthPath = useTransform(
+    springMeals,
+    [1, 250, 500],
+    [
+      "M 15 32 Q 25 20 35 32", 
+      "M 15 30 Q 25 30 35 30", 
+      "M 15 25 Q 25 40 35 25"  
+    ]
+  );
+
+  const eyeHeight = useTransform(springMeals, [1, 250, 500], [2, 6, 8]);
+  const eyeY = useTransform(springMeals, [1, 250, 500], [4, 0, -2]);
+  
+  const cheekOpacity = useTransform(springMeals, [1, 300, 500], [0, 0, 0.6]);
+  const sweatOpacity = useTransform(springMeals, [1, 150, 500], [1, 0, 0]);
+
+  const impact = {
+    co2: meals * IMPACT_FACTORS.co2,
+    water: meals * IMPACT_FACTORS.water,
+    land: meals * IMPACT_FACTORS.land,
+    carKm: meals * IMPACT_FACTORS.carKm,
+    showers: meals * IMPACT_FACTORS.showers,
   };
 
-  const impact = calculateImpact();
-
-  const impactCards = [
-    {
-      label: "CO₂ Emissions Saved",
-      value: impact.co2,
-      unit: "KG",
-      description: "Greenhouse gas prevented from entering atmosphere",
-      compare: `Same as driving ${impact.carKm} km by car`,
-      icon: <Leaf size={24} />,
-      color: "bg-[#F28F3B]",
-      textColor: "text-white",
-      detail: "Food waste in landfills produces methane, a greenhouse gas 25x more potent than CO₂"
-    },
-    {
-      label: "Fresh Water Preserved",
-      value: impact.water,
-      unit: "Liters",
-      description: "Water saved from food production",
-      compare: `Equivalent to ${impact.showers} standard showers`,
-      icon: <Droplets size={24} />,
-      color: "bg-white",
-      textColor: "text-[#2D2A26]",
-      detail: "It takes 840 liters of water to produce 1 meal that ends up wasted"
-    },
-    {
-      label: "Land Preserved",
-      value: impact.land,
-      unit: "m²",
-      description: "Agricultural land saved from waste",
-      compare: `About ${Math.round(Number(impact.land) * 0.25)} parking spots worth of land`,
-      icon: <Trees size={24} />,
-      color: "bg-[#2D2A26]",
-      textColor: "text-white",
-      detail: "28% of global agricultural land is used to produce food that is never eaten"
-    }
-  ];
-
-  const sdgProgress = sdgData;
-
-  const funFacts = funFactsData;
-
   return (
-    <section className="relative w-full py-16 sm:py-20 md:py-24 lg:py-32 px-4 sm:px-6 md:px-10 lg:px-16 overflow-hidden font-jakarta bg-[#F4F3EE]">
-      
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.3, 1],
-            opacity: [0.03, 0.08, 0.03] 
-          }}
-          transition={{ duration: 10, repeat: Infinity }}
-          className="absolute top-1/4 left-1/4 w-125 h-125 bg-[#F28F3B] rounded-full blur-[120px]"
-        />
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.02, 0.06, 0.02] 
-          }}
-          transition={{ duration: 8, repeat: Infinity, delay: 2 }}
-          className="absolute bottom-1/4 right-1/4 w-100 h-100 bg-[#2D2A26] rounded-full blur-[100px]"
-        />
+    <section 
+      ref={containerRef}
+      className="relative w-full min-h-[120vh] py-24 flex flex-col items-center justify-center bg-[#F4F3EE] overflow-hidden font-[family:var(--font-jakarta)]"
+    >
+      <div 
+        className="absolute inset-0 z-0 opacity-[0.2]"
+        style={{
+          backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)',
+          backgroundSize: '40px 40px'
+        }}
+      />
+
+      <motion.div 
+        style={{ x: glowX, backgroundColor: moodColor }}
+        className="absolute top-1/2 -translate-y-1/2 w-[50vw] h-[50vw] rounded-full blur-[160px] opacity-20 z-0 pointer-events-none" 
+      />
+
+      <div className="absolute top-10 left-0 w-full overflow-hidden pointer-events-none select-none opacity-[0.03] z-0">
+        <h2 className="text-[15vw] font-black uppercase leading-none whitespace-nowrap -ml-20 tracking-tighter">
+          CALCULATE IMPACT • CALCULATE IMPACT
+        </h2>
       </div>
 
-      <div className="absolute inset-0 pointer-events-none">
-        {[new Array(12)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-[#F28F3B]/30 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, Math.random() * 50 - 25, 0],
-              x: [0, Math.random() * 50 - 25, 0],
-              opacity: [0, 0.5, 0],
-            }}
-            transition={{
-              duration: Math.random() * 5 + 3,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-            }}
-          />
-        ))}
-      </div>
-
-      <div className="max-w-7xl mx-auto relative z-10 px-4 sm:px-6 md:px-10 lg:px-16">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 md:px-8">
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+        <div className="mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-md border border-white/50 rounded-full shadow-sm mb-6">
+            <Leaf size={14} className="text-[#F28F3B]" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2D2A26]/60">Real-Time Metrics</span>
+          </div>
+          <h2 className="text-[50px] sm:text-[70px] md:text-[90px] font-black uppercase tracking-tighter text-[#2D2A26] leading-[0.85]">
+            See The <br />
+            <span className="text-transparent" style={{ WebkitTextStroke: '2px #2D2A26' }}>Difference.</span>
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
           
-          <div className="lg:col-span-5 sticky top-32">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-black/5 shadow-sm mb-6">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F28F3B] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#F28F3B]"></span>
-                </span>
-                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#2D2A26]/50">SDG 12.6 • Impact Transparency</span>
+          <div className="lg:col-span-4 flex flex-col">
+            <div className="bg-[#2D2A26] rounded-[48px] p-8 md:p-12 shadow-2xl flex-1 flex flex-col justify-between relative overflow-hidden group">
+              <Cloud className="absolute -bottom-10 -right-10 w-64 h-64 text-white/5 group-hover:scale-110 transition-transform duration-700 pointer-events-none" />
+              
+              <div className="relative z-10">
+                <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-white mb-8 border border-white/10">
+                  <Cloud size={28} />
+                </div>
+                <h3 className="text-white/50 text-xs font-black uppercase tracking-[0.2em] mb-4">CO₂ Prevented</h3>
+                <div className="flex items-baseline gap-2 mb-2">
+                  <AnimatedCounter value={impact.co2} isDecimal={true} className="text-6xl sm:text-7xl xl:text-8xl font-black text-white tracking-tighter leading-none" />
+                  <span className="text-xl font-bold text-white/40">KG</span>
+                </div>
               </div>
 
-              <h2 className="text-[#2D2A26] font-boldstrom text-[45px] md:text-[80px] leading-[0.85] uppercase tracking-tighter mb-6">
-                Small Acts, <br />
-                <span className="text-[#F28F3B] relative inline-block">
-                  Huge Impact.
-                  <motion.span 
-                    className="absolute -bottom-2 left-0 w-full h-[3px] bg-[#F28F3B]/30"
-                    initial={{ scaleX: 0 }}
-                    whileInView={{ scaleX: 1 }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                  />
-                </span>
-              </h2>
-
-              <p className="text-[#2D2A26]/60 text-base md:text-lg leading-relaxed mb-8">
-                Every rescued meal creates a ripple effect of positive environmental change. 
-                See your real-time impact below — data-driven transparency for a sustainable future.
-              </p>
-
-              <div className="flex flex-wrap gap-3 mb-8">
-                {funFacts.map((fact, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white/60 rounded-full text-[9px] font-bold text-[#2D2A26]/60"
+              <div className="relative z-10 mt-16 bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-md">
+                <div className="flex items-center gap-4 mb-3">
+                  <motion.div 
+                    style={{ backgroundColor: moodColor }}
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white"
                   >
-                    {funFactIconMap[fact.icon as FunFactIcon]}
-                    <span>{fact.text}</span>
+                    <Car size={18} />
                   </motion.div>
-                ))}
-              </div>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="group flex items-center gap-3 bg-[#2D2A26] text-white px-8 py-4 rounded-full font-bold text-[10px] uppercase tracking-widest shadow-xl transition-all hover:bg-[#F28F3B]"
-              >
-                Start Rescuing Food
-                <motion.span 
-                  className="group-hover:translate-x-2 transition-transform"
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                >
-                  →
-                </motion.span>
-              </motion.button>
-
-              <div className="mt-10 pt-6 border-t border-black/10">
-                <div className="flex items-center gap-2 mb-4">
-                  <Shield size={16} className="text-[#F28F3B]" />
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-[#2D2A26]/40">SDG 12 Progress Towards 2030</span>
+                  <p className="text-white/80 text-sm font-bold leading-tight">
+                    Like not driving<br />your car for
+                  </p>
                 </div>
-                <div className="space-y-3">
-                  {sdgProgress.map((item, idx) => (
-                    <div key={idx}>
-                      <div className="flex justify-between text-[10px] mb-1">
-                        <span className="font-bold text-[#2D2A26]/60">Target {item.target}: {item.name}</span>
-                        <span className="text-[#F28F3B] font-bold">{item.current}% / {item.target}%</span>
-                      </div>
-                      <div className="h-1.5 bg-black/10 rounded-full overflow-hidden">
-                        <motion.div 
-                          initial={{ width: 0 }}
-                          whileInView={{ width: `${(item.current / item.target) * 100}%` }}
-                          transition={{ duration: 1, delay: idx * 0.2 }}
-                          className="h-full bg-[#F28F3B] rounded-full"
-                        />
-                      </div>
-                    </div>
-                  ))}
+                <div className="flex items-baseline gap-1">
+                  <AnimatedCounter value={impact.carKm} className="text-3xl font-black text-white tracking-tighter" />
+                  <motion.span style={{ color: moodColor }} className="text-sm font-bold uppercase tracking-wider">Kilometers</motion.span>
                 </div>
-                <p className="text-[8px] text-[#2D2A26]/30 mt-3 uppercase tracking-wider">
-                  Source: UN Sustainable Development Goals Report 2024
-                </p>
               </div>
-            </motion.div>
+            </div>
           </div>
 
-          <div className="lg:col-span-7">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6 }}
-              className="relative"
+          <div className="lg:col-span-8 flex flex-col gap-6 lg:gap-8">
+            
+            <motion.div 
+              style={{ backgroundColor: cardBg, borderColor: cardBorder }}
+              className="backdrop-blur-xl rounded-[48px] p-8 md:p-12 shadow-xl"
             >
-              <div className="bg-white/40 backdrop-blur-xl rounded-[48px] p-6 md:p-10 border border-white/50 shadow-2xl relative overflow-hidden">
-                
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#F28F3B]/10 to-transparent rounded-full blur-3xl" />
-                
-                <div className="relative mb-10">
-                  <div className="flex justify-between items-end mb-6">
-                    <div>
-                      <h4 className="font-boldstrom text-xs text-[#2D2A26]/40 uppercase tracking-widest mb-1">
-                        YOUR CONTRIBUTION
-                      </h4>
-                      <p className="text-[#2D2A26]/70 text-sm">Adjust the slider to see your impact</p>
-                    </div>
-                    <div className="text-right">
-                      <motion.div 
-                        className="text-5xl md:text-7xl font-boldstrom text-[#F28F3B] leading-none"
-                        animate={{ scale: [1, 1.05, 1] }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        {meals}
-                      </motion.div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#2D2A26]/40">Meals Rescued</span>
-                    </div>
-                  </div>
-                  
-                  <div className="relative py-4">
-                    <input
-                      type="range" 
-                      min="1" 
-                      max="100" 
-                      value={meals} 
-                      onChange={(e) => setMeals(parseInt(e.target.value))}
-                      className="w-full h-2 bg-[#EBE9E0] rounded-full appearance-none cursor-pointer"
-                      style={{
-                        background: `linear-gradient(to right, #F28F3B 0%, #F28F3B ${meals}%, #EBE9E0 ${meals}%, #EBE9E0 100%)`
-                      }}
-                    />
-                    <div className="absolute -bottom-2 left-0 right-0 flex justify-between px-2">
-                      {[0, 25, 50, 75, 100].map((tick) => (
-                        <div key={tick} className="relative">
-                          <div className="w-0.5 h-2 bg-[#2D2A26]/20" />
-                          <span className="absolute top-3 left-1/2 -translate-x-1/2 text-[8px] text-[#2D2A26]/30">{tick}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between mt-8 text-[9px] font-bold text-[#2D2A26]/40 uppercase tracking-[0.2em]">
-                    <span>🌱 Beginner Rescuer</span>
-                    <span>⭐ Impact Champion</span>
-                    <span>🏆 Zero Waste Hero</span>
-                  </div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-16 md:mb-24">
+                <div>
+                  <h3 className="text-[28px] md:text-[40px] font-black text-[#2D2A26] uppercase tracking-tighter leading-none mb-2">
+                    Drag to <br/>
+                    <motion.span style={{ color: moodColor }}>Rescue Meals</motion.span>
+                  </h3>
+                  <p className="text-[#2D2A26]/40 text-sm font-bold">
+                    Adjust the slider to see how your actions scale.
+                  </p>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <AnimatePresence>
-                    {impactCards.map((data, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.1, duration: 0.4 }}
-                        whileHover={{ y: -5 }}
-                        className={`${data.color} ${data.textColor} p-5 rounded-2xl shadow-lg border border-black/5 relative overflow-hidden group cursor-pointer`}
-                      >
-                        <div className={`mb-3 ${data.textColor === 'text-white' ? 'text-white/80' : 'text-[#F28F3B]'}`}>
-                          {data.icon}
-                        </div>
-                        
-                        <div className="mb-1">
-                          <motion.h5 
-                            key={data.value}
-                            initial={{ scale: 1.05 }}
-                            animate={{ scale: 1 }}
-                            className="text-2xl md:text-3xl font-boldstrom leading-none"
-                          >
-                            {data.value}
-                          </motion.h5>
-                          <span className="text-[9px] font-bold opacity-60">{data.unit}</span>
-                        </div>
-                        
-                        <p className="text-[9px] font-bold uppercase tracking-wider opacity-70 mb-2">
-                          {data.label}
-                        </p>
-                        
-                        <p className="text-[8px] leading-relaxed opacity-50">
-                          {data.compare}
-                        </p>
-
-                        <motion.div 
-                          className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 rounded-2xl"
-                          initial={{ opacity: 0 }}
-                          whileHover={{ opacity: 1 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <p className="text-white text-[9px] text-center leading-relaxed">
-                            {data.detail}
-                          </p>
-                        </motion.div>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-
+                
                 <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="mt-6 p-4 bg-[#2D2A26]/5 rounded-2xl border border-black/5"
+                  className="w-24 h-24 rounded-full flex items-center justify-center bg-white shadow-lg border border-black/5"
+                  style={{ color: moodColor }}
                 >
-                  <div className="flex items-center justify-between flex-wrap gap-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-[#F28F3B]/20 flex items-center justify-center">
-                        <Award size={16} className="text-[#F28F3B]" />
-                      </div>
-                      <div>
-                        <p className="text-[8px] font-bold uppercase tracking-wider text-[#2D2A26]/40">Your Total Impact</p>
-                        <p className="text-xs font-bold text-[#2D2A26]">
-                          {impact.trees} trees worth of CO₂ • {impact.water}L water • {impact.land}m² land
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-[10px] text-[#2D2A26]/40">↓ Keep rescuing to increase impact</span>
-                    </div>
-                  </div>
+                  <svg width="60" height="60" viewBox="0 0 50 50">
+                    <motion.rect x="12" style={{ y: eyeY, height: eyeHeight }} y="16" width="6" rx="3" fill="currentColor" />
+                    <motion.rect x="32" style={{ y: eyeY, height: eyeHeight }} y="16" width="6" rx="3" fill="currentColor" />
+                    
+                    <motion.circle cx="8" cy="24" r="4" fill="#10B981" style={{ opacity: cheekOpacity }} />
+                    <motion.circle cx="42" cy="24" r="4" fill="#10B981" style={{ opacity: cheekOpacity }} />
+                    
+                    <motion.path d="M 40 8 Q 40 14 36 14 Q 32 14 32 8 Q 36 2 40 8" fill="#EF4444" style={{ opacity: sweatOpacity }} />
+                    <motion.path d="M 10 10 Q 10 15 7 15 Q 4 15 4 10 Q 7 6 10 10" fill="#EF4444" style={{ opacity: sweatOpacity }} />
+                    
+                    <motion.path d={mouthPath} stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" fill="none" />
+                  </svg>
                 </motion.div>
               </div>
+
+              <div className="relative w-full h-4 bg-[#2D2A26]/5 rounded-full mb-8">
+                <motion.div 
+                  className="absolute top-0 left-0 h-full rounded-full" 
+                  style={{ width: fillWidth, backgroundColor: moodColor }} 
+                />
+                
+                <motion.div
+                  className="absolute top-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none z-20"
+                  style={{ 
+                    left: fillWidth,
+                    x: "-50%" 
+                  }}
+                >
+                  <div className="absolute bottom-full mb-6 flex flex-col items-center">
+                    <AnimatedCounter value={meals} className="text-6xl md:text-[40px] font-black text-[#2D2A26] tracking-tighter leading-none" />
+                    <motion.span style={{ color: moodColor }} className="text-[10px] md:text-xs font-black uppercase tracking-widest mt-1">Meals</motion.span>
+                  </div>
+                  
+                  <motion.div 
+                    className="w-8 h-8 md:w-10 md:h-10 bg-white rounded-full shadow-xl border-4" 
+                    style={{ borderColor: moodColor }}
+                  />
+                </motion.div>
+
+                <input
+                  type="range"
+                  min="1"
+                  max="500"
+                  value={meals}
+                  onChange={(e) => setMeals(parseInt(e.target.value))}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30"
+                />
+              </div>
+
+              <div className="flex justify-between px-2">
+                {[1, 100, 200, 300, 400, 500].map((step) => (
+                  <span key={step} className="text-[10px] font-bold text-[#2D2A26]/30">{step}</span>
+                ))}
+              </div>
             </motion.div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 h-full">
+              
+              <div className="bg-[#3B82F6] rounded-[48px] p-8 shadow-xl relative overflow-hidden group flex flex-col justify-between">
+                <Droplets className="absolute -top-6 -right-6 w-40 h-40 text-white/10 group-hover:scale-110 transition-transform duration-700 pointer-events-none" />
+                <div className="relative z-10 mb-8">
+                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white mb-6 border border-white/20">
+                    <Droplets size={24} />
+                  </div>
+                  <h3 className="text-white/70 text-xs font-black uppercase tracking-[0.2em] mb-2">Water Saved</h3>
+                  <div className="flex items-baseline gap-2">
+                    <AnimatedCounter value={impact.water} className="text-5xl lg:text-6xl font-black text-white tracking-tighter leading-none" />
+                    <span className="text-sm font-bold text-white/60">L</span>
+                  </div>
+                </div>
+                <div className="relative z-10 flex items-center gap-3 bg-white/10 rounded-2xl p-4 border border-white/10 backdrop-blur-sm">
+                  <Bath size={16} className="text-white/80" />
+                  <p className="text-xs font-bold text-white/80 leading-tight">
+                    Equal to <span className="text-white text-base mx-1"><AnimatedCounter value={impact.showers} /></span> showers
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-[48px] p-8 shadow-xl border border-black/5 relative overflow-hidden group flex flex-col justify-between">
+                <Map className="absolute -top-6 -right-6 w-40 h-40 text-[#2D2A26]/5 group-hover:scale-110 transition-transform duration-700 pointer-events-none" />
+                <div className="relative z-10 mb-8">
+                  <div className="w-12 h-12 bg-[#F28F3B]/10 rounded-2xl flex items-center justify-center text-[#F28F3B] mb-6">
+                    <Map size={24} />
+                  </div>
+                  <h3 className="text-[#2D2A26]/40 text-xs font-black uppercase tracking-[0.2em] mb-2">Land Preserved</h3>
+                  <div className="flex items-baseline gap-2">
+                    <AnimatedCounter value={impact.land} isDecimal={true} className="text-5xl lg:text-6xl font-black text-[#2D2A26] tracking-tighter leading-none" />
+                    <span className="text-sm font-bold text-[#2D2A26]/40">m²</span>
+                  </div>
+                </div>
+                <div className="relative z-10 flex items-center gap-3 bg-[#2D2A26]/5 rounded-2xl p-4 border border-[#2D2A26]/5">
+                  <Leaf size={16} className="text-[#F28F3B]" />
+                  <p className="text-[#2D2A26]/60 text-xs font-bold leading-tight">
+                    Safeguards natural habitats
+                  </p>
+                </div>
+              </div>
+
+            </div>
           </div>
 
         </div>
       </div>
-
-      <motion.div 
-        initial={{ x: 0 }}
-        animate={{ x: [0, -100, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute -bottom-10 left-0 font-boldstrom text-[12vw] opacity-[0.015] text-[#2D2A26] whitespace-nowrap pointer-events-none select-none"
-      >
-        EVERY MEAL RESCUED • EVERY DROP SAVED • EVERY BREATH CLEANER •
-      </motion.div>
     </section>
   );
-};
-
-export default Section4;
+}
