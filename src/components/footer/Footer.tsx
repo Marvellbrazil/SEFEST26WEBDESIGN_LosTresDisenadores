@@ -14,8 +14,7 @@ import { useFooter } from '../../hooks/useFooter';
 import { footerLinks, socials } from '../../constants/footer';
 
 export default function Footer() {
-  const footerRef = useRef(null);
-  const { isVisible, setIsVisible, email, setEmail, isSubscribed, handleSubscribe, scrollToTop } = useFooter();
+  const { footerRef, isVisible, email, setEmail, isSubscribed, handleSubscribe, scrollToTop } = useFooter();
   
   const { scrollYProgress } = useScroll({
     target: footerRef,
