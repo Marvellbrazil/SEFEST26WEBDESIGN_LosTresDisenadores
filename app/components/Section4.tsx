@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { Search, CreditCard, ShoppingBag, Leaf, ArrowRight, Clock, ShieldCheck, BarChart3 } from 'lucide-react';
+import Link from 'next/link';
 
 const cardsData = [
   {
@@ -25,7 +26,8 @@ const cardsData = [
     title2: "Your Bag",
     info: "Step 02 • Secure Checkout",
     description: "Found something delicious? Reserve your Surprise Bag or specific items instantly through our platform. Secure your meal before it sells out.",
-    linkText: "Payment Options",
+    linkText: "Payment Options", 
+    href: "/payment",
     image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=800",
     icon: <CreditCard size={24} />,
     accentColor: "#2D2A26",
@@ -39,7 +41,8 @@ const cardsData = [
     title2: "In-Store",
     info: "Step 03 • Collect & Connect",
     description: "Head to the store during the specified pickup window. Simply show your digital receipt to the staff, grab your rescued food, and say hi to local business owners.",
-    linkText: "Pickup Guide",
+    linkText: "Pickup Guide", 
+    href: "/pickup-guide",
     image: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?q=80&w=800",
     icon: <ShoppingBag size={24} />,
     accentColor: "#F28F3B",
@@ -131,16 +134,17 @@ const StackCard = ({ card, index, progress, totalCards }: any) => {
               <span className="text-[10px] font-black text-[#2D2A26]/50 uppercase tracking-widest">{card.impact}</span>
             </div>
 
-            <button 
-              className={`flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group/btn ${isDarkAccent ? 'text-white' : 'text-white'}`}
+            <Link 
+  href={card.href || "#"} 
+  className={`flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group/btn ${isDarkAccent ? 'text-white' : 'text-white'}`}
               style={{ 
                 backgroundColor: card.accentColor,
                 boxShadow: `0 10px 30px -10px ${card.accentColor}80`
               }}
-            >
-              {card.linkText}
-              <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-            </button>
+>
+  {card.linkText}
+  <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+</Link>
           </div>
         </div>
       </motion.div>
