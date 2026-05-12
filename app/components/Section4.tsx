@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { Search, CreditCard, ShoppingBag, Leaf, ArrowRight, Clock, ShieldCheck, BarChart3 } from 'lucide-react';
 
 const cardsData = [
@@ -28,7 +28,7 @@ const cardsData = [
     linkText: "Payment Options",
     image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=800",
     icon: <CreditCard size={24} />,
-    accentColor: "#3B82F6",
+    accentColor: "#2D2A26",
     stats: "100% Secure",
     impact: "Instant Confirmation",
     statIcon: <ShieldCheck size={16} />
@@ -42,7 +42,7 @@ const cardsData = [
     linkText: "Pickup Guide",
     image: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?q=80&w=800",
     icon: <ShoppingBag size={24} />,
-    accentColor: "#10B981",
+    accentColor: "#F28F3B",
     stats: "Quick & Easy",
     impact: "Meet Local Owners",
     statIcon: <Clock size={16} />
@@ -56,12 +56,97 @@ const cardsData = [
     linkText: "View Dashboard",
     image: "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=800",
     icon: <Leaf size={24} />,
-    accentColor: "#8B5CF6",
+    accentColor: "#2D2A26",
     stats: "Track Impact",
     impact: "Save the Planet",
     statIcon: <BarChart3 size={16} />
   }
 ];
+
+const StackCard = ({ card, index, progress, totalCards }: any) => {
+  const targetScale = 1 - (totalCards - index) * 0.04;
+  const scale = useTransform(progress, [index * 0.25, 1], [1, targetScale]);
+  const opacity = useTransform(progress, [index * 0.25, 1], [1, 0.5]);
+
+  const isDarkAccent = card.accentColor === "#2D2A26";
+
+  return (
+    <div 
+      className="sticky w-full flex items-center justify-center pt-8"
+      style={{ top: `calc(12vh + ${index * 32}px)` }}
+    >
+      <motion.div 
+        style={{ scale, opacity, transformOrigin: "top center" }}
+        className="w-full max-w-5xl h-auto md:h-[65vh] min-h-[500px] bg-white/90 backdrop-blur-3xl rounded-[32px] md:rounded-[48px] border border-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] flex flex-col md:flex-row overflow-hidden relative group"
+      >
+        <div className="w-full md:w-1/2 h-[280px] md:h-full relative overflow-hidden p-3 md:p-4">
+          <div className="w-full h-full rounded-[24px] md:rounded-[36px] overflow-hidden relative">
+            <motion.img 
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              src={card.image}
+              alt={card.title1}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#2D2A26]/80 via-[#2D2A26]/20 to-transparent pointer-events-none" />
+            
+            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between">
+              <div className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-4 py-2 rounded-2xl shadow-lg">
+                <p className="text-[10px] uppercase tracking-wider font-bold opacity-80 mb-0.5">Action</p>
+                <div className="flex items-center gap-2">
+                  {card.statIcon}
+                  <span className="text-sm font-black">{card.stats}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full md:w-1/2 h-full p-6 sm:p-8 md:p-12 flex flex-col justify-between relative bg-gradient-to-br from-white/50 to-transparent">
+          <div className="absolute top-6 right-8 pointer-events-none select-none">
+            <span className="text-[80px] md:text-[120px] font-black leading-none text-[#2D2A26] opacity-[0.03]">
+              0{index + 1}
+            </span>
+          </div>
+
+          <div className="relative z-10">
+            <div className="w-14 h-14 rounded-2xl mb-8 flex items-center justify-center text-white shadow-xl shadow-black/10" style={{ backgroundColor: card.accentColor }}>
+              {card.icon}
+            </div>
+            <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em] mb-3 md:mb-4" style={{ color: card.accentColor }}>
+              {card.info}
+            </p>
+            <h3 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#2D2A26] uppercase tracking-tighter leading-[0.9] mb-4 md:mb-6">
+              {card.title1}<br />
+              <span style={{ color: card.accentColor }}>{card.title2}</span>
+            </h3>
+            <p className="text-[#2D2A26]/60 text-sm md:text-base font-medium leading-relaxed max-w-sm">
+              {card.description}
+            </p>
+          </div>
+
+          <div className="mt-10 relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-t border-[#2D2A26]/10 pt-8">
+            <div className="flex items-center gap-3">
+              <div className="w-2.5 h-2.5 rounded-full animate-pulse shadow-[0_0_10px_currentColor]" style={{ backgroundColor: card.accentColor, color: card.accentColor }} />
+              <span className="text-[10px] font-black text-[#2D2A26]/50 uppercase tracking-widest">{card.impact}</span>
+            </div>
+
+            <button 
+              className={`flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group/btn ${isDarkAccent ? 'text-white' : 'text-white'}`}
+              style={{ 
+                backgroundColor: card.accentColor,
+                boxShadow: `0 10px 30px -10px ${card.accentColor}80`
+              }}
+            >
+              {card.linkText}
+              <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
 
 export default function Section4() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -74,23 +159,34 @@ export default function Section4() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
+
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
   return (
     <section ref={containerRef} className="relative w-full bg-[#F4F3EE] font-[family:var(--font-jakarta)] pb-[20vh] pt-[10vh]">
 
       <div 
-        className="absolute inset-0 z-0 opacity-[0.25] pointer-events-none"
+        className="absolute inset-0 z-0 opacity-[0.2] pointer-events-none"
         style={{
           backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)',
-          backgroundSize: '32px 32px'
+          backgroundSize: '40px 40px'
         }}
       />
       
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#F4F3EE]/40 to-[#F4F3EE] pointer-events-none z-[1]" />
 
       <motion.div 
-        animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.25, 0.15] }} 
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#F28F3B] rounded-full blur-[150px] z-0 pointer-events-none" 
+        animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.15, 0.1] }} 
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#F28F3B] rounded-full blur-[160px] z-0 pointer-events-none" 
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8">
@@ -111,89 +207,15 @@ export default function Section4() {
           </h2>
         </motion.div>
 
-        <div className="relative flex flex-col w-full">
+        <div className="relative w-full h-[400vh]">
           {cardsData.map((card, index) => (
-            <div 
-              key={card.id}
-              className="sticky w-full flex items-center justify-center mb-[5vh] lg:mb-[15vh] last:mb-0"
-              style={{
-                top: `calc(15vh + ${index * 40}px)`
-              }}
-            >
-              <motion.div 
-                initial={{ opacity: 0, y: 80 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-10%" }}
-                transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-                className="w-full max-w-5xl h-auto md:h-[65vh] min-h-[500px] bg-white/80 backdrop-blur-2xl rounded-[32px] md:rounded-[48px] border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] flex flex-col md:flex-row overflow-hidden relative group"
-              >
-                
-                <div className="w-full md:w-1/2 h-[280px] md:h-full relative overflow-hidden">
-                  <motion.img 
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    src={card.image}
-                    alt={card.title1}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#2D2A26]/80 via-[#2D2A26]/30 to-transparent pointer-events-none" />
-                  
-                  <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between">
-                    <div className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-4 py-2 rounded-2xl shadow-lg">
-                      <p className="text-[10px] uppercase tracking-wider font-bold opacity-80 mb-0.5">Action</p>
-                      <div className="flex items-center gap-2">
-                        {card.statIcon}
-                        <span className="text-sm font-black">{card.stats}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="w-full md:w-1/2 h-full p-6 sm:p-8 md:p-12 flex flex-col justify-between bg-gradient-to-br from-white/50 to-transparent relative">
-                  
-                  <div className="absolute top-6 right-8 pointer-events-none select-none">
-                    <span className="text-[80px] md:text-[120px] font-black leading-none text-[#2D2A26] opacity-[0.03]">
-                      0{index + 1}
-                    </span>
-                  </div>
-
-                  <div className="relative z-10">
-                    <div className="w-12 h-12 rounded-full mb-6 flex items-center justify-center text-white shadow-lg" style={{ backgroundColor: card.accentColor }}>
-                      {card.icon}
-                    </div>
-                    <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mb-4 md:mb-6" style={{ color: card.accentColor }}>
-                      {card.info}
-                    </p>
-                    <h3 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#2D2A26] uppercase tracking-tighter leading-[0.9] mb-4 md:mb-6">
-                      {card.title1}<br />
-                      <span style={{ color: card.accentColor }}>{card.title2}</span>
-                    </h3>
-                    <p className="text-[#2D2A26]/60 text-sm md:text-base font-medium leading-relaxed max-w-sm">
-                      {card.description}
-                    </p>
-                  </div>
-
-                  <div className="mt-8 relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#2D2A26]/10 pt-6">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: card.accentColor }} />
-                      <span className="text-[10px] font-bold text-[#2D2A26]/50 uppercase tracking-wider">{card.impact}</span>
-                    </div>
-
-                    <button 
-                      className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-white font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group/btn"
-                      style={{ 
-                        backgroundColor: card.accentColor,
-                        boxShadow: `0 10px 25px -5px ${card.accentColor}60`
-                      }}
-                    >
-                      {card.linkText}
-                      <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-                    </button>
-                  </div>
-
-                </div>
-              </motion.div>
-            </div>
+            <StackCard 
+              key={card.id} 
+              card={card} 
+              index={index} 
+              progress={smoothProgress} 
+              totalCards={cardsData.length} 
+            />
           ))}
         </div>
       </div>

@@ -237,7 +237,7 @@ export default function Section5() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 h-full">
               
-              <div className="bg-[#3B82F6] rounded-[48px] p-8 shadow-xl relative overflow-hidden group flex flex-col justify-between">
+              <div className="bg-[#F28F3B] rounded-[48px] p-8 shadow-xl relative overflow-hidden group flex flex-col justify-between">
                 <Droplets className="absolute -top-6 -right-6 w-40 h-40 text-white/10 group-hover:scale-110 transition-transform duration-700 pointer-events-none" />
                 <div className="relative z-10 mb-8">
                   <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white mb-6 border border-white/20">

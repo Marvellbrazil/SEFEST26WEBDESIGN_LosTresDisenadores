@@ -1,5 +1,5 @@
 'use client';
-import Link from 'next/link';
+
 import { motion, AnimatePresence, useSpring, useScroll } from 'framer-motion';
 import { 
   RiSearchLine, 
@@ -14,7 +14,22 @@ import {
 } from 'react-icons/ri';
 import { ChevronDown } from 'lucide-react';
 import { useNavbar } from '../../hooks/useNavbar';
-import { navLinks, locations } from '../../constants/navbar';
+
+const localNavLinks = [
+  { label: 'Home', href: '#hero' },
+  { label: 'Problem', href: '#problem' },
+  { label: 'How it Works', href: '#how-it-works' },
+  { label: 'Impact', href: '#impact' },
+  { label: 'Marketplace', href: '#marketplace' },
+  { label: 'Business', href: '#business' },
+  { label: 'FAQ', href: '#faq' },
+];
+
+const locations = [
+  { name: 'Surabaya', code: 'SUB' },
+  { name: 'Jakarta', code: 'JKT' },
+  { name: 'Bandung', code: 'BDG' },
+];
 
 export default function Navbar() {
   const {
@@ -36,163 +51,107 @@ export default function Navbar() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
+  const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetId = href.replace('#', '');
+    const elem = document.getElementById(targetId);
+    elem?.scrollIntoView({ behavior: 'smooth' });
+    setIsMobileOpen(false);
+  };
+
   return (
     <>
       <motion.div
         style={{ scaleX }}
-        className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#F28F3B] via-[#FF6B35] to-[#F28F3B] origin-left z-[200]"
+        className="fixed top-0 left-0 right-0 h-[4px] bg-[#F28F3B] origin-left z-[300]"
       />
 
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 ${
+        className={`fixed left-1/2 -translate-x-1/2 w-full z-[100] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] flex justify-center ${
           isScrolled 
-            ? "bg-white/70 backdrop-blur-xl border-b border-black/5 py-2" 
-            : "bg-transparent py-5"
+            ? "top-4 max-w-6xl px-4" 
+            : "top-0 max-w-full px-6 md:px-10 py-6 md:py-8"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+        <div className={`w-full flex items-center justify-between transition-all duration-700 ${
+          isScrolled 
+            ? "bg-white/80 backdrop-blur-2xl border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] rounded-full px-6 py-3"
+            : "bg-white/40 backdrop-blur-md border-b border-[#2D2A26]/5 px-4 py-3 rounded-[24px] md:rounded-none md:bg-transparent md:backdrop-blur-none md:border-none"
+        }`}>
+          
+          <div className="flex items-center gap-10 lg:gap-14">
+            <a href="#hero" onClick={(e) => handleScrollTo(e, '#hero')} className="flex items-center gap-3 group shrink-0">
+              <motion.div
+                whileHover={{ rotate: -10, scale: 1.05 }}
+                className="w-10 h-10 md:w-12 md:h-12 rounded-[14px] flex items-center justify-center font-black text-white bg-[#F28F3B] shadow-lg shadow-[#F28F3B]/30"
+              >
+                <RiLeafLine className="size-5 md:size-6" />
+              </motion.div>
+              <span className="text-xl md:text-2xl font-black uppercase tracking-tighter text-[#2D2A26]">
+                Saverish<span className="text-[#F28F3B]">.</span>
+              </span>
+            </a>
             
-            <div className="flex items-center gap-10">
-              <Link href="/" className="flex items-center gap-2.5 group shrink-0" aria-label="Saverish Home">
-                <motion.div
-                  whileHover={{ rotate: -8, scale: 1.05 }}
-                  className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-white transition-all duration-500 bg-[#F28F3B] shadow-lg shadow-[#F28F3B]/20`}
+            <div className="hidden xl:flex items-center gap-1">
+              {localNavLinks.map((link) => (
+                <a 
+                  key={link.label}
+                  href={link.href}
+                  onClick={(e) => handleScrollTo(e, link.href)}
+                  className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest text-[#2D2A26]/70 hover:text-[#2D2A26] hover:bg-[#2D2A26]/5 transition-all duration-300"
                 >
-                  <RiLeafLine className="size-6" />
-                </motion.div>
-                <span className={`text-2xl font-black tracking-tight transition-colors duration-500 ${
-                  isScrolled ? 'text-slate-900' : 'text-white'
-                }`}>
-                  Saverish<span className="text-[#F28F3B]">.</span>
-                </span>
-              </Link>
-              
-              <div className="hidden lg:flex items-center gap-2">
-                {navLinks.map((link) => (
-                  <div
-                    key={link.label}
-                    className="relative"
-                    onMouseEnter={() => link.hasDropdown && handleDropdownEnter(link.label)}
-                    onMouseLeave={handleDropdownLeave}
-                  >
-                    <Link 
-                      href={link.href} 
-                      className={`relative flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 ${
-                        isScrolled 
-                          ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100" 
-                          : "text-white/80 hover:text-white hover:bg-white/10"
-                      }`}
-                    >
-                      {link.label}
-                      {link.hasDropdown && (
-                        <ChevronDown size={14} className={`transition-transform duration-300 ${
-                          activeDropdown === link.label ? 'rotate-180' : ''
-                        }`} />
-                      )}
-                    </Link>
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </div>
 
-                    <AnimatePresence>
-                      {link.hasDropdown && activeDropdown === link.label && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 10, scale: 0.98 }}
-                          className="absolute top-full left-0 mt-3 w-80 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-black/5 overflow-hidden p-2.5"
-                        >
-                          <div className="grid grid-cols-1 gap-1">
-                            {link.dropdownItems?.map((item) => (
-                              <Link
-                                key={item.label}
-                                href={item.href}
-                                className="flex items-center gap-4 p-3 rounded-2xl hover:bg-[#F28F3B]/5 transition-all group"
-                              >
-                                <span className="text-2xl bg-slate-50 w-12 h-12 flex items-center justify-center rounded-xl group-hover:bg-white transition-colors">{item.icon}</span>
-                                <div className="flex-1">
-                                  <p className="text-sm font-black text-slate-800 group-hover:text-[#F28F3B] transition-colors">
-                                    {item.label}
-                                  </p>
-                                  <p className="text-[11px] font-medium text-slate-400 leading-tight">{item.desc}</p>
-                                </div>
-                                <RiArrowRightLine className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#F28F3B]" />
-                              </Link>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="hidden lg:flex items-center bg-[#2D2A26]/5 hover:bg-[#2D2A26]/10 transition-colors rounded-full px-4 py-2 cursor-pointer group relative">
+              <RiMapPinLine className="size-4 text-[#F28F3B]" />
+              <span className="text-[10px] font-black uppercase tracking-widest ml-2 text-[#2D2A26]">
+                {selectedLocation.name || 'Surabaya'}
+              </span>
+              <div className="absolute top-full right-0 mt-4 bg-white/90 backdrop-blur-3xl rounded-[24px] shadow-2xl border border-white/60 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-[180px] z-[110] p-2">
+                {locations.map((loc) => (
+                  <button
+                    key={loc.code}
+                    onClick={() => setSelectedLocation(loc)}
+                    className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-colors text-[#2D2A26]/60 hover:bg-[#F4F3EE] hover:text-[#2D2A26]"
+                  >
+                    {loc.name}
+                  </button>
                 ))}
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="hidden md:flex items-center bg-black/5 hover:bg-black/10 transition-colors rounded-2xl px-3 py-1.5 cursor-pointer group relative">
-                <RiMapPinLine className={`size-4 text-[#F28F3B]`} />
-                <span className={`text-xs font-black ml-2 ${isScrolled ? 'text-slate-700' : 'text-white'}`}>
-                  {selectedLocation.name}
-                </span>
-                <div className="absolute top-full right-0 mt-3 bg-white rounded-2xl shadow-2xl border border-black/5 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-[140px] z-[110]">
-                  {locations.map((loc) => (
-                    <button
-                      key={loc.code}
-                      onClick={() => setSelectedLocation(loc)}
-                      className={`w-full text-left px-4 py-2 text-[13px] font-bold hover:bg-[#F28F3B]/10 transition-colors ${
-                        selectedLocation.code === loc.code ? 'text-[#F28F3B]' : 'text-slate-600'
-                      }`}
-                    >
-                      {loc.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setIsSearchOpen(true)}
-                  aria-label="Search food (Cmd+K)"
-                  className={`p-2.5 rounded-xl transition-all ${
-                    isScrolled ? 'text-slate-600 hover:bg-slate-100' : 'text-white/70 hover:bg-white/10 hover:text-white'
-                  }`}
-                >
-                  <RiSearchLine size={20} />
-                </button>
-
-                <button aria-label="View Wishlist" className={`hidden sm:flex p-2.5 rounded-xl transition-all ${
-                  isScrolled ? 'text-slate-600 hover:bg-slate-100' : 'text-white/70 hover:bg-white/10 hover:text-white'
-                }`}>
-                  <RiHeartLine size={20} />
-                </button>
-
-                <button aria-label="Shopping Cart" className={`relative p-2.5 rounded-xl transition-all ${
-                  isScrolled ? 'text-slate-600 hover:bg-slate-100' : 'text-white/70 hover:bg-white/10 hover:text-white'
-                }`}>
-                  <RiShoppingBag3Line size={20} />
-                  <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-[#F28F3B] text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white/10">3</span>
-                </button>
-              </div>
-
-              <button className={`hidden sm:flex items-center gap-2.5 px-6 py-3 rounded-2xl text-xs font-black transition-all ${
-                isScrolled 
-                  ? "bg-[#F28F3B] text-white hover:shadow-lg hover:shadow-[#F28F3B]/30" 
-                  : "bg-[#F28F3B] backdrop-blur-md text-white border border-white/20 hover:bg-white hover:text-slate-900"
-              }`}>
-                <RiUser3Line size={16} />
-                <span>SIGN IN</span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="p-3 rounded-full text-[#2D2A26] hover:bg-[#2D2A26]/5 transition-all"
+              >
+                <RiSearchLine size={20} />
               </button>
 
-              <button
-                onClick={() => setIsMobileOpen(true)}
-                aria-label="Open Menu"
-                className={`lg:hidden p-2.5 rounded-xl transition-all ${
-                  isScrolled ? 'text-slate-900 bg-slate-100' : 'text-white bg-white/10'
-                }`}
-              >
-                <RiMenuLine size={24} />
+              <button className="relative p-3 rounded-full text-[#2D2A26] hover:bg-[#2D2A26]/5 transition-all">
+                <RiShoppingBag3Line size={20} />
+                <span className="absolute top-1 right-1 w-5 h-5 bg-[#F28F3B] text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white/20 shadow-lg">3</span>
               </button>
             </div>
+
+            <button className="hidden md:flex items-center gap-2 px-8 py-3.5 rounded-full text-[10px] uppercase tracking-widest font-black transition-all bg-[#2D2A26] text-white hover:bg-[#F28F3B] hover:shadow-[0_10px_20px_rgba(242,143,59,0.3)] shadow-xl shadow-black/5">
+              <RiUser3Line size={16} />
+              <span>Sign In</span>
+            </button>
+
+            <button
+              onClick={() => setIsMobileOpen(true)}
+              className="xl:hidden p-3 rounded-full text-[#2D2A26] bg-[#2D2A26]/5"
+            >
+              <RiMenuLine size={24} />
+            </button>
           </div>
         </div>
       </motion.nav>
@@ -203,44 +162,31 @@ export default function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] flex items-start justify-center pt-[15vh] px-4"
+            className="fixed inset-0 z-[200] flex flex-col justify-center items-center px-4 bg-[#F4F3EE]/95 backdrop-blur-2xl"
           >
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <button 
               onClick={() => setIsSearchOpen(false)}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
-            />
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              className="relative w-full max-w-2xl bg-white rounded-[32px] shadow-2xl border border-black/5 overflow-hidden"
+              className="absolute top-8 right-8 p-4 bg-white rounded-full text-[#2D2A26] hover:text-[#F28F3B] transition-colors shadow-lg border border-white/50"
             >
-              <div className="p-6">
-                <div className="flex items-center gap-4 bg-slate-50 rounded-2xl px-5 py-4 border border-black/5 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#F28F3B] transition-all">
-                  <RiSearchLine className="text-[#F28F3B] size-6 shrink-0" />
-                  <input
-                    ref={searchInputRef}
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search stores or food type..."
-                    className="flex-1 text-lg font-bold text-slate-800 placeholder-slate-400 outline-none bg-transparent"
-                  />
-                  <div className="flex gap-1 items-center bg-slate-200 px-2 py-1 rounded-lg">
-                    <span className="text-[10px] font-black text-slate-500">ESC</span>
-                  </div>
-                </div>
-                <div className="mt-6">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Popular Searches</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {['Bakery', 'Vegan', 'Pizza', 'Surplus Bags', 'Near Me'].map(tag => (
-                      <button key={tag} className="px-4 py-2 bg-slate-100 hover:bg-[#F28F3B] hover:text-white rounded-xl text-xs font-bold text-slate-600 transition-all">{tag}</button>
-                    ))}
-                  </div>
-                </div>
+              <RiCloseLine size={32} />
+            </button>
+
+            <motion.div
+              initial={{ scale: 0.9, y: 40 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 40 }}
+              className="w-full max-w-5xl"
+            >
+              <div className="flex items-center gap-6 border-b-4 border-[#2D2A26] pb-8">
+                <RiSearchLine className="text-[#F28F3B] size-10 md:size-16 shrink-0" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="SEARCH FOR MEALS..."
+                  className="flex-1 text-4xl md:text-7xl lg:text-[100px] font-black text-[#2D2A26] placeholder-[#2D2A26]/20 uppercase tracking-tighter outline-none bg-transparent w-full"
+                />
               </div>
             </motion.div>
           </motion.div>
@@ -249,50 +195,42 @@ export default function Navbar() {
 
       <AnimatePresence>
         {isMobileOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[250] lg:hidden">
-            <motion.div onClick={() => setIsMobileOpen(false)} className="absolute inset-0 bg-slate-900/80 backdrop-blur-lg" />
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: "spring", stiffness: 300, damping: 35 }}
-              className="absolute right-0 top-0 h-full w-[85vw] max-w-sm bg-white shadow-2xl p-6 flex flex-col"
-            >
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-[#F28F3B] rounded-2xl flex items-center justify-center text-white"><RiLeafLine size={20} /></div>
-                  <span className="text-xl font-black text-slate-900">Saverish.</span>
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }} 
+            className="fixed inset-0 z-[250] xl:hidden bg-[#F4F3EE]"
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(#2D2A26_1px,transparent_1px)] [background-size:40px_40px] opacity-[0.1]" />
+            <div className="relative z-10 h-full flex flex-col p-6">
+              <div className="flex items-center justify-between mb-16">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-[#F28F3B] rounded-2xl flex items-center justify-center text-white"><RiLeafLine size={24} /></div>
+                  <span className="text-2xl font-black uppercase tracking-tighter text-[#2D2A26]">Saverish.</span>
                 </div>
-                <button onClick={() => setIsMobileOpen(false)} className="p-2 rounded-xl bg-slate-100"><RiCloseLine size={24} /></button>
+                <button onClick={() => setIsMobileOpen(false)} className="p-4 rounded-full bg-white text-[#2D2A26] shadow-lg"><RiCloseLine size={24} /></button>
               </div>
 
-              <div className="flex-1 space-y-2 overflow-y-auto">
-                {navLinks.map((link, i) => (
+              <div className="flex-1 flex flex-col justify-center gap-6">
+                {localNavLinks.map((link, i) => (
                   <motion.div
                     key={link.label}
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: -40 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
+                    transition={{ delay: i * 0.1 }}
                   >
-                    <Link
+                    <a
                       href={link.href}
-                      onClick={() => setIsMobileOpen(false)}
-                      className={`flex items-center justify-between p-4 rounded-2xl text-lg font-black ${link.label === 'Home' ? 'bg-[#F28F3B] text-white' : 'text-slate-800 hover:bg-slate-50'}`}
+                      onClick={(e) => handleScrollTo(e, link.href)}
+                      className="text-[40px] font-black uppercase tracking-tighter text-[#2D2A26] hover:text-[#F28F3B] transition-colors flex items-center justify-between group"
                     >
                       {link.label}
-                      <RiArrowRightLine size={20} />
-                    </Link>
+                      <RiArrowRightLine className="text-[#F28F3B]" />
+                    </a>
                   </motion.div>
                 ))}
               </div>
-
-              <div className="mt-auto pt-6 border-t border-slate-100">
-                <div className="flex flex-col gap-3">
-                  <button className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-slate-100 font-black text-slate-800"><RiHeartLine /> Wishlist</button>
-                  <button className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-[#F28F3B] text-white font-black shadow-lg shadow-[#F28F3B]/30"><RiUser3Line /> Sign In</button>
-                </div>
-              </div>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
