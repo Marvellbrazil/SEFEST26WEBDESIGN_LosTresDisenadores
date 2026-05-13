@@ -69,7 +69,6 @@ const cardsData = [
 const StackCard = ({ card, index, progress, totalCards }: any) => {
   const targetScale = 1 - (totalCards - index) * 0.04;
   const scale = useTransform(progress, [index * 0.25, 1], [1, targetScale]);
-  const opacity = useTransform(progress, [index * 0.25, 1], [1, 0.5]);
 
   const isDarkAccent = card.accentColor === "#2D2A26";
 
@@ -79,7 +78,7 @@ const StackCard = ({ card, index, progress, totalCards }: any) => {
       style={{ top: `calc(12vh + ${index * 32}px)` }}
     >
       <motion.div 
-        style={{ scale, opacity, transformOrigin: "top center" }}
+        style={{ scale, transformOrigin: "top center" }}
         className="w-full max-w-5xl h-auto md:h-[65vh] min-h-[500px] bg-white/90 backdrop-blur-3xl rounded-[32px] md:rounded-[48px] border border-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] flex flex-col md:flex-row overflow-hidden relative group"
       >
         <div className="w-full md:w-1/2 h-[280px] md:h-full relative overflow-hidden p-3 md:p-4">
@@ -135,16 +134,16 @@ const StackCard = ({ card, index, progress, totalCards }: any) => {
             </div>
 
             <Link 
-  href={card.href || "#"} 
-  className={`flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group/btn ${isDarkAccent ? 'text-white' : 'text-white'}`}
+              href={card.href || "#"} 
+              className={`flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group/btn text-white`}
               style={{ 
                 backgroundColor: card.accentColor,
                 boxShadow: `0 10px 30px -10px ${card.accentColor}80`
               }}
->
-  {card.linkText}
-  <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-</Link>
+            >
+              {card.linkText}
+              <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+            </Link>
           </div>
         </div>
       </motion.div>

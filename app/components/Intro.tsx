@@ -2,30 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { Variants } from 'framer-motion';
-import { AnimationConfig, createSpring, createEase } from '../../src/utils/animation';
 
 interface IntroProps {
   setFinished: (v: boolean) => void;
 }
 
 const words = ['SAVE', 'RESCUE', 'ENJOY'];
-
-const wordVariants: Variants = {
-  initial: { opacity: 0, y: 30, scale: 0.8 },
-  animate: { opacity: 1, y: 0, scale: 1 },
-  exit: { opacity: 0, y: -30, scale: 0.8 },
-};
-
-const logoVariants: Variants = {
-  initial: { opacity: 0, scale: 0.5, rotate: -180 },
-  animate: {
-    opacity: 1,
-    scale: 1,
-    rotate: 0,
-    transition: { duration: AnimationConfig.duration.slow, ease: AnimationConfig.ease.smooth, type: 'spring', stiffness: 200, damping: 15 },
-  },
-};
 
 export default function Intro({ setFinished }: IntroProps) {
   const [index, setIndex] = useState(0);
@@ -34,7 +16,7 @@ export default function Intro({ setFinished }: IntroProps) {
 
   useEffect(() => {
     if (index < words.length) {
-      const timer = setTimeout(() => setIndex((prev) => prev + 1), 800);
+      const timer = setTimeout(() => setIndex((prev) => prev + 1), 600);
       return () => clearTimeout(timer);
     }
     if (index === words.length && !showLogo) {
@@ -44,7 +26,7 @@ export default function Intro({ setFinished }: IntroProps) {
 
   useEffect(() => {
     if (showLogo) {
-      const timer = setTimeout(() => setIsExiting(true), 2000);
+      const timer = setTimeout(() => setIsExiting(true), 1800);
       return () => clearTimeout(timer);
     }
   }, [showLogo]);
@@ -53,40 +35,48 @@ export default function Intro({ setFinished }: IntroProps) {
     <motion.div
       initial={{ y: 0 }}
       animate={isExiting ? { y: '-100%' } : { y: 0 }}
-      transition={createEase({ duration: AnimationConfig.duration.slow })}
+      transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
       onAnimationComplete={() => isExiting && setFinished(false)}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-[#F28F3B] to-[#e07a2e] overflow-hidden"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#F28F3B] overflow-hidden font-[family:var(--font-jakarta)]"
     >
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {!showLogo ? (
-          <div className="relative z-10 text-center">
-            <motion.h1
-              key={`word-${index}`}
-              variants={wordVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={createSpring({ stiffness: 300 })}
-              className="text-white font-[family:var(--font-inter)] text-[12vw] font-black md:text-[8vw] uppercase tracking-tighter"
-            >
-              {words[index]}
-            </motion.h1>
-          </div>
+          <motion.div 
+            key="words-container"
+            className="relative z-10 flex items-center justify-center overflow-hidden h-32 md:h-48"
+          >
+            <AnimatePresence mode="popLayout">
+              <motion.h1
+                key={`word-${index}`}
+                initial={{ opacity: 0, y: 100, rotateX: -45 }}
+                animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                exit={{ opacity: 0, y: -100, rotateX: 45 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="text-[#F4F3EE] text-[15vw] md:text-[10vw] font-black uppercase tracking-tighter leading-none"
+                style={{ WebkitTextStroke: index % 2 === 0 ? '0px transparent' : '2px #F4F3EE', color: index % 2 === 0 ? '#F4F3EE' : 'transparent' }}
+              >
+                {words[index]}
+              </motion.h1>
+            </AnimatePresence>
+          </motion.div>
         ) : (
           <motion.div
-            key="logo-img"
-            variants={logoVariants}
-            initial="initial"
-            animate="animate"
-            className="relative z-10 w-[40%] max-w-[250px] md:max-w-[300px]"
+            key="logo-container"
+            initial={{ opacity: 0, scale: 0.8, filter: 'blur(20px)' }}
+            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="relative z-10 flex flex-col items-center"
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 0.2, scale: 1.2 }}
-              transition={{ duration: AnimationConfig.duration.slow, delay: 0.3 }}
-              className="absolute inset-0 bg-white rounded-full blur-3xl -z-10"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vw] h-[30vw] bg-[#F4F3EE] rounded-full blur-[100px] opacity-20 z-0"
             />
-            <img src="/HD.png" alt="Logo" className="w-full h-auto object-contain relative z-10" />
+            
+            <div className="relative z-10 w-[40%] max-w-[250px] md:max-w-[300px]">
+              <img src="/HD.png" alt="Logo" className="w-full h-auto object-contain drop-shadow-2xl" />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

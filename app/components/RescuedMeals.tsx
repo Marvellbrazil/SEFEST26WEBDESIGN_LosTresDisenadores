@@ -164,14 +164,13 @@ const rescuedMeals = [
   },
 ];
 
-function StarRating({ rating, size = 12 }: { rating: number; size?: number }) {
+function StarRating({ rating }: { rating: number }) {
   return (
-    <div className="flex items-center gap-0.5">
+    <div className="flex items-center gap-0.5 sm:gap-1">
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
-          size={size}
-          className={star <= Math.round(rating) ? "text-[#F28F3B] fill-[#F28F3B]" : "text-[#2D2A26]/20 fill-[#2D2A26]/20"}
+          className={`w-2 h-2 sm:w-3 sm:h-3 ${star <= Math.round(rating) ? "text-[#F28F3B] fill-[#F28F3B]" : "text-[#2D2A26]/20 fill-[#2D2A26]/20"}`}
         />
       ))}
     </div>
@@ -242,7 +241,7 @@ export default function RescuedMeals() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="flex gap-3 overflow-x-auto pb-6 mb-8 justify-start lg:justify-center px-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
+          className="flex gap-2 sm:gap-3 overflow-x-auto pb-6 mb-8 justify-start lg:justify-center px-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
         >
           {categories.map((cat) => (
             <motion.button
@@ -252,7 +251,7 @@ export default function RescuedMeals() {
                 setVisibleCount(8);
               }}
               whileTap={{ scale: 0.95 }}
-              className={`shrink-0 snap-center px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 ${
+              className={`shrink-0 snap-center px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-widest transition-all duration-300 ${
                 activeCategory === cat
                   ? "bg-[#2D2A26] text-white shadow-xl"
                   : "bg-white/60 backdrop-blur-md text-[#2D2A26]/60 hover:bg-white border border-white/50"
@@ -265,7 +264,7 @@ export default function RescuedMeals() {
 
         <motion.div
           layout
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6"
         >
           <AnimatePresence mode="popLayout">
             {visibleMeals.map((meal, idx) => (
@@ -278,9 +277,9 @@ export default function RescuedMeals() {
                 exit={{ opacity: 0, scale: 0.9, y: -20 }}
                 transition={{ duration: 0.4, delay: idx * 0.05, type: "spring", bounce: 0.3 }}
                 whileHover={{ y: -8 }}
-                className="group bg-white/70 backdrop-blur-xl rounded-[32px] overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] border border-white/60 transition-all duration-500 flex flex-col p-2"
+                className="group bg-white/70 backdrop-blur-xl rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] border border-white/60 transition-all duration-500 flex flex-col p-2"
               >
-                <div className="relative overflow-hidden rounded-[24px] aspect-[4/3] bg-[#2D2A26]/5">
+                <div className="relative overflow-hidden rounded-[16px] sm:rounded-[24px] aspect-[4/3] bg-[#2D2A26]/5">
                   <img
                     src={meal.img}
                     alt={meal.store}
@@ -290,17 +289,17 @@ export default function RescuedMeals() {
                   
                   <div className="absolute inset-0 bg-gradient-to-t from-[#2D2A26]/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
-                  <div className="absolute top-3 left-3 flex gap-2">
-                    <span className={`text-[9px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full ${meal.badgeColor} shadow-md backdrop-blur-md`}>
+                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex gap-2">
+                    <span className={`text-[8px] sm:text-[9px] font-black uppercase tracking-wider px-2 py-1 sm:px-3 sm:py-1.5 rounded-full ${meal.badgeColor} shadow-md backdrop-blur-md`}>
                       {meal.badge}
                     </span>
                   </div>
                   
-                  <div className="absolute top-3 right-3 bg-white text-[#2D2A26] text-[10px] font-black px-3 py-1.5 rounded-full shadow-md">
+                  <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-white text-[#2D2A26] text-[8px] sm:text-[10px] font-black px-2 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-md">
                     -{meal.discount}%
                   </div>
 
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center gap-3 text-[9px] font-bold uppercase tracking-wider text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
+                  <div className="hidden sm:flex absolute bottom-3 left-3 right-3 items-center gap-3 text-[9px] font-bold uppercase tracking-wider text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
                     <span className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-1 rounded-lg">
                       <MapPin size={10} />
                       {meal.distance}
@@ -312,48 +311,48 @@ export default function RescuedMeals() {
                   </div>
                 </div>
 
-                <div className="p-5 flex flex-col flex-1">
+                <div className="p-3 sm:p-5 flex flex-col flex-1">
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-black text-[#2D2A26] text-lg uppercase tracking-tighter leading-tight truncate pr-2">
+                    <h3 className="font-black text-[#2D2A26] text-xs sm:text-lg uppercase tracking-tighter leading-tight truncate pr-2">
                       {meal.store}
                     </h3>
-                    <div className="flex items-center gap-1 bg-[#F28F3B]/10 px-2 py-1 rounded-lg shrink-0">
-                      <StarRating rating={meal.rating} size={10} />
-                      <span className="text-[9px] text-[#F28F3B] font-bold">
+                    <div className="flex items-center gap-1 bg-[#F28F3B]/10 px-1.5 py-1 sm:px-2 sm:py-1 rounded-lg shrink-0">
+                      <StarRating rating={meal.rating} />
+                      <span className="text-[8px] sm:text-[9px] text-[#F28F3B] font-bold">
                         {meal.rating}
                       </span>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-[10px] text-[#2D2A26]/50 font-bold uppercase tracking-widest">
+                  <div className="flex items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+                    <span className="text-[8px] sm:text-[10px] text-[#2D2A26]/50 font-bold uppercase tracking-widest truncate">
                       {meal.category}
                     </span>
-                    <span className="w-1 h-1 rounded-full bg-[#2D2A26]/20" />
-                    <span className="flex items-center gap-1 text-[10px] text-[#2D2A26]/50 font-bold">
-                      <Leaf size={10} className="text-[#F28F3B]" />
-                      {meal.co2Saved} CO₂
+                    <span className="w-1 h-1 rounded-full bg-[#2D2A26]/20 shrink-0" />
+                    <span className="flex items-center gap-1 text-[8px] sm:text-[10px] text-[#2D2A26]/50 font-bold shrink-0">
+                      <Leaf className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#F28F3B]" />
+                      {meal.co2Saved}
                     </span>
                   </div>
 
                   <div className="flex-1" />
 
-                  <div className="pt-4 mt-2 border-t border-[#2D2A26]/5 flex items-end justify-between gap-2">
+                  <div className="pt-3 sm:pt-4 mt-1 sm:mt-2 border-t border-[#2D2A26]/5 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                     <div>
-                      <p className="text-[9px] text-[#2D2A26]/40 font-bold uppercase tracking-wider mb-1">
+                      <p className="hidden sm:block text-[9px] text-[#2D2A26]/40 font-bold uppercase tracking-wider mb-1">
                         Total Price
                       </p>
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-black text-[#F28F3B] leading-none tracking-tighter">
+                      <div className="flex items-baseline gap-1.5 sm:gap-2">
+                        <span className="text-sm sm:text-2xl font-black text-[#F28F3B] leading-none tracking-tighter">
                           ${meal.price.toFixed(2)}
                         </span>
-                        <span className="text-xs text-[#2D2A26]/30 line-through font-bold">
+                        <span className="text-[9px] sm:text-xs text-[#2D2A26]/30 line-through font-bold">
                           ${meal.originalValue}
                         </span>
                       </div>
                     </div>
                     
-                    <button className="bg-[#2D2A26] hover:bg-[#F28F3B] text-white text-xs font-bold uppercase tracking-wider px-5 py-3 rounded-xl transition-all duration-300 group-hover:shadow-[0_10px_20px_rgba(242,143,59,0.2)]">
+                    <button className="bg-[#2D2A26] hover:bg-[#F28F3B] text-white text-[9px] sm:text-xs font-bold uppercase tracking-wider px-3 py-2 sm:px-5 sm:py-3 rounded-xl transition-all duration-300 group-hover:shadow-[0_10px_20px_rgba(242,143,59,0.2)] w-full sm:w-auto text-center">
                       Rescue
                     </button>
                   </div>
@@ -380,16 +379,16 @@ export default function RescuedMeals() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
-            className="text-center mt-16"
+            className="text-center mt-12 sm:mt-16"
           >
             <motion.button
               onClick={() => setVisibleCount(prev => prev + 8)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-md border border-white hover:bg-white text-[#2D2A26] font-bold text-xs uppercase tracking-widest px-8 py-4 rounded-full transition-all duration-300 shadow-md hover:shadow-xl group"
+              className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-md border border-white hover:bg-white text-[#2D2A26] font-bold text-[10px] sm:text-xs uppercase tracking-widest px-6 py-3 sm:px-8 sm:py-4 rounded-full transition-all duration-300 shadow-md hover:shadow-xl group"
             >
               Load More ({filtered.length - visibleCount})
-              <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform w-3 h-3 sm:w-4 sm:h-4" />
             </motion.button>
           </motion.div>
         )}

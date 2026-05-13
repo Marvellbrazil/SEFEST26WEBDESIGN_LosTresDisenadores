@@ -21,10 +21,10 @@ const problemCardData = [
     description: "Global food waste produced annually, contributing significantly to landfill overflow.",
     color: "#F28F3B",
     icon: "trash2",
-    leftOffset: "-600px",
-    top: "5%",
+    pos: { left: "18%", top: "2%" },
     rotation: -6,
     parallaxSpeed: -100,
+    baseZ: 20,
   },
   {
     id: 2,
@@ -32,12 +32,12 @@ const problemCardData = [
     value: 3.3,
     unit: "Billion Tons",
     description: "CO2 equivalent greenhouse gases released from rotting food waste in landfills.",
-    color: "#10B981",
+    color: "#2D2A26",
     icon: "cloudRain",
-    leftOffset: "220px",
-    top: "8%",
+    pos: { right: "18%", top: "8%" },
     rotation: 4,
     parallaxSpeed: -150,
+    baseZ: 15,
   },
   {
     id: 3,
@@ -45,12 +45,12 @@ const problemCardData = [
     value: 940,
     unit: "Billion USD",
     description: "Total economic value lost globally due to food being discarded unnecessarily.",
-    color: "#FBBF24",
+    color: "#2D2A26",
     icon: "dollarSign",
-    leftOffset: "-550px",
-    top: "22%", 
+    pos: { left: "22%", top: "42%" }, 
     rotation: 2,
     parallaxSpeed: -50,
+    baseZ: 10,
   },
   {
     id: 4,
@@ -58,12 +58,12 @@ const problemCardData = [
     value: 25,
     unit: "Times Potency",
     description: "Methane is far more potent than CO2 at trapping heat in the atmosphere.",
-    color: "#EF4444",
+    color: "#F28F3B",
     icon: "flame",
-    leftOffset: "150px",
-    top: "20%",
+    pos: { right: "22%", top: "38%" },
     rotation: -3,
     parallaxSpeed: -80,
+    baseZ: 5,
   }
 ];
 
@@ -93,9 +93,10 @@ export default function Section3() {
   const leftEyeRef = useRef<HTMLDivElement>(null);
   const rightEyeRef = useRef<HTMLDivElement>(null);
   
-  const [isMobile, setIsMobile] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
   const [isHoveringVideo, setIsHoveringVideo] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -119,7 +120,7 @@ export default function Section3() {
   const smileyY = useTransform(springScroll, [0, 1], [0, -150]);
 
   useEffect(() => {
-    const checkDevice = () => setIsMobile(window.innerWidth < 768);
+    const checkDevice = () => setIsDesktop(window.innerWidth >= 1024);
     checkDevice();
     window.addEventListener('resize', checkDevice);
     
@@ -127,7 +128,7 @@ export default function Section3() {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
 
-      if (isMobile) return;
+      if (!isDesktop) return;
       
       const eyes = [leftEyeRef.current, rightEyeRef.current];
       eyes.forEach((eye) => {
@@ -144,12 +145,12 @@ export default function Section3() {
       window.removeEventListener('resize', checkDevice);
       window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [isMobile]);
+  }, [isDesktop, mouseX, mouseY]);
 
   return (
-    <div ref={containerRef} className="relative w-full font-[family:var(--font-jakarta)] bg-[#F4F3EE] h-[300vh]">
+    <div id="problem" ref={containerRef} className="relative w-full font-[family:var(--font-jakarta)] bg-[#F4F3EE] lg:h-[300vh]">
       
-      {!isMobile && (
+      {isDesktop && (
         <motion.div
           style={{
             left: cursorSpringX,
@@ -169,7 +170,7 @@ export default function Section3() {
         </motion.div>
       )}
 
-      <section className="sticky top-0 w-full h-screen overflow-hidden z-0 bg-[#F4F3EE]">
+      <section className="lg:sticky lg:top-0 w-full min-h-screen lg:h-screen overflow-hidden z-0 bg-[#F4F3EE]">
         <div 
           className="absolute inset-0 z-0 opacity-[0.25]"
           style={{
@@ -180,26 +181,26 @@ export default function Section3() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#F4F3EE] via-transparent to-transparent z-[1]" />
         
         <motion.div 
-          animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }} 
+          animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.15, 0.1] }} 
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-[#EF4444] rounded-full blur-[150px] z-0 pointer-events-none" 
+          className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-[#F28F3B] rounded-full blur-[150px] z-0 pointer-events-none" 
         />
         <motion.div 
-          animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.25, 0.15] }} 
+          animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.15, 0.1] }} 
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-[#F28F3B] rounded-full blur-[150px] z-0 pointer-events-none" 
+          className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-[#2D2A26] rounded-full blur-[150px] z-0 pointer-events-none" 
         />
 
         <motion.div 
-          style={!isMobile ? { 
+          style={isDesktop ? { 
             scale: sec1Scale, 
             rotate: sec1Rotate, 
             y: sec1Y,
             transformOrigin: 'center center'
           } : {}}
-          className="relative w-full h-full flex flex-col justify-center py-20 lg:py-0 will-change-transform z-10"
+          className="relative w-full h-full flex flex-col justify-center pt-32 pb-16 lg:py-0 will-change-transform z-10"
         >
-          <motion.div style={{ y: titleY }} className="relative z-30 text-center mb-16 px-4 flex flex-col items-center">
+          <motion.div style={isDesktop ? { y: titleY } : {}} className="relative z-30 text-center mb-10 lg:mb-16 px-4 flex flex-col items-center">
             <motion.div 
               initial={{ opacity: 0, y: -30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -207,7 +208,7 @@ export default function Section3() {
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-md border border-white/50 rounded-full mb-6 shadow-sm"
             >
-              <span className="w-2 h-2 rounded-full bg-[#EF4444] animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-[#F28F3B] animate-pulse" />
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2D2A26]/60">Global Crisis</span>
             </motion.div>
             
@@ -216,7 +217,7 @@ export default function Section3() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-10%" }}
               transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[50px] sm:text-[70px] md:text-[100px] lg:text-[130px] font-black uppercase tracking-tighter leading-[0.85] flex flex-col items-center"
+              className="text-[40px] sm:text-[60px] md:text-[90px] lg:text-[120px] font-black uppercase tracking-tighter leading-[0.85] flex flex-col items-center"
             >
               <span className="text-transparent" style={{ WebkitTextStroke: '2px #2D2A26' }}>
                 The Problem
@@ -231,61 +232,65 @@ export default function Section3() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-10%" }}
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              className="mt-8 text-sm md:text-lg text-[#2D2A26]/60 max-w-2xl mx-auto font-medium leading-relaxed"
+              className="mt-6 lg:mt-8 text-sm md:text-lg text-[#2D2A26]/60 max-w-2xl mx-auto font-medium leading-relaxed"
             >
               Our current "take-make-waste" model is pushing the planet to its limits. This isn't just an environmental issue, it's a global emergency.
             </motion.p>
           </motion.div>
 
-          <div className={`relative w-full max-w-7xl mx-auto ${isMobile ? 'flex flex-col gap-6 px-6' : 'h-[400px]'}`}>
-            {!isMobile && (
+          <div className="relative w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:block gap-6 px-4 lg:px-0 lg:h-[450px]">
+            {isDesktop && (
               <motion.div 
                 style={{ y: smileyY }}
-                className="absolute left-1/2 top-0 -translate-x-1/2 z-[25]"
+                className="absolute left-1/2 top-[5%] -translate-x-1/2 z-[25]"
               >
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.5, rotate: -30 }}
                   whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
                   viewport={{ once: true, margin: "-10%" }}
                   transition={{ duration: 0.8, delay: 0.3, type: "spring", bounce: 0.5 }}
-                  className="w-56 h-56 md:w-64 md:h-64 rounded-full bg-gradient-to-br from-[#F28F3B] to-[#FF6B35] shadow-[0_20px_50px_rgba(242,143,59,0.3)] flex flex-col items-center justify-center border-[8px] border-white"
+                  className="w-48 h-48 xl:w-56 xl:h-56 rounded-full bg-gradient-to-br from-[#F28F3B] to-[#FF6B35] shadow-[0_20px_50px_rgba(242,143,59,0.3)] flex flex-col items-center justify-center border-[8px] border-white"
                 >
-                  <div className="flex gap-8 mb-4">
-                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-inner overflow-hidden">
-                      <div ref={leftEyeRef} className="w-5 h-5 bg-[#2D2A26] rounded-full" />
+                  <div className="flex gap-6 xl:gap-8 mb-4">
+                    <div className="w-10 h-10 xl:w-12 xl:h-12 bg-white rounded-full flex items-center justify-center shadow-inner overflow-hidden">
+                      <div ref={leftEyeRef} className="w-4 h-4 xl:w-5 xl:h-5 bg-[#2D2A26] rounded-full" />
                     </div>
-                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-inner overflow-hidden">
-                      <div ref={rightEyeRef} className="w-5 h-5 bg-[#2D2A26] rounded-full" />
+                    <div className="w-10 h-10 xl:w-12 xl:h-12 bg-white rounded-full flex items-center justify-center shadow-inner overflow-hidden">
+                      <div ref={rightEyeRef} className="w-4 h-4 xl:w-5 xl:h-5 bg-[#2D2A26] rounded-full" />
                     </div>
                   </div>
-                  <div className="w-20 h-5 bg-[#2D2A26] rounded-full mt-2 opacity-80" />
+                  <div className="w-16 xl:w-20 h-4 xl:h-5 bg-[#2D2A26] rounded-full mt-2 opacity-80" />
                 </motion.div>
               </motion.div>
             )}
 
             {problemCardData.map((card, idx) => {
               const cardY = useTransform(springScroll, [0, 1], [0, card.parallaxSpeed]);
+              const zIndex = hoveredCard === card.id ? 50 : card.baseZ;
+
               return (
                 <motion.div 
                   key={card.id}
-                  style={!isMobile ? {
+                  onMouseEnter={() => setHoveredCard(card.id)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  style={isDesktop ? {
                     position: 'absolute',
-                    left: `calc(50% + ${card.leftOffset})`,
-                    top: card.top,
+                    ...card.pos,
                     y: cardY,
-                    zIndex: card.id > 2 ? 10 : 20,
-                    width: '380px'
+                    zIndex: zIndex,
+                    width: '340px'
                   } : {}}
+                  className="w-full"
                 >
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.8, y: 60, rotate: 0 }}
-                    whileInView={{ opacity: 1, scale: 1, y: 0, rotate: card.rotation }}
+                    whileInView={{ opacity: 1, scale: 1, y: 0, rotate: isDesktop ? card.rotation : 0 }}
                     viewport={{ once: true, margin: "-10%" }}
                     transition={{ duration: 0.8, delay: 0.4 + idx * 0.1, type: "spring", bounce: 0.4 }}
-                    whileHover={!isMobile ? { scale: 1.05, rotate: 0, zIndex: 50 } : {}}
-                    className="group bg-white/80 backdrop-blur-2xl rounded-[32px] border border-white/60 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] p-7 cursor-pointer hover:bg-white transition-colors duration-300 w-full h-full"
+                    whileHover={isDesktop ? { scale: 1.05, rotate: 0 } : {}}
+                    className={`group bg-white/80 backdrop-blur-2xl rounded-[32px] border shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] p-6 lg:p-7 cursor-pointer hover:bg-white transition-all duration-300 w-full h-full ${hoveredCard === card.id ? 'border-[#F28F3B]/40' : 'border-white/60'}`}
                   >
-                    <div className="p-3 w-fit rounded-2xl mb-6 shadow-inner" style={{ backgroundColor: `${card.color}15`, color: card.color }}>
+                    <div className="p-3 w-fit rounded-2xl mb-6 shadow-inner transition-colors duration-300" style={{ backgroundColor: `${card.color}15`, color: card.color }}>
                       {iconMap[card.icon as keyof typeof iconMap]}
                     </div>
                     <h3 className="text-[10px] font-black text-[#2D2A26]/40 uppercase mb-2 tracking-widest">{card.title}</h3>
@@ -299,21 +304,21 @@ export default function Section3() {
         </motion.div>
       </section>
 
-      <div className="h-[100vh] w-full pointer-events-none" />
+      <div className="hidden lg:block h-[100vh] w-full pointer-events-none" />
 
       <motion.section 
-        style={!isMobile ? { 
+        style={isDesktop ? { 
           scale: sec2Scale, 
           rotate: sec2Rotate,
           transformOrigin: "bottom center"
         } : {}}
-        className="relative z-10 w-full h-screen bg-[#F4F3EE] flex items-center justify-center px-4 md:px-6 overflow-hidden will-change-transform shadow-[0_-20px_50px_rgba(0,0,0,0.1)]"
+        className="relative z-10 w-full min-h-screen lg:h-screen bg-[#F4F3EE] flex items-center justify-center px-4 md:px-6 py-20 lg:py-0 overflow-hidden will-change-transform lg:shadow-[0_-20px_50px_rgba(0,0,0,0.1)]"
       >
         <div
           onMouseEnter={() => setIsHoveringVideo(true)}
           onMouseLeave={() => setIsHoveringVideo(false)}
           onClick={() => setShowModal(true)}
-          className="relative w-full max-w-6xl mx-auto aspect-video rounded-[32px] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] bg-white border border-white/50 cursor-none transition-transform hover:scale-[1.01] duration-500"
+          className="relative w-full max-w-6xl mx-auto aspect-[4/3] md:aspect-video rounded-[32px] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] bg-white border border-white/50 cursor-none transition-transform hover:scale-[1.01] duration-500"
         >
           <div className="absolute inset-0 w-full h-full opacity-90 group-hover:opacity-100 transition-opacity duration-500">
             <iframe
@@ -325,13 +330,13 @@ export default function Section3() {
 
           <div className="absolute inset-0 bg-gradient-to-t from-[#2D2A26]/90 via-[#2D2A26]/20 to-transparent z-10 pointer-events-none" />
           
-          <div className="absolute bottom-8 md:bottom-16 left-8 md:left-16 z-20 text-white pointer-events-none">
+          <div className="hidden md:block absolute bottom-8 md:bottom-16 left-6 md:left-16 right-6 md:right-16 z-20 text-white pointer-events-none">
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="flex items-center gap-3 mb-5"
+              className="flex items-center gap-3 mb-4 md:mb-5"
             >
               <div className="h-1.5 w-10 md:w-14 bg-[#F28F3B] rounded-full" />
               <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.3em] text-white/80">Click to Play with Sound</span>
@@ -341,12 +346,18 @@ export default function Section3() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9]"
+              className="text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9]"
             >
               Saving Food,<br />
               <span className="text-[#F28F3B]">Empowering Locals.</span>
             </motion.h3>
           </div>
+
+          {!isDesktop && (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-[#F28F3B] rounded-full flex items-center justify-center text-white shadow-lg pointer-events-none z-20">
+              <Play fill="white" size={24} className="ml-1" />
+            </div>
+          )}
         </div>
       </motion.section>
 
@@ -369,7 +380,7 @@ export default function Section3() {
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="relative w-full max-w-6xl aspect-video rounded-3xl overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.15)] border border-white/50"
+              className="relative w-full max-w-6xl aspect-video rounded-[32px] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.15)] border border-white/50"
             >
               <iframe
                 className="w-full h-full bg-[#2D2A26]"
