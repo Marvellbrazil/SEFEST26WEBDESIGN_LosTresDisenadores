@@ -1,34 +1,35 @@
-'use client';
+"use client";
 
-import { motion, AnimatePresence, useSpring, useScroll } from 'framer-motion';
-import { 
-  RiSearchLine, 
-  RiCloseLine, 
-  RiMapPinLine, 
+import { motion, AnimatePresence, useSpring, useScroll } from "framer-motion";
+import {
+  RiSearchLine,
+  RiCloseLine,
+  RiMapPinLine,
   RiMenuLine,
   RiShoppingBag3Line,
   RiUser3Line,
   RiHeartLine,
   RiLeafLine,
-  RiArrowRightLine
-} from 'react-icons/ri';
-import { ChevronDown } from 'lucide-react';
-import { useNavbar } from '../../hooks/useNavbar';
+  RiArrowRightLine,
+} from "react-icons/ri";
+import { ChevronDown } from "lucide-react";
+import { useNavbar } from "../../hooks/useNavbar";
+import Link from "next/link";
 
 const localNavLinks = [
-  { label: 'Home', href: '#hero' },
-  { label: 'Problem', href: '#problem' },
-  { label: 'How it Works', href: '#how-it-works' },
-  { label: 'Impact', href: '#impact' },
-  { label: 'Marketplace', href: '#marketplace' },
-  { label: 'Business', href: '#business' },
-  { label: 'FAQ', href: '#faq' },
+  { label: "Home", href: "#hero" },
+  { label: "Problem", href: "#problem" },
+  { label: "How it Works", href: "#how-it-works" },
+  { label: "Impact", href: "#impact" },
+  { label: "Marketplace", href: "#marketplace" },
+  { label: "Business", href: "#business" },
+  { label: "FAQ", href: "#faq" },
 ];
 
 const locations = [
-  { name: 'Surabaya', code: 'SUB' },
-  { name: 'Jakarta', code: 'JKT' },
-  { name: 'Bandung', code: 'BDG' },
+  { name: "Surabaya", code: "SUB" },
+  { name: "Jakarta", code: "JKT" },
+  { name: "Bandung", code: "BDG" },
 ];
 
 export default function Navbar() {
@@ -45,17 +46,24 @@ export default function Navbar() {
     setSelectedLocation,
     searchQuery,
     setSearchQuery,
-    searchInputRef
+    searchInputRef,
   } = useNavbar();
 
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
 
-  const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleScrollTo = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
     e.preventDefault();
-    const targetId = href.replace('#', '');
+    const targetId = href.replace("#", "");
     const elem = document.getElementById(targetId);
-    elem?.scrollIntoView({ behavior: 'smooth' });
+    elem?.scrollIntoView({ behavior: "smooth" });
     setIsMobileOpen(false);
   };
 
@@ -70,33 +78,42 @@ export default function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         className={`fixed left-1/2 -translate-x-1/2 w-full z-[100] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] flex justify-center ${
-          isScrolled 
-            ? "top-4 max-w-6xl px-4" 
+          isScrolled
+            ? "top-4 max-w-6xl px-4"
             : "top-0 max-w-full px-6 md:px-10 py-6 md:py-8"
         }`}
       >
-        <div className={`w-full flex items-center justify-between transition-all duration-700 ${
-          isScrolled 
-            ? "bg-white/80 backdrop-blur-2xl border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] rounded-full px-6 py-3"
-            : "bg-white/40 backdrop-blur-md border-b border-[#2D2A26]/5 px-4 py-3 rounded-[24px] md:rounded-none md:bg-transparent md:backdrop-blur-none md:border-none"
-        }`}>
-          
+        <div
+          className={`w-full flex items-center justify-between transition-all duration-700 ${
+            isScrolled
+              ? "bg-white/80 backdrop-blur-2xl border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] rounded-full px-6 py-3"
+              : "bg-white/40 backdrop-blur-md border-b border-[#2D2A26]/5 px-4 py-3 rounded-[24px] md:rounded-none md:bg-transparent md:backdrop-blur-none md:border-none"
+          }`}
+        >
           <div className="flex items-center gap-10 lg:gap-14">
-            <a href="#hero" onClick={(e) => handleScrollTo(e, '#hero')} className="flex items-center gap-3 group shrink-0">
+            <a
+              href="#hero"
+              onClick={(e) => handleScrollTo(e, "#hero")}
+              className="flex items-center gap-3 group shrink-0"
+            >
               <motion.div
                 whileHover={{ rotate: -10, scale: 1.05 }}
-                className="w-10 h-10 md:w-12 md:h-12 rounded-[14px] flex items-center justify-center font-black text-white bg-[#F28F3B] shadow-lg shadow-[#F28F3B]/30"
+                className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden flex items-center justify-center font-black text-white bg-[#F28F3B] shadow-lg shadow-[#F28F3B]/30 shrink-0"
               >
-                <RiLeafLine className="size-5 md:size-6" />
+                <img
+                  src="https://images.unsplash.com/vector-1778639108685-395007c80714?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwcm9maWxlLXBhZ2V8MXx8fGVufDB8fHx8fA%3D%3D"
+                  alt="Saverish Custom Logo"
+                  className="w-full h-full object-cover object-center"
+                />
               </motion.div>
               <span className="text-xl md:text-2xl font-black uppercase tracking-tighter text-[#2D2A26]">
                 Saverish<span className="text-[#F28F3B]">.</span>
               </span>
             </a>
-            
+
             <div className="hidden xl:flex items-center gap-1">
               {localNavLinks.map((link) => (
-                <a 
+                <a
                   key={link.label}
                   href={link.href}
                   onClick={(e) => handleScrollTo(e, link.href)}
@@ -112,7 +129,7 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center bg-[#2D2A26]/5 hover:bg-[#2D2A26]/10 transition-colors rounded-full px-4 py-2 cursor-pointer group relative">
               <RiMapPinLine className="size-4 text-[#F28F3B]" />
               <span className="text-[10px] font-black uppercase tracking-widest ml-2 text-[#2D2A26]">
-                {selectedLocation.name || 'Surabaya'}
+                {selectedLocation.name || "Surabaya"}
               </span>
               <div className="absolute top-full right-0 mt-4 bg-white/90 backdrop-blur-3xl rounded-[24px] shadow-2xl border border-white/60 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-[180px] z-[110] p-2">
                 {locations.map((loc) => (
@@ -137,14 +154,18 @@ export default function Navbar() {
 
               <button className="relative p-3 rounded-full text-[#2D2A26] hover:bg-[#2D2A26]/5 transition-all">
                 <RiShoppingBag3Line size={20} />
-                <span className="absolute top-1 right-1 w-5 h-5 bg-[#F28F3B] text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white/20 shadow-lg">3</span>
+                <span className="absolute top-1 right-1 w-5 h-5 bg-[#F28F3B] text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white/20 shadow-lg">
+                  3
+                </span>
               </button>
             </div>
 
-            <button className="hidden md:flex items-center gap-2 px-8 py-3.5 rounded-full text-[10px] uppercase tracking-widest font-black transition-all bg-[#2D2A26] text-white hover:bg-[#F28F3B] hover:shadow-[0_10px_20px_rgba(242,143,59,0.3)] shadow-xl shadow-black/5">
-              <RiUser3Line size={16} />
-              <span>Sign In</span>
-            </button>
+            <Link href="/login">
+              <button className="hidden md:flex items-center gap-2 px-8 py-3.5 rounded-full text-[10px] uppercase tracking-widest font-black transition-all bg-[#2D2A26] text-white hover:bg-[#F28F3B] hover:shadow-[0_10px_20px_rgba(242,143,59,0.3)] shadow-xl shadow-black/5">
+                <RiUser3Line size={16} />
+                <span>Sign In</span>
+              </button>
+            </Link>
 
             <button
               onClick={() => setIsMobileOpen(true)}
@@ -164,7 +185,7 @@ export default function Navbar() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[200] flex flex-col justify-center items-center px-4 bg-[#F4F3EE]/95 backdrop-blur-2xl"
           >
-            <button 
+            <button
               onClick={() => setIsSearchOpen(false)}
               className="absolute top-8 right-8 p-4 bg-white rounded-full text-[#2D2A26] hover:text-[#F28F3B] transition-colors shadow-lg border border-white/50"
             >
@@ -195,20 +216,29 @@ export default function Navbar() {
 
       <AnimatePresence>
         {isMobileOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            exit={{ opacity: 0 }} 
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="fixed inset-0 z-[250] xl:hidden bg-[#F4F3EE]"
           >
             <div className="absolute inset-0 bg-[radial-gradient(#2D2A26_1px,transparent_1px)] [background-size:40px_40px] opacity-[0.1]" />
             <div className="relative z-10 h-full flex flex-col p-6">
               <div className="flex items-center justify-between mb-16">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-[#F28F3B] rounded-2xl flex items-center justify-center text-white"><RiLeafLine size={24} /></div>
-                  <span className="text-2xl font-black uppercase tracking-tighter text-[#2D2A26]">Saverish.</span>
+                  <div className="w-12 h-12 bg-[#F28F3B] rounded-2xl flex items-center justify-center text-white">
+                    <RiLeafLine size={24} />
+                  </div>
+                  <span className="text-2xl font-black uppercase tracking-tighter text-[#2D2A26]">
+                    Saverish.
+                  </span>
                 </div>
-                <button onClick={() => setIsMobileOpen(false)} className="p-4 rounded-full bg-white text-[#2D2A26] shadow-lg"><RiCloseLine size={24} /></button>
+                <button
+                  onClick={() => setIsMobileOpen(false)}
+                  className="p-4 rounded-full bg-white text-[#2D2A26] shadow-lg"
+                >
+                  <RiCloseLine size={24} />
+                </button>
               </div>
 
               <div className="flex-1 flex flex-col justify-center gap-6">
