@@ -174,9 +174,9 @@ export default function Dashboard() {
                       className="absolute right-0 mt-4 w-80 bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-[#2D2A26]/5 p-2 z-50 overflow-hidden"
                     >
                       <Link
-                          href="/login"
-                          title="Sign Out"
-                          aria-label="Sign Out"
+                          href="/"
+                          title="Back"
+                          aria-label="Back"
                           className="group flex items-center justify-center w-10 h-10 rounded-full bg-white hover:bg-red-50 text-[#2D2A26]/40 hover:text-red-500 transition-all duration-300 shadow-sm hover:shadow-md ml-0 shrink-0"
                         >
                           <LogOut 

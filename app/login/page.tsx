@@ -92,11 +92,9 @@ export default function LoginPage() {
                 Forgot Password?
               </button>
             </div>
-            <Link href="/dashboard" className="w-full block">
             <button className="w-full bg-[#2D2A26] text-white rounded-2xl py-5 text-[11px] font-black uppercase tracking-[0.25em] hover:bg-[#F28F3B] transition-all shadow-xl shadow-black/5 hover:shadow-[#F28F3B]/30 hover:-translate-y-1">
               Sign In
             </button>
-            </Link>
             <p className="lg:hidden text-center text-[10px] font-black uppercase tracking-widest text-gray-400 mt-8">
               Don't have an account?{" "}
               <button

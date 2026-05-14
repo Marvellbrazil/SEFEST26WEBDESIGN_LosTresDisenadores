@@ -57,6 +57,7 @@ const cardsData = [
     info: "Step 04 • See The Difference",
     description: "Enjoy your delicious rescued meal. Check your dashboard to see exactly how much CO2, water, and money you've saved by making a sustainable choice.",
     linkText: "View Dashboard",
+    href: "/dashboard",
     image: "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=800",
     icon: <Leaf size={24} />,
     accentColor: "#2D2A26",
