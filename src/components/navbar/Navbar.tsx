@@ -12,9 +12,9 @@ import {
   RiLeafLine,
   RiArrowRightLine,
 } from "react-icons/ri";
-import { ChevronDown } from "lucide-react";
 import { useNavbar } from "../../hooks/useNavbar";
 import Link from "next/link";
+import Image from "next/image";
 
 const localNavLinks = [
   { label: "Home", href: "#hero" },
@@ -98,12 +98,15 @@ export default function Navbar() {
             >
               <motion.div
                 whileHover={{ rotate: -10, scale: 1.05 }}
-                className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden flex items-center justify-center font-black text-white bg-[#F28F3B] shadow-lg shadow-[#F28F3B]/30 shrink-0"
+                className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden flex items-center justify-center font-black text-white bg-[#F28F3B] shadow-lg shadow-[#F28F3B]/30 shrink-0"
               >
-                <img
+                <Image
                   src="https://images.unsplash.com/vector-1778639108685-395007c80714?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwcm9maWxlLXBhZ2V8MXx8fGVufDB8fHx8fA%3D%3D"
                   alt="Saverish Custom Logo"
-                  className="w-full h-full object-cover object-center"
+                  fill
+                  sizes="(max-width: 768px) 40px, 48px"
+                  priority={true}
+                  className="object-cover object-center"
                 />
               </motion.div>
               <span className="text-xl md:text-2xl font-black uppercase tracking-tighter text-[#2D2A26]">

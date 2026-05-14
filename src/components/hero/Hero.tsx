@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
-import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring, useInView } from 'framer-motion';
 import {
   RiLeafLine,
   RiStore2Line,
@@ -15,6 +15,7 @@ import {
 import { gsap } from 'gsap';
 import { InertiaPlugin } from 'gsap/InertiaPlugin';
 import { AnimatedCounter } from './AnimatedCounter';
+import Image from 'next/image';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(InertiaPlugin);
@@ -82,6 +83,9 @@ const DotGrid: React.FC<DotGridProps> = ({
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  const isInView = useInView(wrapperRef, { margin: "0px" });
+  
   const dotsRef = useRef<Dot[]>([]);
   const pointerRef = useRef({
     x: 0,
@@ -145,7 +149,7 @@ const DotGrid: React.FC<DotGridProps> = ({
   }, [dotSize, gap]);
 
   useEffect(() => {
-    if (!circlePath) return;
+    if (!circlePath || !isInView) return;
 
     let rafId: number;
     const proxSq = proximity * proximity;
@@ -188,7 +192,7 @@ const DotGrid: React.FC<DotGridProps> = ({
 
     draw();
     return () => cancelAnimationFrame(rafId);
-  }, [proximity, baseColor, activeRgb, baseRgb, circlePath]);
+  }, [proximity, baseColor, activeRgb, baseRgb, circlePath, isInView]);
 
   useEffect(() => {
     buildGrid();
@@ -584,7 +588,14 @@ export default function Hero() {
           <div className="flex -space-x-3">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 overflow-hidden shadow-sm">
-                <img src={`https://i.pravatar.cc/100?img=${i + 15}`} alt="user" className="w-full h-full object-cover" />
+                <Image 
+                  src={`https://i.pravatar.cc/100?img=${i + 15}`} 
+                  alt="user" 
+                  width={32} 
+                  height={32} 
+                  className="w-full h-full object-cover" 
+                  unoptimized
+                />
               </div>
             ))}
           </div>

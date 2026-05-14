@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 interface IntroProps {
   setFinished: (v: boolean) => void;
@@ -75,7 +76,14 @@ export default function Intro({ setFinished }: IntroProps) {
             />
             
             <div className="relative z-10 w-[40%] max-w-[250px] md:max-w-[300px]">
-              <img src="/HD.png" alt="Logo" className="w-full h-auto object-contain drop-shadow-2xl" />
+              <Image 
+                src="/HD.png" 
+                alt="Logo" 
+                width={300} 
+                height={300} 
+                priority={true} 
+                className="w-full h-auto object-contain drop-shadow-2xl" 
+              />
             </div>
           </motion.div>
         )}

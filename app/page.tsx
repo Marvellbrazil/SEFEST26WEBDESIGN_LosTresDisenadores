@@ -2,21 +2,23 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import dynamic from 'next/dynamic';
 
 import Intro from './components/Intro';
 import LoadingBar from './components/LoadingBar';
 import Navbar from '../src/components/navbar/Navbar';
 import Hero from '../src/components/hero/Hero';
-import Section2 from './components/Section2';
-import Section3 from './components/Section3';
-import Section4 from './components/Section4';
-import Section5 from './components/Section5';
-import Section6 from './components/Section6';
-import RescuedMeals from './components/RescuedMeals';
-import FAQ from './components/FAQ';
-import Footer from '../src/components/footer/Footer';
 import CustomCursor from './components/CustomCursor';
 import SmoothScroll from './components/SmoothScroll';
+
+const Section2 = dynamic(() => import('./components/Section2'));
+const Section3 = dynamic(() => import('./components/Section3'));
+const Section4 = dynamic(() => import('./components/Section4'));
+const Section5 = dynamic(() => import('./components/Section5'));
+const Section6 = dynamic(() => import('./components/Section6'));
+const RescuedMeals = dynamic(() => import('./components/RescuedMeals'));
+const FAQ = dynamic(() => import('./components/FAQ'));
+const Footer = dynamic(() => import('../src/components/footer/Footer'));
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
