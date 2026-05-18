@@ -81,8 +81,8 @@ const DotGrid: React.FC<DotGridProps> = ({
   className = '',
   style
 }) => {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   
   const isInView = useInView(wrapperRef, { margin: "0px" });
   
@@ -196,14 +196,17 @@ const DotGrid: React.FC<DotGridProps> = ({
 
   useEffect(() => {
     buildGrid();
-    const hasResizeObserver = typeof ResizeObserver !== 'undefined';
-    if (hasResizeObserver) {
-      const ro = new ResizeObserver(buildGrid);
-      if (wrapperRef.current) ro.observe(wrapperRef.current);
-      return () => ro.disconnect();
+    let ro: ResizeObserver | null = null;
+    if ('ResizeObserver' in window && wrapperRef.current) {
+      ro = new ResizeObserver(buildGrid);
+      ro.observe(wrapperRef.current);
+    } else {
+      window.addEventListener('resize', buildGrid);
     }
-    window.addEventListener('resize', buildGrid);
-    return () => window.removeEventListener('resize', buildGrid);
+    return () => {
+      if (ro) ro.disconnect();
+      else window.removeEventListener('resize', buildGrid);
+    };
   }, [buildGrid]);
 
   useEffect(() => {
@@ -305,7 +308,6 @@ const DotGrid: React.FC<DotGridProps> = ({
     </div>
   );
 };
-
 
 const floatingCards = [
   {
@@ -430,7 +432,7 @@ const floatingAppIcons = [
 ];
 
 export default function Hero() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -466,7 +468,7 @@ export default function Hero() {
         />
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-[#F4F3EE]/40 via-transparent to-[#F4F3EE]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#F4F3EE]/40 via-transparent to-[#F4F3EE] pointer-events-none" />
 
       <motion.div 
         animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }} 
