@@ -81,8 +81,8 @@ const DotGrid: React.FC<DotGridProps> = ({
   className = '',
   style
 }) => {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   
   const isInView = useInView(wrapperRef, { margin: "0px" });
   
@@ -432,7 +432,7 @@ const floatingAppIcons = [
 ];
 
 export default function Hero() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -469,6 +469,31 @@ export default function Hero() {
       </div>
 
       <div className="absolute inset-0 bg-gradient-to-b from-[#F4F3EE]/40 via-transparent to-[#F4F3EE] pointer-events-none" />
+
+      <div className="absolute bottom-12 md:bottom-16 left-0 w-full z-[15] overflow-hidden flex pointer-events-none origin-center -rotate-2">
+        <div className="bg-[#2D2A26] py-3 md:py-4 w-[110vw] -ml-[5vw] shadow-[0_20px_40px_rgba(0,0,0,0.15)] flex">
+          <motion.div
+            className="flex whitespace-nowrap items-center w-max"
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{ repeat: Infinity, ease: "linear", duration: 25 }}
+          >
+            {[...Array(2)].map((_, idx) => (
+              <div key={idx} className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="flex items-center gap-6 md:gap-8 mx-6 md:mx-8">
+                    <span className="text-[#F4F3EE] font-black text-sm md:text-base uppercase tracking-[0.2em]">Rescue Food</span>
+                    <RiLeafLine className="text-[#F28F3B]" size={20} />
+                    <span className="text-transparent font-black text-sm md:text-base uppercase tracking-[0.2em]" style={{ WebkitTextStroke: '1px #F4F3EE' }}>Zero Waste</span>
+                    <RiLeafLine className="text-[#F28F3B]" size={20} />
+                    <span className="text-[#F4F3EE] font-black text-sm md:text-base uppercase tracking-[0.2em]">Save The Planet</span>
+                    <RiLeafLine className="text-[#F28F3B]" size={20} />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
 
       <svg className="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-[0.15]" preserveAspectRatio="none">
         {[
