@@ -330,7 +330,7 @@ export default function Section3() {
 
           <div className="absolute inset-0 bg-gradient-to-t from-[#2D2A26]/90 via-[#2D2A26]/20 to-transparent z-10 pointer-events-none" />
           
-          <div className="hidden md:block absolute bottom-8 md:bottom-16 left-6 md:left-16 right-6 md:right-16 z-20 text-white pointer-events-none">
+          <div className="absolute bottom-6 md:bottom-24 left-6 md:left-12 right-6 md:right-12 z-20 text-white pointer-events-none">
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -346,7 +346,7 @@ export default function Section3() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9]"
+              className="text-lg sm:text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-tighter leading-[0.9]"
             >
               Saving Food,<br />
               <span className="text-[#F28F3B]">Empowering Locals.</span>

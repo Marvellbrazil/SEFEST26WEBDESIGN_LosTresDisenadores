@@ -80,9 +80,9 @@ const StackCard = ({ card, index, progress, totalCards }: any) => {
     >
       <motion.div 
         style={{ scale, transformOrigin: "top center" }}
-        className="w-full max-w-5xl h-auto md:h-[65vh] min-h-[500px] bg-white/90 backdrop-blur-3xl rounded-[32px] md:rounded-[48px] border border-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] flex flex-col md:flex-row overflow-hidden relative group"
+        className="w-full max-w-5xl h-auto md:h-[65vh] bg-white/90 backdrop-blur-3xl rounded-[32px] md:rounded-[48px] border border-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] flex flex-col md:flex-row overflow-hidden relative group"
       >
-        <div className="w-full md:w-1/2 h-[280px] md:h-full relative overflow-hidden p-3 md:p-4">
+        <div className="w-full md:w-1/2 h-48 md:h-full relative overflow-hidden p-3 md:p-4">
           <div className="w-full h-full rounded-[24px] md:rounded-[36px] overflow-hidden relative">
             <motion.img 
               whileHover={{ scale: 1.05 }}
@@ -93,7 +93,7 @@ const StackCard = ({ card, index, progress, totalCards }: any) => {
             />
             <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#2D2A26]/80 via-[#2D2A26]/20 to-transparent pointer-events-none" />
             
-            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between">
+            <div className="hidden md:flex absolute bottom-6 left-6 right-6 items-center justify-between">
               <div className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-4 py-2 rounded-2xl shadow-lg">
                 <p className="text-[10px] uppercase tracking-wider font-bold opacity-80 mb-0.5">Action</p>
                 <div className="flex items-center gap-2">
@@ -105,7 +105,7 @@ const StackCard = ({ card, index, progress, totalCards }: any) => {
           </div>
         </div>
 
-        <div className="w-full md:w-1/2 h-full p-6 sm:p-8 md:p-12 flex flex-col justify-between relative bg-gradient-to-br from-white/50 to-transparent">
+        <div className="w-full md:w-1/2 h-full p-5 sm:p-8 md:p-12 flex flex-col justify-between relative bg-gradient-to-br from-white/50 to-transparent">
           <div className="absolute top-6 right-8 pointer-events-none select-none">
             <span className="text-[80px] md:text-[120px] font-black leading-none text-[#2D2A26] opacity-[0.03]">
               0{index + 1}
@@ -113,7 +113,7 @@ const StackCard = ({ card, index, progress, totalCards }: any) => {
           </div>
 
           <div className="relative z-10">
-            <div className="w-14 h-14 rounded-2xl mb-8 flex items-center justify-center text-white shadow-xl shadow-black/10" style={{ backgroundColor: card.accentColor }}>
+            <div className="hidden sm:flex w-14 h-14 rounded-2xl mb-8 items-center justify-center text-white shadow-xl shadow-black/10" style={{ backgroundColor: card.accentColor }}>
               {card.icon}
             </div>
             <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em] mb-3 md:mb-4" style={{ color: card.accentColor }}>
@@ -129,11 +129,6 @@ const StackCard = ({ card, index, progress, totalCards }: any) => {
           </div>
 
           <div className="mt-10 relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-t border-[#2D2A26]/10 pt-8">
-            <div className="flex items-center gap-3">
-              <div className="w-2.5 h-2.5 rounded-full animate-pulse shadow-[0_0_10px_currentColor]" style={{ backgroundColor: card.accentColor, color: card.accentColor }} />
-              <span className="text-[10px] font-black text-[#2D2A26]/50 uppercase tracking-widest">{card.impact}</span>
-            </div>
-
             <Link 
               href={card.href || "#"} 
               className={`flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group/btn text-white`}

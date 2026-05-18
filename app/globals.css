@@ -26,20 +26,13 @@ html {
   scroll-behavior: smooth;
 }
 
-::-webkit-scrollbar {
-  width: 5px;
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--accent);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #e07a2e;
+html::-webkit-scrollbar {
+  display: none;
 }
 
 ::selection {

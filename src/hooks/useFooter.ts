@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 
 export const useFooter = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -7,39 +7,38 @@ export const useFooter = () => {
 
   const footerRef = useRef<HTMLElement | null>(null);
 
+  const handleIntersect = useCallback(([entry]: IntersectionObserverEntry[]) => {
+    if (entry.isIntersecting) {
+      setIsVisible(true);
+    }
+  }, []);
+
   useEffect(() => {
-    if (!footerRef.current) return;
+    const currentRef = footerRef.current;
+    if (!currentRef) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(footerRef.current);
+    const observer = new IntersectionObserver(handleIntersect, { threshold: 0.1 });
+    observer.observe(currentRef);
 
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [handleIntersect]);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
       setIsSubscribed(true);
       setEmail('');
       setTimeout(() => setIsSubscribed(false), 3000);
     }
-  };
+  }, [email]);
 
-  const scrollToTop = () => {
+  const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-  
-  return {
+  }, []);
+
+  return useMemo(() => ({
     footerRef,
     isVisible,
     setIsVisible,
@@ -48,5 +47,5 @@ export const useFooter = () => {
     isSubscribed,
     handleSubscribe,
     scrollToTop
-  };
+  }), [isVisible, email, isSubscribed, handleSubscribe, scrollToTop]);
 };

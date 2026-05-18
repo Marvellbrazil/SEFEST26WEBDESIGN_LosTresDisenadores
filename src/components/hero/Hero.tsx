@@ -468,27 +468,6 @@ export default function Hero() {
 
       <div className="absolute inset-0 bg-gradient-to-b from-[#F4F3EE]/40 via-transparent to-[#F4F3EE]" />
 
-      <svg className="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-[0.15]" preserveAspectRatio="none">
-        {[
-          { path: "M 50% 40% Q 30% 25% 15% 18%" },
-          { path: "M 50% 40% Q 70% 25% 85% 15%" },
-          { path: "M 50% 40% Q 30% 60% 15% 70%" },
-          { path: "M 50% 40% Q 70% 60% 85% 72%" }
-        ].map((line, index) => (
-          <motion.path
-            key={index}
-            d={line.path}
-            stroke="#2D2A26"
-            strokeWidth="1.5"
-            strokeDasharray="6 6"
-            fill="none"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: index * 0.2 }}
-          />
-        ))}
-      </svg>
-
       <motion.div 
         animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }} 
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
@@ -626,7 +605,7 @@ export default function Hero() {
 
       </div>
       
-      <div className="lg:hidden w-full overflow-x-auto pb-8 pt-12 px-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden flex gap-4 mt-4 relative z-40">
+      <div className="hidden w-full overflow-x-auto pb-8 pt-12 px-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden flex gap-4 mt-4 relative z-40">
         {floatingCards.map((card) => (
           <div key={card.id} className="shrink-0 snap-center w-64">
              {card.content}
