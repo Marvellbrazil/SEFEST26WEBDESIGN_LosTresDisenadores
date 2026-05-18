@@ -197,9 +197,9 @@ const DotGrid: React.FC<DotGridProps> = ({
   useEffect(() => {
     buildGrid();
     let ro: ResizeObserver | null = null;
-    if ('ResizeObserver' in window) {
+    if ('ResizeObserver' in window && wrapperRef.current) {
       ro = new ResizeObserver(buildGrid);
-      wrapperRef.current && ro.observe(wrapperRef.current);
+      ro.observe(wrapperRef.current);
     } else {
       window.addEventListener('resize', buildGrid);
     }
@@ -308,7 +308,6 @@ const DotGrid: React.FC<DotGridProps> = ({
     </div>
   );
 };
-
 
 const floatingCards = [
   {
@@ -469,7 +468,7 @@ export default function Hero() {
         />
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-[#F4F3EE]/40 via-transparent to-[#F4F3EE]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#F4F3EE]/40 via-transparent to-[#F4F3EE] pointer-events-none" />
 
       <svg className="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-[0.15]" preserveAspectRatio="none">
         {[
