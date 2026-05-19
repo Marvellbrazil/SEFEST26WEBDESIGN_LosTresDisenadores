@@ -190,7 +190,7 @@ export default function RescuedMeals() {
   const hasMore = visibleCount < filtered.length;
 
   return (
-    <section className="relative w-full bg-[#F4F3EE] py-24 lg:py-32 overflow-hidden font-[family:var(--font-jakarta)]">
+    <section id="marketplace" className="relative w-full bg-[#F4F3EE] py-24 lg:py-32 overflow-hidden font-[family:var(--font-jakarta)]">
       
       <div 
         className="absolute inset-0 z-0 opacity-[0.2] pointer-events-none"

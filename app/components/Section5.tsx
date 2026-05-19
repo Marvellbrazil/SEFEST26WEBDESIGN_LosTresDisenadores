@@ -85,7 +85,7 @@ export default function Section5() {
   };
 
   return (
-    <section 
+    <section id="metrics"
       ref={containerRef}
       className="relative w-full min-h-[120vh] py-24 flex flex-col items-center justify-center bg-[#F4F3EE] overflow-hidden font-[family:var(--font-jakarta)]"
     >

@@ -17,7 +17,7 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="relative w-full min-h-screen py-24 lg:py-32 bg-[#F4F3EE] overflow-hidden font-[family:var(--font-jakarta)]">
+    <section id="faq-section" className="relative w-full min-h-screen py-24 lg:py-32 bg-[#F4F3EE] overflow-hidden font-[family:var(--font-jakarta)]">
       
       <div 
         className="absolute inset-0 z-0 opacity-[0.2] pointer-events-none"

@@ -17,7 +17,7 @@ export default function Section6() {
   const rotateOrb = useTransform(smoothProgress, [0, 1], [0, 90]);
 
   return (
-    <section 
+    <section id="pricing"
       ref={containerRef}
       className="relative w-full min-h-screen py-24 lg:py-32 bg-[#F4F3EE] overflow-hidden font-[family:var(--font-jakarta)]"
     >
