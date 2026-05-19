@@ -48,9 +48,10 @@ export default function Section6() {
         <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-8 mb-16 md:mb-24">
           <div className="max-w-2xl">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
               className="inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-md border border-white/50 rounded-full shadow-sm mb-6"
             >
               <Store size={14} className="text-[#F28F3B]" />
@@ -58,10 +59,10 @@ export default function Section6() {
             </motion.div>
             
             <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ delay: 0.1, duration: 0.6, ease: "easeOut" }}
               className="text-[40px] sm:text-[60px] md:text-[80px] font-black uppercase tracking-tighter text-[#2D2A26] leading-[0.9] mb-6"
             >
               Turn Waste Into <br />
@@ -69,10 +70,10 @@ export default function Section6() {
             </motion.h2>
 
             <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
               className="text-[#2D2A26]/60 text-sm sm:text-base md:text-lg font-medium leading-relaxed max-w-lg"
             >
               Join thousands of bakeries, cafes, and supermarkets converting daily surplus food into extra revenue, while attracting conscious customers to your store.
@@ -80,10 +81,10 @@ export default function Section6() {
           </div>
 
           <motion.div 
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
             className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto"
           >
             <button className="bg-[#2D2A26] text-white px-8 py-4 rounded-full font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#F28F3B] hover:shadow-[0_10px_30px_rgba(242,143,59,0.3)] transition-all duration-300 group">
@@ -98,10 +99,10 @@ export default function Section6() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
           
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={{ delay: 0.2, type: "spring", bounce: 0.4 }}
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="md:col-span-12 lg:col-span-8 relative rounded-[40px] md:rounded-[48px] overflow-hidden shadow-2xl group h-[400px] md:h-[500px] border border-white/20"
           >
             <img 
@@ -127,10 +128,10 @@ export default function Section6() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={{ delay: 0.3, type: "spring", bounce: 0.4 }}
+            initial={{ opacity: 0, x: 100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="md:col-span-6 lg:col-span-4 relative rounded-[40px] md:rounded-[48px] overflow-hidden shadow-2xl group h-[400px] md:h-[500px] border border-white/20 bg-[#F28F3B]"
           >
             <img 
@@ -157,10 +158,10 @@ export default function Section6() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={{ delay: 0.4, type: "spring", bounce: 0.4 }}
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="md:col-span-6 lg:col-span-4 relative rounded-[40px] md:rounded-[48px] overflow-hidden shadow-2xl group h-[400px] md:h-[500px] border border-white/10 bg-[#2D2A26]"
           >
             <img 
@@ -187,10 +188,10 @@ export default function Section6() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={{ delay: 0.5, type: "spring", bounce: 0.4 }}
+            initial={{ opacity: 0, x: 100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="md:col-span-12 lg:col-span-8 relative rounded-[40px] md:rounded-[48px] overflow-hidden shadow-xl group h-[400px] md:h-[500px] border border-white/60 bg-white"
           >
             <div className="absolute right-0 top-0 w-1/2 h-full overflow-hidden hidden md:block">
@@ -239,10 +240,10 @@ export default function Section6() {
         </div>
 
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 100 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.6 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="mt-16 md:mt-24 p-6 md:p-10 bg-white/60 backdrop-blur-xl border border-white/80 rounded-[40px] shadow-lg flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden"
         >
           <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-[#F28F3B]/10 to-transparent pointer-events-none" />

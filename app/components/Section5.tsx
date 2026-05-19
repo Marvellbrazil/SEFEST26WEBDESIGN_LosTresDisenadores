@@ -110,7 +110,13 @@ export default function Section5() {
 
       <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 md:px-8">
         
-        <div className="mb-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="mb-16"
+        >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-md border border-white/50 rounded-full shadow-sm mb-6">
             <Leaf size={14} className="text-[#F28F3B]" />
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2D2A26]/60">Real-Time Metrics</span>
@@ -119,12 +125,18 @@ export default function Section5() {
             See The <br />
             <span className="text-transparent" style={{ WebkitTextStroke: '2px #2D2A26' }}>Difference.</span>
           </h2>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
           
-          <div className="lg:col-span-4 flex flex-col">
-            <div className="bg-[#2D2A26] rounded-[48px] p-8 md:p-12 shadow-2xl flex-1 flex flex-col justify-between relative overflow-hidden group">
+          <motion.div 
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-4 flex flex-col"
+          >
+            <div className="bg-[#2D2A26] rounded-[48px] rounded-tr-[120px] rounded-bl-[80px] p-8 md:p-12 shadow-2xl flex-1 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-2 transition-all duration-500">
               <Cloud className="absolute -bottom-10 -right-10 w-64 h-64 text-white/5 group-hover:scale-110 transition-transform duration-700 pointer-events-none" />
               
               <div className="relative z-10">
@@ -138,7 +150,7 @@ export default function Section5() {
                 </div>
               </div>
 
-              <div className="relative z-10 mt-16 bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-md">
+              <div className="relative z-10 mt-16 bg-white/5 border border-white/10 rounded-3xl rounded-br-[60px] p-6 backdrop-blur-md">
                 <div className="flex items-center gap-4 mb-3">
                   <motion.div 
                     style={{ backgroundColor: moodColor }}
@@ -156,13 +168,17 @@ export default function Section5() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           <div className="lg:col-span-8 flex flex-col gap-6 lg:gap-8">
             
             <motion.div 
+              initial={{ opacity: 0, x: 100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
               style={{ backgroundColor: cardBg, borderColor: cardBorder }}
-              className="backdrop-blur-xl rounded-[48px] p-8 md:p-12 shadow-xl"
+              className="backdrop-blur-xl rounded-[48px] rounded-tl-[100px] rounded-br-[100px] p-8 md:p-12 shadow-xl hover:-translate-y-2 transition-all duration-500"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-16 md:mb-24">
                 <div>
@@ -237,10 +253,16 @@ export default function Section5() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 h-full">
               
-              <div className="bg-[#F28F3B] rounded-[48px] p-8 shadow-xl relative overflow-hidden group flex flex-col justify-between">
+              <motion.div 
+                initial={{ opacity: 0, x: 100 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                className="bg-[#F28F3B] rounded-[40px] rounded-tr-[80px] rounded-bl-[20px] p-8 shadow-xl relative overflow-hidden group flex flex-col justify-between hover:-translate-y-2 transition-all duration-500"
+              >
                 <Droplets className="absolute -top-6 -right-6 w-40 h-40 text-white/10 group-hover:scale-110 transition-transform duration-700 pointer-events-none" />
                 <div className="relative z-10 mb-8">
-                  <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white mb-6 border border-white/20">
+                  <div className="w-12 h-12 bg-white/20 rounded-2xl rounded-tr-[24px] rounded-bl-[8px] flex items-center justify-center text-white mb-6 border border-white/20">
                     <Droplets size={24} />
                   </div>
                   <h3 className="text-white/70 text-xs font-black uppercase tracking-[0.2em] mb-2">Water Saved</h3>
@@ -249,18 +271,24 @@ export default function Section5() {
                     <span className="text-sm font-bold text-white/60">L</span>
                   </div>
                 </div>
-                <div className="relative z-10 flex items-center gap-3 bg-white/10 rounded-2xl p-4 border border-white/10 backdrop-blur-sm">
+                <div className="relative z-10 flex items-center gap-3 bg-white/10 rounded-2xl rounded-br-[32px] p-4 border border-white/10 backdrop-blur-sm">
                   <Bath size={16} className="text-white/80" />
                   <p className="text-xs font-bold text-white/80 leading-tight">
                     Equal to <span className="text-white text-base mx-1"><AnimatedCounter value={impact.showers} /></span> showers
                   </p>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="bg-white rounded-[48px] p-8 shadow-xl border border-black/5 relative overflow-hidden group flex flex-col justify-between">
+              <motion.div 
+                initial={{ opacity: 0, x: 100 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="bg-white rounded-[40px] rounded-tl-[80px] rounded-br-[20px] p-8 shadow-xl border border-black/5 relative overflow-hidden group flex flex-col justify-between hover:-translate-y-2 transition-all duration-500"
+              >
                 <Map className="absolute -top-6 -right-6 w-40 h-40 text-[#2D2A26]/5 group-hover:scale-110 transition-transform duration-700 pointer-events-none" />
                 <div className="relative z-10 mb-8">
-                  <div className="w-12 h-12 bg-[#F28F3B]/10 rounded-2xl flex items-center justify-center text-[#F28F3B] mb-6">
+                  <div className="w-12 h-12 bg-[#F28F3B]/10 rounded-2xl rounded-tl-[24px] rounded-br-[8px] flex items-center justify-center text-[#F28F3B] mb-6">
                     <Map size={24} />
                   </div>
                   <h3 className="text-[#2D2A26]/40 text-xs font-black uppercase tracking-[0.2em] mb-2">Land Preserved</h3>
@@ -269,13 +297,13 @@ export default function Section5() {
                     <span className="text-sm font-bold text-[#2D2A26]/40">m²</span>
                   </div>
                 </div>
-                <div className="relative z-10 flex items-center gap-3 bg-[#2D2A26]/5 rounded-2xl p-4 border border-[#2D2A26]/5">
+                <div className="relative z-10 flex items-center gap-3 bg-[#2D2A26]/5 rounded-2xl rounded-bl-[32px] p-4 border border-[#2D2A26]/5">
                   <Leaf size={16} className="text-[#F28F3B]" />
                   <p className="text-[#2D2A26]/60 text-xs font-bold leading-tight">
                     Safeguards natural habitats
                   </p>
                 </div>
-              </div>
+              </motion.div>
 
             </div>
           </div>
