@@ -17,7 +17,6 @@ const cardsData = [
     icon: <Search size={24} />,
     accentColor: "#F28F3B",
     stats: "Real-time Map",
-    impact: "Location Based",
     statIcon: <Search size={16} />
   },
   {
@@ -32,7 +31,6 @@ const cardsData = [
     icon: <CreditCard size={24} />,
     accentColor: "#2D2A26",
     stats: "100% Secure",
-    impact: "Instant Confirmation",
     statIcon: <ShieldCheck size={16} />
   },
   {
@@ -47,7 +45,6 @@ const cardsData = [
     icon: <ShoppingBag size={24} />,
     accentColor: "#F28F3B",
     stats: "Quick & Easy",
-    impact: "Meet Local Owners",
     statIcon: <Clock size={16} />
   },
   {
@@ -62,7 +59,6 @@ const cardsData = [
     icon: <Leaf size={24} />,
     accentColor: "#2D2A26",
     stats: "Track Impact",
-    impact: "Save the Planet",
     statIcon: <BarChart3 size={16} />
   }
 ];
@@ -116,7 +112,7 @@ const StackCard = ({ card, index, progress, totalCards, isMobile }: any) => {
           </div>
 
           <div className="relative z-10 flex-1 flex flex-col justify-center mt-2 md:mt-0">
-            <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl mb-6 md:mb-8 flex items-center justify-center text-white shadow-lg" style={{ backgroundColor: card.accentColor }}>
+            <div className="hidden md:flex w-12 h-12 md:w-14 md:h-14 rounded-2xl mb-6 md:mb-8 items-center justify-center text-white shadow-lg" style={{ backgroundColor: card.accentColor }}>
               {card.icon}
             </div>
             
@@ -134,12 +130,7 @@ const StackCard = ({ card, index, progress, totalCards, isMobile }: any) => {
             </p>
           </div>
 
-          <div className="mt-8 md:mt-10 relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5 md:gap-6 border-t border-[#2D2A26]/10 pt-6 md:pt-8">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full animate-pulse" style={{ backgroundColor: card.accentColor, boxShadow: `0 0 10px ${card.accentColor}` }} />
-              <span className="text-[9px] md:text-[10px] font-black text-[#2D2A26]/50 uppercase tracking-widest">{card.impact}</span>
-            </div>
-
+          <div className="mt-8 md:mt-10 relative z-10 flex flex-col sm:flex-row gap-5 md:gap-6 border-t border-[#2D2A26]/10 pt-6 md:pt-8">
             <Link 
               href={card.href || "#"} 
               className="flex items-center justify-center gap-2 px-6 py-3 md:px-8 md:py-4 rounded-full font-bold text-[10px] md:text-xs uppercase tracking-wider transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group/btn text-white w-full sm:w-auto"
@@ -178,7 +169,7 @@ export default function Section4() {
   });
 
   return (
-    <section ref={containerRef} className="relative w-full bg-[#F4F3EE] font-[family:var(--font-jakarta)] pb-[20vh] pt-[10vh]">
+    <section id="guide" ref={containerRef} className="relative w-full bg-[#F4F3EE] font-[family:var(--font-jakarta)] pb-[20vh] pt-[10vh]">
 
       <div 
         className="absolute inset-0 z-0 opacity-[0.2] pointer-events-none"
