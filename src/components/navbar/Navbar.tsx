@@ -19,11 +19,11 @@ import Image from "next/image";
 const localNavLinks = [
   { label: "Home", href: "#hero" },
   { label: "Problem", href: "#problem" },
-  { label: "How it Works", href: "#how-it-works" },
-  { label: "Impact", href: "#impact" },
+  { label: "Guide", href: "#guide" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Metrics", href: "#metrics" },
   { label: "Marketplace", href: "#marketplace" },
-  { label: "Business", href: "#business" },
-  { label: "FAQ", href: "#faq" },
+  { label: "FAQ", href: "#faq-section" },
 ];
 
 const locations = [
