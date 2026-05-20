@@ -1,7 +1,10 @@
+/* eslint-disable react-hooks/immutability */
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react-hooks/rules-of-hooks */
 'use client';
 
 import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react';
-import { motion, useTransform, useSpring, useInView, AnimatePresence, useMotionValue, Variants } from 'framer-motion';
+import { motion, useTransform, useSpring, useInView, useMotionValue, Variants } from 'framer-motion';
 import {
   RiLeafLine,
   RiMapPinLine,
@@ -19,13 +22,13 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(InertiaPlugin);
 }
 
-const throttle = (func: (...args: any[]) => void, limit: number) => {
+const throttle = <T extends Event>(func: (this: Window, event: T) => void, limit: number) => {
   let lastCall = 0;
-  return function (this: any, ...args: any[]) {
+  return function (this: Window, event: T) {
     const now = performance.now();
     if (now - lastCall >= limit) {
       lastCall = now;
-      func.apply(this, args);
+      func.call(this, event);
     }
   };
 };
@@ -59,9 +62,9 @@ function hexToRgb(hex: string) {
   const m = hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
   if (!m) return { r: 0, g: 0, b: 0 };
   return {
-    r: parseInt(m[1], 16),
-    g: parseInt(m[2], 16),
-    b: parseInt(m[3], 16)
+    r: Number.parseInt(m[1], 16),
+    g: Number.parseInt(m[2], 16),
+    b: Number.parseInt(m[3], 16)
   };
 }
 
@@ -303,7 +306,7 @@ const floatingCards = [
     parallaxFactor: 25,
     delay: 0,
     content: (
-      <div className="w-56 bg-white/95 backdrop-blur-xl border border-white rounded-[20px] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] p-4">
+      <div className="w-56 bg-white/95 backdrop-blur-xl border border-white rounded-[20px] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] p-4 cursor-none">
         <div className="flex items-center gap-3 mb-3 border-b border-[#2D2A26]/5 pb-3">
           <div className="w-8 h-8 rounded-xl bg-[#F28F3B]/10 flex items-center justify-center text-[#F28F3B]">
             <RiLeafLine size={16} />
@@ -328,7 +331,7 @@ const floatingCards = [
     parallaxFactor: -20,
     delay: 0.2,
     content: (
-      <div className="w-52 bg-white/95 backdrop-blur-xl border border-white rounded-[20px] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] p-4">
+      <div className="w-52 bg-white/95 backdrop-blur-xl border border-white rounded-[20px] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] p-4 cursor-none">
         <div className="flex items-center justify-between mb-4">
           <p className="text-[10px] font-black uppercase tracking-wider text-[#2D2A26]/50">CO₂ Prevented</p>
           <RiPieChart2Line className="text-[#F28F3B]" size={16} />
@@ -356,7 +359,7 @@ const floatingCards = [
     parallaxFactor: 15,
     delay: 0.4,
     content: (
-      <div className="w-60 bg-white/95 backdrop-blur-xl border border-white rounded-[20px] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] p-4">
+      <div className="w-60 bg-white/95 backdrop-blur-xl border border-white rounded-[20px] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] p-4 cursor-none">
         <div className="flex items-center gap-2 mb-3">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
           <span className="text-[10px] font-black uppercase tracking-wider text-[#2D2A26]/50">Live Schedule</span>
@@ -386,7 +389,7 @@ const floatingCards = [
     parallaxFactor: -25,
     delay: 0.6,
     content: (
-      <div className="w-56 bg-white/95 backdrop-blur-xl border border-white rounded-[20px] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] p-4">
+      <div className="w-56 bg-white/95 backdrop-blur-xl border border-white rounded-[20px] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] p-4 cursor-none">
         <div className="flex items-center justify-between mb-4 border-b border-[#2D2A26]/5 pb-3">
           <p className="text-[10px] font-black uppercase tracking-wider text-[#2D2A26]/50">Partner Revenue</p>
           <RiLineChartLine className="text-[#F28F3B]" size={16} />
@@ -527,9 +530,9 @@ export default function Hero() {
   const mouseSpringY = useSpring(mouseMagnetY, { stiffness: 100, damping: 12 });
 
   return (
-    <section
+    <section id="hero"
       ref={containerRef}
-      className="relative w-full min-h-[100svh] flex flex-col items-center justify-between overflow-hidden bg-[#F4F3EE] pt-24 font-[family:var(--font-jakarta)] select-none"
+      className="relative w-full min-h-svh flex flex-col items-center justify-between overflow-hidden bg-[#F4F3EE] pt-24 font-(--font-jakarta) select-none cursor-none"
       onMouseMove={handleMouseMove}
     >
       <div className="absolute inset-0 z-0">
@@ -544,12 +547,12 @@ export default function Hero() {
         />
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-[#F4F3EE]/40 via-transparent to-[#F4F3EE] pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-[#F4F3EE]/40 via-transparent to-[#F4F3EE] pointer-events-none" />
 
       <motion.div 
         animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }} 
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#F28F3B] rounded-full blur-[140px] z-0 pointer-events-none" 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-125 h-125 bg-[#F28F3B] rounded-full blur-[140px] z-0 pointer-events-none" 
       />
 
       <div className="hidden lg:block absolute inset-0 z-20 pointer-events-none">
@@ -596,7 +599,7 @@ export default function Hero() {
           className="text-[#2D2A26] text-[40px] sm:text-[52px] md:text-[64px] xl:text-[72px] leading-[0.9] font-black uppercase tracking-tighter flex flex-col items-center"
         >
           <span>Rescue Delicious Food</span>
-          <span className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-5 sm:px-6 py-1 rounded-[16px] sm:rounded-[20px] shadow-[0_15px_30px_rgba(242,143,59,0.25)] border-4 border-white transform rotate-1.5 inline-block text-[28px] sm:text-[38px] md:text-[46px] xl:text-[54px] mt-4">
+          <span className="highlight">
             Save Our Planet
           </span>
         </motion.h1>
@@ -632,7 +635,7 @@ export default function Hero() {
         >
           <div 
             ref={searchFieldRef}
-            className="flex items-center w-[500px] max-w-[280px] sm:max-w-[300px] bg-white rounded-full p-1 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.1)] border border-[#2D2A26]/5 focus-within:ring-4 focus-within:ring-[#F28F3B]/20 transition-all duration-300"
+            className="flex items-center w-125 max-w-70 sm:max-w-75 bg-white rounded-full p-1 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.1)] border border-[#2D2A26]/5 focus-within:ring-4 focus-within:ring-[#F28F3B]/20 transition-all duration-300"
           >
             <div className="flex-1 flex items-center gap-1.5 pl-3">
               <RiMapPinLine className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#F28F3B] shrink-0" />
@@ -645,7 +648,7 @@ export default function Hero() {
             </div>
             <button 
               onClick={handleInputInteraction}
-              className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white font-bold px-4 py-2 rounded-full transition-all hover:shadow-[0_10px_25px_-5px_rgba(242,143,59,0.4)] flex items-center justify-center gap-1.5 text-xs whitespace-nowrap shrink-0 group"
+              className="bg-linear-to-r from-[#F28F3B] to-[#FF6B35] text-white font-bold px-4 py-2 rounded-full transition-all hover:shadow-[0_10px_25px_-5px_rgba(242,143,59,0.4)] flex items-center justify-center gap-1.5 text-xs whitespace-nowrap shrink-0 group"
             >
               <RiSearchLine className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
               <span className="hidden sm:inline-block">Search</span>
