@@ -131,9 +131,9 @@ export default function Section5() {
 
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 35, damping: 18, mass: 1 });
   
-  const dynamicBgColor = useTransform(smoothProgress, [0, 0.85, 1], ["#FDB0B0", "#CDF5DF", "#BCF2D5"]);
+  const dynamicBgColor = useTransform(scrollYProgress, [0, 0.85, 1], ["#FDB0B0", "#CDF5DF", "#BCF2D5"]);
   
-  const dynamicEyeColor = useTransform(smoothProgress, [0, 0.85, 1], ["#EF4444", "#22C55E", "#10B981"]);
+  const dynamicEyeColor = useTransform(scrollYProgress, [0, 0.85, 1], ["#EF4444", "#22C55E", "#10B981"]);
 
   const meals = useTransform(smoothProgress, [0, 1], [1, 500]);
   const displayMeals = useTransform(meals, (latest) => Math.round(latest));
@@ -185,55 +185,54 @@ export default function Section5() {
       
       <motion.section 
         style={{ backgroundColor: dynamicBgColor }}
-        className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden transition-colors duration-500"
+        className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden transition-colors"
       >
         
         <div className="absolute inset-0 z-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)', backgroundSize: '36px 36px' }} />
 
-        <div className="lg:hidden absolute top-20 left-6 z-20 flex flex-col items-start">
+        <div className="lg:hidden absolute top-28 left-6 z-20 flex flex-col items-start">
           <motion.div 
             initial={{ opacity: 0, scale: 0.4, rotate: -15, y: 30 }}
             whileInView={{ opacity: 1, scale: 1, rotate: 0, y: 0 }}
             viewport={{ once: true }}
             transition={stickerSpringTransition}
-            className="bg-[#2D2A26] text-white text-[10px] font-black uppercase tracking-[0.25em] px-3.5 py-1.5 rounded-lg shadow-lg mb-3 w-max"
+            className="bg-[#2D2A26] text-white text-[9px] font-black uppercase tracking-[0.25em] px-3 py-1 rounded-lg shadow-lg mb-2 w-max"
           >
-            Impact Journey
+            Scroll To See
           </motion.div>
           <motion.h2 
             initial={{ opacity: 0, scale: 0.7, y: 40 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ ...stickerSpringTransition, delay: 0.1 }}
-            className="relative font-black uppercase tracking-tighter leading-[0.85] text-[#2D2A26] text-[40px] min-[400px]:text-[48px]"
+            className="relative font-black uppercase tracking-tighter leading-[0.85] text-[#2D2A26] text-[32px] min-[400px]:text-[38px]"
           >
             YOUR <br />
-            <span className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-3 py-0.5 rounded-[12px] shadow-[0_15px_30px_rgba(242,143,59,0.3)] border-2 border-white transform rotate-2 inline-block text-[32px] min-[400px]:text-[36px] mt-2">
+            <span className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-2.5 py-0.5 rounded-[10px] shadow-[0_12px_24px_rgba(242,143,59,0.25)] border-2 border-white transform rotate-2 inline-block text-[26px] min-[400px]:text-[30px] mt-1.5">
               IMPACT
             </span>
           </motion.h2>
         </div>
 
-        {/* Desktop Header */}
         <div className="hidden lg:flex flex-col items-start absolute top-32 left-12 z-20">
           <motion.div 
             initial={{ opacity: 0, scale: 0.4, rotate: -12, y: 40 }}
             whileInView={{ opacity: 1, scale: 1, rotate: 0, y: 0 }}
             viewport={{ once: true }}
             transition={stickerSpringTransition}
-            className="bg-[#2D2A26] text-white text-xs font-black uppercase tracking-[0.3em] px-5 py-2 rounded-lg shadow-xl mb-4 w-max"
+            className="bg-[#2D2A26] text-white text-[11px] font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-lg shadow-xl mb-3 w-max"
           >
-            Impact Journey
+            Scroll To See
           </motion.div>
           <motion.h2 
             initial={{ opacity: 0, scale: 0.8, y: 50, rotate: 5 }}
             whileInView={{ opacity: 1, scale: 1, y: 0, rotate: 0 }}
             viewport={{ once: true }}
             transition={{ ...stickerSpringTransition, delay: 0.15 }}
-            className="relative font-black uppercase tracking-tighter leading-[0.8] flex flex-col items-start text-[#2D2A26] text-[76px] xl:text-[90px]"
+            className="relative font-black uppercase tracking-tighter leading-[0.8] flex flex-col items-start text-[#2D2A26] text-[62px] xl:text-[72px]"
           >
             <span>YOUR</span>
-            <span className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-6 py-1 rounded-[20px] shadow-[0_20px_40px_rgba(242,143,59,0.3)] border-4 border-white transform rotate-2 inline-block text-[54px] xl:text-[68px] mt-3">
+            <span className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-5 py-0.5 rounded-[16px] shadow-[0_15px_30px_rgba(242,143,59,0.25)] border-4 border-white transform rotate-2 inline-block text-[44px] xl:text-[54px] mt-2">
               IMPACT
             </span>
           </motion.h2>
@@ -246,11 +245,11 @@ export default function Section5() {
           transition={{ ...stickerSpringTransition, delay: 0.25 }}
           onMouseEnter={() => setIsHoveredMeals(true)}
           onMouseLeave={() => setIsHoveredMeals(false)}
-          className="absolute top-20 right-4 lg:top-32 lg:right-12 z-30 bg-white/80 backdrop-blur-xl rounded-[20px] lg:rounded-[32px] p-2 pr-3 lg:p-4 lg:pr-8 shadow-xl flex items-center gap-2 lg:gap-5 border border-white"
+          className="absolute top-28 right-4 lg:top-32 lg:right-12 z-30 bg-white/80 backdrop-blur-xl rounded-[20px] lg:rounded-[32px] p-2 pr-3 lg:p-4 lg:pr-8 shadow-xl flex items-center gap-2 lg:gap-5 border border-white"
         >
           <motion.div 
             style={{ backgroundColor: dynamicEyeColor }}
-            className="relative w-12 h-12 lg:w-16 lg:h-16 rounded-full shadow-lg flex flex-col items-center justify-center border-2 border-white backdrop-blur-md overflow-hidden transition-colors duration-500"
+            className="relative w-11 h-11 lg:w-16 lg:h-16 rounded-full shadow-lg flex flex-col items-center justify-center border-2 border-white backdrop-blur-md overflow-hidden transition-colors duration-500"
           >
             <div className="flex gap-1.5 lg:gap-2 mb-0 mt-2 lg:mt-3">
               <div className="w-2.5 h-2.5 lg:w-3.5 lg:h-3.5 bg-white rounded-full flex items-center justify-center shadow-inner overflow-hidden">
@@ -281,34 +280,34 @@ export default function Section5() {
           </motion.div>
 
           <div className="flex flex-col">
-            <span className="text-[9px] lg:text-[11px] font-black uppercase tracking-[0.2em] text-[#F28F3B] mb-0.5">Total Rescued</span>
+            <span className="text-[8px] lg:text-[11px] font-black uppercase tracking-[0.2em] text-[#F28F3B] mb-0.5">Total Rescued</span>
             <div className="flex items-baseline gap-1 lg:gap-1.5">
-              <motion.span className="text-3xl lg:text-5xl font-black tracking-tighter text-[#2D2A26]">
+              <motion.span className="text-2xl lg:text-5xl font-black tracking-tighter text-[#2D2A26]">
                 {displayMeals}
               </motion.span>
-              <span className="text-[10px] lg:text-sm font-bold uppercase text-[#2D2A26]/40">Meals</span>
+              <span className="text-[9px] lg:text-sm font-bold uppercase text-[#2D2A26]/40">Meals</span>
             </div>
           </div>
         </motion.div>
 
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[100px] lg:-translate-y-[120px] w-full max-w-[90%] lg:max-w-3xl px-4 lg:px-8 z-10 text-center pointer-events-none h-24">
           <motion.div style={{ opacity: stat1Opacity, y: stat1Y }} className="absolute inset-0 flex flex-col items-center justify-center">
-            <p className="text-[#2D2A26]/80 text-lg sm:text-2xl md:text-3xl lg:text-4xl font-medium leading-tight">
+            <p className="text-[#2D2A26]/80 text-base sm:text-2xl md:text-3xl lg:text-4xl font-medium leading-tight">
               This impact is equivalent to planting <br/>
               <span className="font-black text-[#F28F3B]">50 mature trees</span><br/>
               and letting them grow for 10 years.
             </p>
           </motion.div>
           <motion.div style={{ opacity: stat2Opacity, y: stat2Y }} className="absolute inset-0 flex flex-col items-center justify-center">
-            <p className="text-[#2D2A26]/80 text-lg sm:text-2xl md:text-3xl lg:text-4xl font-medium leading-tight">
+            <p className="text-[#2D2A26]/80 text-base sm:text-2xl md:text-3xl lg:text-4xl font-medium leading-tight">
               The water saved is enough to completely fill <br/>
-              <span className="font-black text-[#3B82F6]">1 Olympic swimming pool!</span>
+              <span className="font-black text-[#F28F3B]">1 Olympic swimming pool!</span>
             </p>
           </motion.div>
           <motion.div style={{ opacity: stat3Opacity, y: stat3Y }} className="absolute inset-0 flex flex-col items-center justify-center">
-            <p className="text-[#2D2A26]/80 text-lg sm:text-2xl md:text-3xl lg:text-4xl font-medium leading-tight">
+            <p className="text-[#2D2A26]/80 text-base sm:text-2xl md:text-3xl lg:text-4xl font-medium leading-tight">
               The preserved land equals the area of <br/>
-              <span className="font-black text-[#F59E0B]">2 international football fields.</span>
+              <span className="font-black text-[#F28F3B]">2 international football fields.</span>
             </p>
           </motion.div>
         </div>
@@ -367,11 +366,6 @@ export default function Section5() {
               transformOrigin: "top center"
             }}
           />
-        </div>
-
-        <div className="absolute bottom-6 lg:bottom-10 left-0 w-full flex justify-between px-6 lg:px-12 text-[#2D2A26]/30 text-[9px] lg:text-[10px] font-black uppercase tracking-[0.3em]">
-          <span>Start Journey</span>
-          <span>Goal: Zero Waste City</span>
         </div>
       </motion.section>
     </div>

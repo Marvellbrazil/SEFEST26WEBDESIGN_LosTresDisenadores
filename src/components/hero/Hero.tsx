@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react';
-import { motion, useScroll, useTransform, useSpring, useInView, AnimatePresence, useVelocity, useMotionValue } from 'framer-motion';
+import { motion, useTransform, useSpring, useInView, AnimatePresence, useMotionValue, Variants } from 'framer-motion';
 import {
   RiLeafLine,
   RiMapPinLine,
@@ -281,20 +281,19 @@ const DotGrid: React.FC<DotGridProps> = ({
   );
 };
 
-const flashAlerts = [
-  "⚡ LIVE: 12 meals rescued in Surabaya 3 mins ago",
-  "🥐 5 Surprise Bags left at 'The Bread Factory'",
-  "🌱 ECO: 45kg CO₂ footprint reduced just now",
-  "🍱 LIVE: 8 sushi packs rescued in Jakarta",
-];
-
-const marqueeItems = [
-  { text: "RESCUE SURPLUS FOOD", type: "text" },
-  { img: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=200&auto=format&fit=crop&q=80", type: "image", alt: "Croissant" },
-  { text: "10X ENVIRONMENTAL IMPACT", type: "text" },
-  { img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&auto=format&fit=crop&q=80", type: "image", alt: "Salad Bowl" },
-  { text: "ZERO WASTE MOVEMENT", type: "text" },
-  { img: "https://images.unsplash.com/photo-1607349913338-fca6f7fc42d0?w=200&auto=format&fit=crop&q=80", type: "image", alt: "Paper Bag" },
+const marqueeTexts = [
+  "RESCUE SURPLUS FOOD",
+  "10X ENVIRONMENTAL IMPACT",
+  "ZERO WASTE MOVEMENT",
+  "FLASH SALE EVERYDAY",
+  "SAVE OUR PLANET",
+  "SUPPORT LOCAL BUSINESS",
+  "RESCUE SURPLUS FOOD",
+  "10X ENVIRONMENTAL IMPACT",
+  "ZERO WASTE MOVEMENT",
+  "FLASH SALE EVERYDAY",
+  "SAVE OUR PLANET",
+  "SUPPORT LOCAL BUSINESS"
 ];
 
 const floatingCards = [
@@ -412,6 +411,38 @@ const floatingCards = [
   },
 ];
 
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
+    }
+  }
+};
+
+const itemFadeUpVariants: Variants = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  show: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: { type: "spring" as const, stiffness: 100, damping: 20 }
+  }
+};
+
+const stickerVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.4, rotate: -15, y: 30 },
+  show: { 
+    opacity: 1, 
+    scale: 1, 
+    rotate: 0, 
+    y: 0,
+    transition: { type: "spring" as const, stiffness: 150, damping: 12, mass: 0.8 }
+  }
+};
+
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const searchFieldRef = useRef<HTMLDivElement | null>(null);
@@ -419,7 +450,6 @@ export default function Hero() {
   const triggerShockwaveRef = useRef<((cx: number, cy: number) => void) | null>(null);
   
   const [isMounted, setIsMounted] = useState(false);
-  const [alertIndex, setAlertIndex] = useState(0);
   
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -428,20 +458,8 @@ export default function Hero() {
   const mouseMagnetX = useMotionValue(0);
   const mouseMagnetY = useMotionValue(0);
 
-  const { scrollY } = useScroll();
-  const scrollVelocity = useVelocity(scrollY);
-  const smoothVelocity = useSpring(scrollVelocity, { stiffness: 50, damping: 15 });
-  
-  const marqueeScrollOffset = useTransform(smoothVelocity, [-3000, 3000], [-180, 180]);
-
   useEffect(() => {
     setIsMounted(true);
-    
-    const alertInterval = setInterval(() => {
-      setAlertIndex((prev) => (prev + 1) % flashAlerts.length);
-    }, 3500);
-
-    return () => clearInterval(alertInterval);
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -508,13 +526,6 @@ export default function Hero() {
   const mouseSpringX = useSpring(mouseMagnetX, { stiffness: 100, damping: 12 });
   const mouseSpringY = useSpring(mouseMagnetY, { stiffness: 100, damping: 12 });
 
-  const stickerSpringTransition = {
-    type: "spring" as const,
-    stiffness: 150,
-    damping: 12,
-    mass: 0.8
-  };
-
   return (
     <section
       ref={containerRef}
@@ -566,61 +577,39 @@ export default function Hero() {
         })}
       </div>
 
-      <div className="relative z-30 w-full max-w-5xl mx-auto px-4 flex flex-col items-center text-center mt-4 flex-1 justify-center relative">
-        
-        <div className="h-6 overflow-hidden mb-3 flex items-center justify-center relative w-full max-w-md pointer-events-none">
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={alertIndex}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="text-[#2D2A26] text-xs sm:text-sm font-black uppercase tracking-[0.18em] text-center"
-            >
-              {flashAlerts[alertIndex]}
-            </motion.span>
-          </AnimatePresence>
-        </div>
-
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-100px" }}
+        className="relative z-30 w-full max-w-5xl mx-auto px-4 flex flex-col items-center text-center mt-4 flex-1 justify-center"
+      >
         <motion.div
-          initial={{ opacity: 0, scale: 0.4, rotate: -15, y: 30 }}
-          whileInView={{ opacity: 1, scale: 1, rotate: 0, y: 0 }}
-          viewport={{ once: true }}
-          transition={stickerSpringTransition}
+          variants={stickerVariants}
           className="bg-[#2D2A26] text-white text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-md shadow-md mb-8 w-max relative z-40"
         >
           Eco Platform
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, scale: 0.8, y: 50 }}
-          whileInView={{ opacity: 1, scale: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ ...stickerSpringTransition, delay: 0.15 }}
-          className="text-[#2D2A26] text-[40px] sm:text-[60px] md:text-[76px] xl:text-[86px] leading-[0.85] font-black uppercase tracking-tighter flex flex-col items-center"
+          variants={itemFadeUpVariants}
+          className="text-[#2D2A26] text-[40px] sm:text-[52px] md:text-[64px] xl:text-[72px] leading-[0.9] font-black uppercase tracking-tighter flex flex-col items-center"
         >
           <span>Rescue Delicious Food</span>
-          <span className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-5 sm:px-6 py-1 rounded-[16px] sm:rounded-[20px] shadow-[0_15px_30px_rgba(242,143,59,0.25)] border-4 border-white transform rotate-1.5 inline-block text-[28px] sm:text-[44px] md:text-[54px] xl:text-[64px] mt-4">
+          <span className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-5 sm:px-6 py-1 rounded-[16px] sm:rounded-[20px] shadow-[0_15px_30px_rgba(242,143,59,0.25)] border-4 border-white transform rotate-1.5 inline-block text-[28px] sm:text-[38px] md:text-[46px] xl:text-[54px] mt-4">
             Save Our Planet
           </span>
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+          variants={itemFadeUpVariants}
           className="text-[#2D2A26]/75 text-xs min-[400px]:text-sm sm:text-base md:text-lg max-w-2xl mt-8 mb-8 font-medium leading-relaxed"
         >
           A circular economy platform that connects conscious consumers with local eateries to save perfectly good food at flash-sale prices. 10x Impact. Automated.
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          variants={itemFadeUpVariants}
           className="flex items-center gap-4 mb-10 bg-white/50 backdrop-blur-md px-5 py-2.5 rounded-full border border-black/5 shadow-sm"
         >
           <div className="flex -space-x-3">
@@ -637,10 +626,7 @@ export default function Hero() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.5 }}
+          variants={itemFadeUpVariants}
           style={{ x: searchSpringX, y: searchSpringY }}
           className="w-full flex flex-col items-center gap-3 relative z-50 mb-10"
         >
@@ -671,6 +657,7 @@ export default function Hero() {
         </motion.div>
 
         <motion.div 
+          variants={itemFadeUpVariants}
           ref={scrollIndicatorRef}
           style={{ x: mouseSpringX, y: mouseSpringY }}
           className="hidden md:flex flex-col items-center gap-2 mt-4 select-none pointer-events-auto transition-transform"
@@ -689,52 +676,28 @@ export default function Hero() {
             Scroll down
           </span>
         </motion.div>
-      </div>
+      </motion.div>
 
-      <div className="w-full bg-[#2D2A26] py-3 sm:py-2 overflow-hidden border-t border-b border-white/5 relative z-40 flex shrink-0 shadow-[0_-15px_40px_rgba(0,0,0,0.05)]">
+      <div className="w-full bg-[#2D2A26] py-3 sm:py-2 overflow-hidden border-t border-b border-white/5 relative z-40 block shadow-[0_-15px_40px_rgba(0,0,0,0.05)] whitespace-nowrap">
         <motion.div 
-          style={{ x: marqueeScrollOffset }}
           animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="flex whitespace-nowrap gap-16 sm:gap-24 items-center w-max pr-16 sm:pr-24 transition-transform duration-500 ease-out"
+          transition={{ duration: 55, ease: "linear", repeat: Infinity }}
+          className="flex w-max shrink-0 max-w-none"
         >
-          {marqueeItems.map((item, idx) => (
-            <div key={`marquee-1-${idx}`} className="flex items-center gap-6 sm:gap-8 shrink-0 group">
-              {item.type === "text" ? (
-                <span className="text-white/90 text-sm sm:text-base font-black tracking-[0.25em] uppercase transition-colors group-hover:text-[#F28F3B]">
-                  {item.text}
-                </span>
-              ) : (
-                <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-[24px] overflow-hidden bg-white/10 p-0.5 border border-white/10 shadow-xl transition-all group-hover:scale-105 group-hover:rotate-3">
-                  <img src={item.img} alt={item.alt} className="w-full h-full object-cover rounded-xl sm:rounded-[20px] transform scale-105" />
-                </div>
-              )}
-            </div>
-          ))}
-          {marqueeItems.map((item, idx) => (
-            <div key={`marquee-2-${idx}`} className="flex items-center gap-6 sm:gap-8 shrink-0 group">
-              {item.type === "text" ? (
-                <span className="text-white/90 text-sm sm:text-base font-black tracking-[0.25em] uppercase transition-colors group-hover:text-[#F28F3B]">
-                  {item.text}
-                </span>
-              ) : (
-                <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-[24px] overflow-hidden bg-white/10 p-0.5 border border-white/10 shadow-xl transition-all group-hover:scale-105 group-hover:rotate-3">
-                  <img src={item.img} alt={item.alt} className="w-full h-full object-cover rounded-xl sm:rounded-[20px] transform scale-105" />
-                </div>
-              )}
-            </div>
-          ))}
-          {marqueeItems.map((item, idx) => (
-            <div key={`marquee-3-${idx}`} className="flex items-center gap-6 sm:gap-8 shrink-0 group">
-              {item.type === "text" ? (
-                <span className="text-white/90 text-sm sm:text-base font-black tracking-[0.25em] uppercase transition-colors group-hover:text-[#F28F3B]">
-                  {item.text}
-                </span>
-              ) : (
-                <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-[24px] overflow-hidden bg-white/10 p-0.5 border border-white/10 shadow-xl transition-all group-hover:scale-105 group-hover:rotate-3">
-                  <img src={item.img} alt={item.alt} className="w-full h-full object-cover rounded-xl sm:rounded-[20px] transform scale-105" />
-                </div>
-              )}
+          {[0, 1].map((blockIdx) => (
+            <div key={`block-${blockIdx}`} className="flex shrink-0 items-center max-w-none">
+              {[0, 1].map((setIdx) => (
+                <React.Fragment key={`set-${blockIdx}-${setIdx}`}>
+                  {marqueeTexts.map((text, idx) => (
+                    <div key={`item-${blockIdx}-${setIdx}-${idx}`} className="flex items-center gap-10 sm:gap-16 px-5 sm:px-8 shrink-0 group max-w-none">
+                      <span className="text-white/90 text-sm sm:text-base font-black tracking-[0.25em] uppercase transition-colors group-hover:text-[#F28F3B] whitespace-nowrap max-w-none">
+                        {text}
+                      </span>
+                      <div className="w-2 h-2 rounded-full bg-white/10 shrink-0 group-hover:bg-[#F28F3B]/50 transition-colors duration-300" />
+                    </div>
+                  ))}
+                </React.Fragment>
+              ))}
             </div>
           ))}
         </motion.div>

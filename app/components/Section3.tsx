@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { motion, useMotionValue, useTransform, animate, useScroll, useSpring, AnimatePresence, useMotionTemplate } from 'framer-motion';
-import { Trash2, Flame, CloudRain, DollarSign, Play, X } from 'lucide-react';
+import { Trash2, Flame, CloudRain, DollarSign, Play, X, ArrowUpRight } from 'lucide-react';
 import { RiLeafLine } from 'react-icons/ri';
 
 interface ChartProps {
@@ -117,12 +117,12 @@ const problemCardData = [
     bgImage: "https://images.unsplash.com/photo-1553787499-6f9133860278?q=80&w=600",
     color: "#F28F3B",
     icon: <Trash2 size={24} />,
-    pos: { left: "15%", top: "20%" }, 
+    pos: { left: "4%", top: "10%" }, 
     rotation: -4,
     floatDelay: 0,
     Visual: MiniBarChart,
-    cablePath: "M 200 320 C 350 320, 450 460, 600 460",
-    nodeX: 200, nodeY: 320
+    cablePath: "M 250 280 C 400 280, 500 400, 600 400",
+    nodeX: 250, nodeY: 280
   },
   {
     id: 2,
@@ -134,12 +134,12 @@ const problemCardData = [
     bgImage: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=600",
     color: "#2D2A26",
     icon: <CloudRain size={24} />,
-    pos: { right: "14%", top: "18%" }, 
+    pos: { right: "4%", top: "10%" }, 
     rotation: 5,
     floatDelay: 0.5,
     Visual: MiniRingChart,
-    cablePath: "M 1000 290 C 850 290, 750 460, 600 460",
-    nodeX: 1000, nodeY: 290
+    cablePath: "M 950 260 C 800 260, 700 400, 600 400",
+    nodeX: 950, nodeY: 260
   },
   {
     id: 3,
@@ -151,12 +151,12 @@ const problemCardData = [
     bgImage: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=600",
     color: "#2D2A26",
     icon: <DollarSign size={24} />,
-    pos: { left: "16%", bottom: "5%" }, 
+    pos: { left: "6%", bottom: "16%" }, 
     rotation: 3,
     floatDelay: 1,
     Visual: MiniTrendLine,
-    cablePath: "M 250 690 C 400 690, 450 460, 600 460",
-    nodeX: 250, nodeY: 690
+    cablePath: "M 250 680 C 400 680, 500 400, 600 400",
+    nodeX: 250, nodeY: 680
   },
   {
     id: 4,
@@ -168,12 +168,12 @@ const problemCardData = [
     bgImage: "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?q=80&w=600",
     color: "#F28F3B",
     icon: <Flame size={24} />,
-    pos: { right: "16%", bottom: "5%" },
+    pos: { right: "5%", bottom: "18%" },
     rotation: -5,
     floatDelay: 1.5,
     Visual: MiniGaugeChart,
-    cablePath: "M 950 690 C 800 690, 750 460, 600 460",
-    nodeX: 950, nodeY: 690
+    cablePath: "M 950 660 C 800 660, 700 400, 600 400",
+    nodeX: 950, nodeY: 660
   }
 ];
 
@@ -184,7 +184,6 @@ const reelImages1 = [
   "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=800",
 ];
 const repeatedReel1 = [...reelImages1, ...reelImages1, ...reelImages1, ...reelImages1];
-
 
 const AnimatedNumber = ({ value }: { value: number }) => {
   const count = useMotionValue(0);
@@ -234,7 +233,7 @@ const TiltCard = ({ children, className, isDesktop }: { children: React.ReactNod
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-      className={`relative rounded-[24px] sm:rounded-[32px] overflow-hidden group ${className}`}
+      className={`relative overflow-hidden group ${className}`}
     >
       <div className="absolute -inset-[100%] bg-gradient-to-tr from-transparent via-white/40 to-transparent w-[300%] h-[300%] -rotate-45 -translate-x-[60%] pointer-events-none mix-blend-overlay" />
       {isDesktop && (
@@ -324,7 +323,16 @@ export default function Section3() {
   }, [isDesktop, magnetX, magnetY, cursorX, cursorY]);
 
   return (
-    <div id="problem" ref={containerRef} className="relative w-full max-w-full overflow-x-hidden font-[family:var(--font-jakarta)] bg-[#F4F3EE] lg:h-[250vh]">
+    <div id="problem" ref={containerRef} className="relative w-full max-w-full overflow-x-hidden font-[family:var(--font-jakarta)] bg-[#F4F3EE] lg:h-[220vh] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <style jsx global>{`
+        #problem *::-webkit-scrollbar {
+          display: none !important;
+        }
+        #problem * {
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+        }
+      `}</style>
       
       {isDesktop && (
         <motion.div
@@ -340,88 +348,88 @@ export default function Section3() {
         </motion.div>
       )}
 
-      <motion.div 
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.5 }}
-        className="absolute inset-0 z-0 overflow-hidden pointer-events-none flex flex-col justify-center gap-10"
-      >
-        <motion.div style={{ x: reel1X }} className="flex gap-6 w-max -rotate-6 transform-gpu">
-          {repeatedReel1.map((src, idx) => (
-            <div key={`reel1-${idx}`} className="w-[300px] md:w-[400px] h-[200px] md:h-[250px] rounded-3xl overflow-hidden shrink-0 shadow-sm border border-black/5">
-              <img src={src} alt="Background Reel" className="w-full h-full object-cover" />
-            </div>
-          ))}
-        </motion.div>
-        <motion.div style={{ x: reel2X }} className="flex gap-6 w-max -rotate-3 transform-gpu">
-          {repeatedReel1.map((src, idx) => (
-            <div key={`reel2-${idx}`} className="w-[300px] md:w-[400px] h-[200px] md:h-[250px] rounded-3xl overflow-hidden shrink-0 shadow-sm border border-black/5">
-              <img src={src} alt="Background Reel" className="w-full h-full object-cover" />
-            </div>
-          ))}
-        </motion.div>
-      </motion.div>
-
-      <div className="absolute inset-0 z-0 overflow-hidden max-w-full pointer-events-none">
-        <div className="absolute inset-0 bg-[#F4F3EE]/80 z-0" />
-        <div className="absolute inset-0 opacity-[0.2]" style={{ backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-        <motion.div animate={{ x: [0, 100, 0], y: [0, -50, 0] }} transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[5%] right-[5%] w-[300px] lg:w-[600px] h-[300px] lg:h-[600px] bg-[#F28F3B] rounded-full blur-[100px] lg:blur-[150px] opacity-20" />
-        <motion.div animate={{ x: [0, -100, 0], y: [0, 50, 0] }} transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[20%] left-[5%] w-[300px] lg:w-[500px] h-[300px] lg:h-[500px] bg-[#2D2A26] rounded-full blur-[100px] lg:blur-[150px] opacity-10" />
-      </div>
-
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.5 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1 }}
-        className="hidden lg:block absolute top-[30%] left-[25%] text-[#F28F3B]/10 z-0 pointer-events-none"
-      >
-        <motion.div animate={{ y: [0, -30, 0], rotate: [0, 15, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}>
-          <RiLeafLine size={80} />
-        </motion.div>
-      </motion.div>
-
-      <section className="lg:sticky lg:top-0 w-full max-w-full overflow-x-hidden min-h-screen z-10 flex flex-col pt-24 lg:pt-0 px-4 lg:px-0">
+      <section className="relative lg:sticky lg:top-0 w-full max-w-full overflow-hidden min-h-screen z-20 flex flex-col pt-12 lg:pt-8 px-4 lg:px-0 pb-10">
         
-        <div className="relative lg:absolute lg:top-24 w-full flex flex-col items-center justify-center text-center z-30 mb-8 lg:mb-0 select-none">
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <motion.div 
-            initial={{ rotate: -10, scale: 0, y: -20 }} 
-            whileInView={{ rotate: -3, scale: 1, y: 0 }} 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, type: "spring" }}
-            className="bg-[#2D2A26] text-white text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-md shadow-md mb-3"
+            transition={{ duration: 1.5 }}
+            className="absolute inset-0 flex flex-col justify-center gap-10"
+          >
+            <motion.div style={{ x: reel1X }} className="flex gap-6 w-max max-w-none -rotate-6 transform-gpu">
+              {repeatedReel1.map((src, idx) => (
+                <div key={`reel1-${idx}`} className="w-[300px] md:w-[400px] h-[200px] md:h-[250px] rounded-3xl overflow-hidden shrink-0 shadow-sm border border-black/5 max-w-none">
+                  <img src={src} alt="Background Reel" className="w-full h-full object-cover max-w-none" />
+                </div>
+              ))}
+            </motion.div>
+            <motion.div style={{ x: reel2X }} className="flex gap-6 w-max max-w-none -rotate-3 transform-gpu">
+              {repeatedReel1.map((src, idx) => (
+                <div key={`reel2-${idx}`} className="w-[300px] md:w-[400px] h-[200px] md:h-[250px] rounded-3xl overflow-hidden shrink-0 shadow-sm border border-black/5 max-w-none">
+                  <img src={src} alt="Background Reel" className="w-full h-full object-cover max-w-none" />
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          <div className="absolute inset-0 bg-[#F4F3EE]/85 z-0" />
+          <div className="absolute inset-0 opacity-[0.2]" style={{ backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+          <motion.div animate={{ x: [0, 100, 0], y: [0, -50, 0] }} transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[5%] right-[5%] w-[300px] lg:w-[600px] h-[300px] lg:h-[600px] bg-[#F28F3B] rounded-full blur-[100px] lg:blur-[150px] opacity-20" />
+          <motion.div animate={{ x: [0, -100, 0], y: [0, 50, 0] }} transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[20%] left-[5%] w-[300px] lg:w-[500px] h-[300px] lg:h-[500px] bg-[#2D2A26] rounded-full blur-[100px] lg:blur-[150px] opacity-10" />
+          
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.5 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1 }}
+            className="hidden lg:block absolute top-[30%] left-[25%] text-[#F28F3B]/10 z-0 pointer-events-none"
+          >
+            <motion.div animate={{ y: [0, -30, 0], rotate: [0, 15, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}>
+              <RiLeafLine size={80} />
+            </motion.div>
+          </motion.div>
+        </div>
+
+        <div className="relative lg:absolute lg:top-0 w-full flex flex-col items-center justify-center text-center z-30 pt-16 lg:pt-24 mb-0 select-none">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.4, rotate: -20, y: 30 }}
+            whileInView={{ opacity: 1, scale: 1, rotate: -3, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ type: "spring", stiffness: 150, damping: 12, mass: 0.8 }}
+            className="bg-[#2D2A26] text-white text-[9px] sm:text-xs font-black uppercase tracking-[0.3em] px-3 py-1 rounded-md shadow-md mb-2"
           >
             The Critical Chaos
           </motion.div>
           
-          <h2 className="relative font-black uppercase tracking-tighter leading-[0.75] flex flex-col items-center">
+          <h2 className="relative font-black uppercase tracking-tighter leading-[0.8] flex flex-col items-center">
             <motion.span 
-              initial={{ y: 50, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
+              initial={{ y: 80, opacity: 0, scale: 0.9 }}
+              whileInView={{ y: 0, opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, type: "spring", bounce: 0.3 }}
-              className="text-[55px] sm:text-[90px] md:text-[110px] lg:text-[130px] text-[#2D2A26] block tracking-tight"
+              transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+              className="text-[38px] sm:text-[60px] md:text-[75px] lg:text-[85px] text-[#2D2A26] block tracking-tight"
             >
               THE PROBLEM
             </motion.span>
             
             <motion.span 
-              initial={{ scale: 0.8, opacity: 0, rotate: 10 }}
-              whileInView={{ scale: 1, opacity: 1, rotate: -1.5 }}
+              initial={{ scale: 0.4, opacity: 0, rotate: 15, y: 30 }}
+              whileInView={{ scale: 1, opacity: 1, rotate: -1.5, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2, type: "spring" }}
-              className="text-[28px] sm:text-[44px] md:text-[56px] lg:text-[64px] bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-8 py-2 rounded-2xl md:rounded-[24px] shadow-[0_20px_40px_rgba(242,143,59,0.3)] block mt-2 border-4 border-white transform"
+              transition={{ duration: 0.6, delay: 0.2, type: "spring", stiffness: 150, damping: 12 }}
+              className="text-[20px] sm:text-[32px] md:text-[40px] lg:text-[44px] bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-6 py-1.5 rounded-xl md:rounded-[20px] shadow-[0_15px_30px_rgba(242,143,59,0.25)] block mt-1.5 border-2 border-white transform"
             >
               WE FACE
             </motion.span>
           </h2>
         </div>
 
-        <div className="relative w-full max-w-7xl mx-auto flex flex-col lg:block h-auto lg:h-[800px] justify-center pb-20 lg:pb-0 z-20 pt-32 lg:pt-40">
+        <div className="relative w-full max-w-7xl mx-auto flex flex-col lg:block h-auto lg:h-[720px] justify-center z-20 pt-20 lg:pt-36 overflow-hidden">
           
           {isDesktop && (
-            <svg viewBox="0 0 1200 800" className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible">
+            <svg viewBox="0 0 1200 800" className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible">
               <defs>
                 {problemCardData.map((card) => (
                   <linearGradient key={`grad-${card.id}`} id={`cableGrad-${card.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -483,10 +491,10 @@ export default function Section3() {
             viewport={{ once: true }}
             transition={{ duration: 0.8, type: "spring", bounce: 0.5, delay: 0.3 }}
             style={isDesktop ? { x: smoothMagnetX, y: smoothMagnetY } : {}}
-            className="relative lg:absolute lg:left-1/2 lg:top-[58%] lg:-translate-x-1/2 lg:-translate-y-1/2 z-20 flex items-center justify-center mb-10 lg:mb-0 mt-8 lg:mt-0"
+            className="relative lg:absolute lg:left-1/2 lg:top-[50%] lg:-translate-x-1/2 lg:-translate-y-1/2 z-20 flex items-center justify-center mb-16 sm:mb-20 lg:mb-0 mt-8 sm:mt-12 lg:mt-0"
           >
             {isDesktop && (
-              <motion.div animate={{ rotate: 360 }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} className="absolute w-[350px] h-[350px] pointer-events-none opacity-20">
+              <motion.div animate={{ rotate: 360 }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} className="absolute w-[280px] h-[280px] pointer-events-none opacity-20">
                 <svg viewBox="0 0 200 200" className="w-full h-full fill-[#2D2A26]">
                   <path id="textPath" d="M 100, 100 m -75, 0 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0" fill="none" />
                   <text className="text-[14px] font-black uppercase tracking-[0.2em]">
@@ -496,28 +504,28 @@ export default function Section3() {
               </motion.div>
             )}
 
-            <div className="relative w-40 h-40 sm:w-48 sm:h-48 xl:w-60 xl:h-60 rounded-full bg-gradient-to-br from-[#F28F3B] to-[#FF6B35] shadow-[0_30px_60px_rgba(242,143,59,0.3)] flex flex-col items-center justify-center border-[4px] sm:border-[6px] border-white backdrop-blur-md cursor-none z-10 transition-transform duration-300">
-              <div className="flex gap-5 sm:gap-6 xl:gap-8 mb-3 sm:mb-4">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 xl:w-12 xl:h-12 bg-white rounded-full flex items-center justify-center shadow-inner overflow-hidden border border-black/5">
+            <div className="relative w-36 h-36 sm:w-44 sm:h-44 xl:w-48 xl:h-48 rounded-full bg-gradient-to-br from-[#F28F3B] to-[#FF6B35] shadow-[0_25px_50px_rgba(242,143,59,0.3)] flex flex-col items-center justify-center border-[4px] sm:border-[5px] border-white backdrop-blur-md cursor-none z-20 transition-transform duration-300">
+              <div className="flex gap-4 sm:gap-5 xl:gap-6 mb-2 sm:mb-3">
+                <div className="w-7 h-7 sm:w-9 sm:h-9 xl:w-10 xl:h-10 bg-white rounded-full flex items-center justify-center shadow-inner overflow-hidden border border-black/5">
                   <div ref={leftEyeRef} className="flex items-center justify-center w-full h-full">
-                    <motion.div animate={{ scale: hoveredCard ? 2.5 : 1 }} transition={{ duration: 0.3, type: "spring", bounce: 0.5 }} className="w-3 h-3 sm:w-4 sm:h-4 xl:w-5 xl:h-5 bg-[#2D2A26] rounded-full" />
+                    <motion.div animate={{ scale: hoveredCard ? 2.5 : 1 }} transition={{ duration: 0.3, type: "spring", bounce: 0.5 }} className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 xl:w-4 bg-[#2D2A26] rounded-full" />
                   </div>
                 </div>
-                <div className="w-8 h-8 sm:w-10 sm:h-10 xl:w-12 xl:h-12 bg-white rounded-full flex items-center justify-center shadow-inner overflow-hidden border border-black/5">
+                <div className="w-7 h-7 sm:w-9 sm:h-9 xl:w-10 xl:h-10 bg-white rounded-full flex items-center justify-center shadow-inner overflow-hidden border border-black/5">
                   <div ref={rightEyeRef} className="flex items-center justify-center w-full h-full">
-                    <motion.div animate={{ scale: hoveredCard ? 2.5 : 1 }} transition={{ duration: 0.3, type: "spring", bounce: 0.5 }} className="w-3 h-3 sm:w-4 sm:h-4 xl:w-5 xl:h-5 bg-[#2D2A26] rounded-full" />
+                    <motion.div animate={{ scale: hoveredCard ? 2.5 : 1 }} transition={{ duration: 0.3, type: "spring", bounce: 0.5 }} className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 xl:w-4 bg-[#2D2A26] rounded-full" />
                   </div>
                 </div>
               </div>
               <motion.div 
-                animate={{ width: hoveredCard ? "1.5rem" : "3rem", height: hoveredCard ? "2rem" : "0.75rem", borderRadius: hoveredCard ? "50%" : "9999px" }}
+                animate={{ width: hoveredCard ? "1.25rem" : "2.5rem", height: hoveredCard ? "1.75rem" : "0.65rem", borderRadius: hoveredCard ? "50%" : "9999px" }}
                 transition={{ duration: 0.3, type: "spring", bounce: 0.5 }}
-                className="mt-2 opacity-80 xl:h-5 sm:h-4 bg-[#2D2A26]" 
+                className="mt-1.5 opacity-80 xl:h-3.5 sm:h-3 bg-[#2D2A26]" 
               />
             </div>
           </motion.div>
 
-          <div className="w-full max-w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:block relative z-30 px-4 sm:px-6 lg:px-0 h-full">
+          <div className="w-full max-w-full grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:block relative z-30 px-4 sm:px-6 lg:px-0 h-full pb-4 overflow-hidden">
             {problemCardData.map((card, idx) => {
               const isHovered = hoveredCard === card.id;
 
@@ -526,20 +534,20 @@ export default function Section3() {
                   key={card.id}
                   onMouseEnter={() => setHoveredCard(card.id)}
                   onMouseLeave={() => setHoveredCard(null)}
-                  style={isDesktop ? { position: 'absolute', ...card.pos, zIndex: isHovered ? 40 : 30, width: '100%', maxWidth: '340px', perspective: '1000px' } : {}}
+                  style={isDesktop ? { position: 'absolute', ...card.pos, zIndex: isHovered ? 40 : 30, width: '100%', maxWidth: '300px', perspective: '1000px' } : {}}
                   className="w-full relative lg:absolute"
                 >
                   <motion.div 
-                    initial={{ opacity: 0, y: 50, scale: 0.9 }} 
+                    initial={{ opacity: 0, y: 40, scale: 0.9 }} 
                     whileInView={{ opacity: 1, y: 0, scale: 1, rotate: isDesktop ? card.rotation : 0 }} 
                     viewport={{ once: true, margin: "-5%" }} 
-                    transition={{ duration: 0.8, delay: isDesktop ? 0.4 + idx * 0.15 : 0.2, type: "spring", bounce: 0.4 }}
+                    transition={{ duration: 0.8, delay: isDesktop ? 0.3 + idx * 0.12 : 0.2, type: "spring", bounce: 0.4 }}
                   >
                     <motion.div
-                      animate={isDesktop ? { y: [0, -15, 0] } : {}}
+                      animate={isDesktop ? { y: [0, -12, 0] } : {}}
                       transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: card.floatDelay }}
                     >
-                      <TiltCard isDesktop={isDesktop} className="w-full">
+                      <TiltCard isDesktop={isDesktop} className="w-full rounded-[20px] sm:rounded-[28px]">
                         <motion.div
                           animate={{
                             backgroundColor: isHovered ? card.color : "#FFFFFF",
@@ -547,14 +555,14 @@ export default function Section3() {
                             scale: isHovered ? 1.03 : 1,
                           }}
                           transition={{ duration: 0.3, ease: "easeOut" }}
-                          className="flex flex-col h-full relative border-2 p-5 sm:p-6 rounded-[24px] sm:rounded-[32px] shadow-[0_12px_40px_rgba(0,0,0,0.06)] overflow-hidden"
+                          className="flex flex-col h-full relative border-2 p-4 sm:p-5 rounded-[20px] sm:rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.06)] overflow-hidden"
                         >
                           <motion.div 
                             animate={{ color: isHovered ? "#FFFFFF" : "#2D2A26" }}
                             style={{ transform: isDesktop ? "translateZ(40px)" : "none" }} 
                             className="flex flex-col h-full relative z-10"
                           >
-                            <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-start justify-between mb-2">
                               <motion.div 
                                 animate={{ 
                                   backgroundColor: isHovered ? "rgba(255,255,255,0.2)" : "rgba(244,243,238,1)",
@@ -562,58 +570,66 @@ export default function Section3() {
                                   rotate: isHovered ? [0, -10, 10, -10, 0] : 0
                                 }}
                                 transition={{ duration: 0.5, repeat: isHovered ? Infinity : 0, repeatDelay: 1 }}
-                                className="p-2.5 sm:p-3 rounded-2xl shadow-inner"
+                                className="p-2 sm:p-2.5 rounded-xl shadow-inner"
                               >
                                 {card.icon}
                               </motion.div>
-                              <div className="h-10 sm:h-12 flex items-center">
+                              <div className="h-8 sm:h-10 flex items-center">
                                 <card.Visual isHovered={isHovered} color={card.color} />
                               </div>
                             </div>
 
-                            <div className="mt-1">
+                            <div className="mt-1 relative">
                               <motion.h3 
                                 animate={{ color: isHovered ? "rgba(255,255,255,0.7)" : "rgba(45,42,38,0.5)" }}
-                                className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.15em] mb-1"
+                                className="text-[10px] font-black uppercase tracking-[0.15em] mb-0.5"
                               >
                                 {card.title}
                               </motion.h3>
-                              <div className="flex items-baseline gap-1 mb-1">
-                                <span className="text-3xl sm:text-4xl font-black tracking-tighter leading-none drop-shadow-sm">
+                              <div className="flex items-baseline gap-1 mb-0.5">
+                                <span className="text-2xl sm:text-3xl font-black tracking-tighter leading-none drop-shadow-sm">
                                   <AnimatedNumber value={card.value} />
                                 </span>
                               </div>
                               <motion.p 
                                 animate={{ color: isHovered ? "#FFFFFF" : "#F28F3B" }}
-                                className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider mb-2"
+                                className="text-[9px] font-bold uppercase tracking-wider mb-1.5"
                               >
                                 {card.unit}
                               </motion.p>
                               <motion.div 
                                 animate={{ background: isHovered ? "linear-gradient(90deg, rgba(255,255,255,0.3) 0%, transparent 100%)" : "linear-gradient(90deg, rgba(45,42,38,0.1) 0%, transparent 100%)" }}
-                                className="w-full h-px mb-2" 
+                                className="w-full h-px mb-1.5" 
                               />
                               <motion.p 
                                 animate={{ color: isHovered ? "rgba(255,255,255,0.9)" : "rgba(45,42,38,0.6)" }}
-                                className="text-xs sm:text-sm font-medium leading-relaxed"
+                                className="text-xs font-medium leading-relaxed"
                               >
                                 {card.description}
                               </motion.p>
+
+                              <motion.div
+                                animate={{ opacity: isHovered ? 0 : 1 }}
+                                transition={{ duration: 0.2 }}
+                                className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[#2D2A26]/5 backdrop-blur-sm flex items-center justify-center text-[#2D2A26]/60 transition-colors group-hover:bg-transparent"
+                              >
+                                <ArrowUpRight size={16} />
+                              </motion.div>
 
                               <motion.div
                                 initial={{ height: 0, opacity: 0, marginTop: 0 }}
                                 animate={{ 
                                   height: isHovered ? "auto" : 0, 
                                   opacity: isHovered ? 1 : 0,
-                                  marginTop: isHovered ? 16 : 0
+                                  marginTop: isHovered ? 12 : 0
                                 }}
                                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                                className="overflow-hidden flex flex-col gap-3"
+                                className="overflow-hidden flex flex-col gap-2.5"
                               >
-                                <p className="text-[13px] leading-relaxed text-white/90 font-medium bg-black/10 p-3 rounded-xl border border-white/10">
+                                <p className="text-[12px] leading-relaxed text-white/90 font-medium bg-black/10 p-2.5 rounded-xl border border-white/10">
                                   {card.fullExplanation}
                                 </p>
-                                <div className="w-full h-28 rounded-xl overflow-hidden shadow-md relative border border-white/20">
+                                <div className="w-full h-24 rounded-xl overflow-hidden shadow-md relative border border-white/20">
                                   <img 
                                     src={card.bgImage} 
                                     alt={card.title} 
@@ -637,56 +653,58 @@ export default function Section3() {
         </div>
       </section>
 
-      <div className="hidden lg:block h-[50vh] w-full pointer-events-none" />
+      <div className="w-full h-[5vh] lg:h-[12vh] pointer-events-none z-10 relative" />
 
       <motion.section 
         style={isDesktop ? { scale: sec2Scale, rotate: sec2Rotate, transformOrigin: "bottom center" } : {}}
-        className="relative z-10 w-full max-w-full overflow-hidden min-h-[70vh] lg:h-screen bg-[#F4F3EE] flex items-center justify-center px-4 md:px-6 py-10 lg:py-0 lg:shadow-[0_-20px_50px_rgba(0,0,0,0.1)]"
+        className="relative z-10 w-full max-w-full overflow-hidden lg:h-[120vh] flex items-center justify-center px-4 md:px-6 pt-16 pb-24 lg:py-0"
       >
-        <motion.div
-          initial={{ opacity: 0, y: 100 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
-          onMouseEnter={() => setIsHoveringVideo(true)}
-          onMouseLeave={() => setIsHoveringVideo(false)}
-          onClick={() => setShowModal(true)}
-          className="relative w-full max-w-6xl mx-auto aspect-[4/3] sm:aspect-video rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-[0_20px_40px_-10px_rgba(0,0,0,0.2)] bg-white border border-white/50 lg:cursor-none transition-transform hover:scale-[1.01] duration-500 group"
-        >
-          <div className="absolute inset-0 w-full h-full opacity-90 group-hover:opacity-100 transition-opacity duration-500">
-            <iframe className="w-full h-full pointer-events-none scale-105" src="https://www.youtube.com/embed/ishA6kry8nc?autoplay=1&mute=1&loop=1&playlist=ishA6kry8nc&controls=0&modestbranding=1&rel=0" allow="autoplay; encrypted-media" />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#2D2A26]/90 via-[#2D2A26]/20 to-transparent z-10 pointer-events-none" />
-          
-          <div className="absolute bottom-6 md:bottom-24 left-6 md:left-12 right-6 md:right-12 z-20 text-white pointer-events-none">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="flex items-center gap-3 mb-4 md:mb-5"
-            >
-              <div className="h-1.5 w-10 md:w-14 bg-[#F28F3B] rounded-full" />
-              <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.3em] text-white/80">Click to Play with Sound</span>
-            </motion.div>
-            <motion.h3 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-lg sm:text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-tighter leading-[0.9]"
-            >
-              Saving Food,<br />
-              <span className="text-[#F28F3B]">Empowering Locals.</span>
-            </motion.h3>
-          </div>
-
-          {!isDesktop && (
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-[#F28F3B] rounded-full flex items-center justify-center text-white shadow-lg pointer-events-none z-20">
-              <Play fill="white" size={24} className="ml-1" />
+        <TiltCard isDesktop={isDesktop} className="w-full max-w-6xl mx-auto aspect-[4/3] sm:aspect-video rounded-[24px] sm:rounded-[32px] shadow-[0_20px_40px_-10px_rgba(0,0,0,0.2)] border border-white/50">
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
+            onMouseEnter={() => setIsHoveringVideo(true)}
+            onMouseLeave={() => setIsHoveringVideo(false)}
+            onClick={() => setShowModal(true)}
+            className="w-full h-full lg:cursor-none transition-transform hover:scale-[1.01] duration-500 relative"
+          >
+            <div className="absolute inset-0 w-full h-full opacity-90 group-hover:opacity-100 transition-opacity duration-500">
+              <iframe className="w-full h-full pointer-events-none scale-105" src="https://www.youtube.com/embed/ishA6kry8nc?autoplay=1&mute=1&loop=1&playlist=ishA6kry8nc&controls=0&modestbranding=1&rel=0" allow="autoplay; encrypted-media" />
             </div>
-          )}
-        </motion.div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#2D2A26]/90 via-[#2D2A26]/20 to-transparent z-10 pointer-events-none" />
+            
+            <div className="absolute bottom-6 md:bottom-24 left-6 md:left-12 right-6 md:right-12 z-20 text-white pointer-events-none">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                className="flex items-center gap-3 mb-4 md:mb-5"
+              >
+                <div className="h-1.5 w-10 md:w-14 bg-[#F28F3B] rounded-full" />
+                <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.3em] text-white/80">Click to Play with Sound</span>
+              </motion.div>
+              <motion.h3 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+                className="text-lg sm:text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-tighter leading-[0.9]"
+              >
+                Saving Food,<br />
+                <span className="text-[#F28F3B]">Empowering Locals.</span>
+              </motion.h3>
+            </div>
+
+            {!isDesktop && (
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-[#F28F3B] rounded-full flex items-center justify-center text-white shadow-lg pointer-events-none z-20">
+                <Play fill="white" size={24} className="ml-1" />
+              </div>
+            )}
+          </motion.div>
+        </TiltCard>
       </motion.section>
 
       <AnimatePresence>
