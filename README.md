@@ -35,16 +35,24 @@
 
   <br/>
 
-  <div align="center">
-    <a href="https://saverish.web.id" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #F28F3B 0%, #FF6B35 100%); border-radius: 16px; padding: 18px 48px; box-shadow: 0 8px 32px rgba(242,143,59,0.3); text-decoration: none;">
-      <p style="font-size: 0.65rem; font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.7); margin: 0 0 4px 0;">
-        LIVE DEMO
-      </p>
-      <span style="font-size: 1.4rem; font-weight: 900; color: #fff; letter-spacing: -0.01em;">
-        saverish.web.id
-      </span>
-    </a>
-  </div>
+  <table align="center" style="border-collapse: separate; border-spacing: 0; width: 100%; max-width: 500px;">
+    <tr>
+      <td style="background: linear-gradient(135deg, #F28F3B 0%, #FF6B35 50%, #F28F3B 100%); border-radius: 16px; padding: 2px;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="background: #F4F3EE; border-radius: 14px; padding: 20px 32px; text-align: center;">
+              <p style="font-size: 0.6rem; font-weight: 900; letter-spacing: 0.4em; text-transform: uppercase; color: #F28F3B; margin: 0 0 8px 0;">
+                Live Demo
+              </p>
+              <a href="https://saverish.web.id" target="_blank" style="font-size: 1.5rem; font-weight: 900; color: #2D2A26; text-decoration: none; letter-spacing: -0.02em; border-bottom: 3px solid #F28F3B; padding-bottom: 2px;">
+                saverish.web.id
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 
   <br/>
 </div>
@@ -164,15 +172,15 @@ Saverish mengadopsi alur penyelamatan makanan yang terintegrasi dari eksplorasi 
        │
 [2. Autentikasi] ──> Masuk ke Halaman Login ──> Pilih mode Sign In atau Sign Up ──> Transisi animasi geser dinamis
        │
-[3. Dashboard] ──> Masuk ke Ruang Kendali ──> Lihat grafik dampak lingkungan, metrik penyelamatan, & penawaran terdekat
+[3. Dashboard] ──> Masuk ke Ruang Kendali ─> Lihat grafik dampak lingkungan, metrik penyelamatan, & penawaran terdekat
        │
-[4. Pemesanan] ─> Pilih Surplus Box dari merchant ──> Tambahkan ke keranjang ──> Lanjut ke Checkout
+[4. Pemesanan] ──> Pilih Surplus Box dari merchant ──> Tambahkan ke keranjang ──> Lanjut ke Checkout
        │
-[5. Pembayaran] ─> Pilih metode pembayaran di Halaman Payment ──> Review ringkasan pesanan ──> Konfirmasi & Bayar
+[5. Pembayaran] ──> Pilih metode pembayaran di Halaman Payment ──> Review ringkasan pesanan ──> Konfirmasi & Bayar
        │
 [6. Pengambilan] ──> Ikuti panduan pickup 3 langkah di Halaman Pickup Guide ──> Datang ke merchant ──> Tunjukkan Order ID ──> Tandai "Collected"
        │
-[7. Pembaruan Dampak] ──> Kembali ke Dashboard ──> Eco-Points bertambah ─> CO2 Offset ter-update ──> Goal progress meningkat
+[7. Pembaruan Dampak] ──> Kembali ke Dashboard ──> Eco-Points bertambah ──> CO2 Offset ter-update ──> Goal progress meningkat
 ```
 
 ---
@@ -181,10 +189,10 @@ Saverish mengadopsi alur penyelamatan makanan yang terintegrasi dari eksplorasi 
 
 ```
 SEFEST26WEBDESIGN_LosTresDisenadores/
-── .git/
+├── .git/
 ├── .gitignore
 ├── .hintrc
-├── .next/
+── .next/
 ├── eslint.config.mjs
 ├── next-env.d.ts
 ├── next.config.ts              # Konfigurasi Next.js (pola gambar remote untuk Unsplash)
@@ -205,7 +213,7 @@ SEFEST26WEBDESIGN_LosTresDisenadores/
 │   ├── SaSVG.svg
 │   └── ...
 │
-── src/                        # Logika bersama, tipe, konstanta, hooks
+├── src/                        # Logika bersama, tipe, konstanta, hooks
 │   ├── components/             # Komponen UI yang dapat digunakan ulang
 │   │   ├── footer/
 │   │   ├── hero/
@@ -226,9 +234,9 @@ SEFEST26WEBDESIGN_LosTresDisenadores/
 │   │   └── navbar.ts
 │   └── utils/                  # Fungsi utilitas
 │       ├── animation.ts
-│       ── device.ts
+│       └── device.ts
 │
-└── app/                        # Next.js App Router -- semua rute & halaman
+── app/                        # Next.js App Router -- semua rute & halaman
     ├── globals.css             # CSS global (direktif Tailwind, variabel CSS)
     ├── layout.tsx              # Layout root (font, metadata, tag OG)
     ├── page.tsx                # Landing page (Intro -> Hero -> Section -> FAQ -> Footer)
@@ -252,11 +260,11 @@ SEFEST26WEBDESIGN_LosTresDisenadores/
     │
     ├── login/                  # Rute: /login
     │   ├── page.tsx            # Auth split-screen dengan animasi spring clip-path
-    │   ── components/
+    │   └── components/
     │       └── ForgotPasswordModal.tsx
     │
     ├── dashboard/              # Rute: /dashboard
-    │   ── page.tsx            # Analitik, metrik, deal, gamifikasi
+    │   └── page.tsx            # Analitik, metrik, deal, gamifikasi
     │
     ├── payment/                # Rute: /payment
     │   ├── page.tsx            # Alur checkout (pemilihan metode + ringkasan)
