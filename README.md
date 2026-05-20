@@ -18,7 +18,6 @@
 
   <br/>
 
-  <!-- BADGES -->
   <p align="center">
     <img src="https://img.shields.io/badge/Next.js%2016-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js 16" />
     <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
@@ -35,7 +34,22 @@
   </p>
 
   <br/>
+
+  <div align="center">
+    <a href="https://saverish.web.id" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #F28F3B 0%, #FF6B35 100%); border-radius: 16px; padding: 18px 48px; box-shadow: 0 8px 32px rgba(242,143,59,0.3); text-decoration: none;">
+      <p style="font-size: 0.65rem; font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.7); margin: 0 0 4px 0;">
+        LIVE DEMO
+      </p>
+      <span style="font-size: 1.4rem; font-weight: 900; color: #fff; letter-spacing: -0.01em;">
+        saverish.web.id
+      </span>
+    </a>
+  </div>
+
+  <br/>
 </div>
+
+---
 
 ## Daftar Isi
 
@@ -47,6 +61,7 @@
 - [Standar Kode & Skalabilitas](#standar-kode--skalabilitas)
 - [Kontributor Proyek](#kontributor-proyek)
 
+---
 
 ## Gambaran Proyek & Keselarasan SDG
 
@@ -64,7 +79,7 @@ Daripada membiarkan makanan yang masih layak terbuang di akhir hari, Saverish be
 | **12.5** -- Mengurangi secara substansial pembuangan limbah melalui pencegahan, pengurangan, daur ulang & penggunaan ulang | Saverish mengalihkan makanan surplus yang masih layak dari pembuangan ke konsumsi, memperpanjang siklus hidup makanan yang telah disiapkan. |
 | **12.8** -- Memastikan semua orang memiliki informasi & kesadaran yang relevan untuk pembangunan berkelanjutan | Dashboard Impact Analytics memvisualisasikan performa keberlanjutan, mengedukasi pengguna tentang kontribusi lingkungan pribadi mereka. |
 
-
+---
 
 ## Tech Stack & Prasyarat
 
@@ -95,7 +110,7 @@ node -v   # v20.x atau lebih tinggi
 npm -v    # v10.x atau lebih tinggi
 ```
 
-
+---
 
 ## Panduan Instalasi Langkah demi Langkah
 
@@ -138,7 +153,7 @@ Buka **[http://localhost:3000](http://localhost:3000)** di peramban Anda untuk m
 
 > **Tips:** Untuk pengalaman terbaik, gunakan peramban modern (Chrome, Edge, atau Firefox) dengan akselerasi perangkat keras diaktifkan agar dapat sepenuhnya menikmati animasi scroll GSAP dan kursor kustom.
 
-
+---
 
 ## Alur Kerja Sistem
 
@@ -151,21 +166,22 @@ Saverish mengadopsi alur penyelamatan makanan yang terintegrasi dari eksplorasi 
        │
 [3. Dashboard] ──> Masuk ke Ruang Kendali ──> Lihat grafik dampak lingkungan, metrik penyelamatan, & penawaran terdekat
        │
-[4. Pemesanan] ──> Pilih Surplus Box dari merchant ──> Tambahkan ke keranjang ──> Lanjut ke Checkout
+[4. Pemesanan] ─> Pilih Surplus Box dari merchant ──> Tambahkan ke keranjang ──> Lanjut ke Checkout
        │
-[5. Pembayaran] ──> Pilih metode pembayaran di Halaman Payment ──> Review ringkasan pesanan ──> Konfirmasi & Bayar
+[5. Pembayaran] ─> Pilih metode pembayaran di Halaman Payment ──> Review ringkasan pesanan ──> Konfirmasi & Bayar
        │
 [6. Pengambilan] ──> Ikuti panduan pickup 3 langkah di Halaman Pickup Guide ──> Datang ke merchant ──> Tunjukkan Order ID ──> Tandai "Collected"
        │
-[7. Pembaruan Dampak] ──> Kembali ke Dashboard ──> Eco-Points bertambah ──> CO2 Offset ter-update ──> Goal progress meningkat
+[7. Pembaruan Dampak] ──> Kembali ke Dashboard ──> Eco-Points bertambah ─> CO2 Offset ter-update ──> Goal progress meningkat
 ```
 
+---
 
 ## Struktur Direktori Proyek
 
 ```
 SEFEST26WEBDESIGN_LosTresDisenadores/
-├── .git/
+── .git/
 ├── .gitignore
 ├── .hintrc
 ├── .next/
@@ -189,7 +205,7 @@ SEFEST26WEBDESIGN_LosTresDisenadores/
 │   ├── SaSVG.svg
 │   └── ...
 │
-├── src/                        # Logika bersama, tipe, konstanta, hooks
+── src/                        # Logika bersama, tipe, konstanta, hooks
 │   ├── components/             # Komponen UI yang dapat digunakan ulang
 │   │   ├── footer/
 │   │   ├── hero/
@@ -210,7 +226,7 @@ SEFEST26WEBDESIGN_LosTresDisenadores/
 │   │   └── navbar.ts
 │   └── utils/                  # Fungsi utilitas
 │       ├── animation.ts
-│       └── device.ts
+│       ── device.ts
 │
 └── app/                        # Next.js App Router -- semua rute & halaman
     ├── globals.css             # CSS global (direktif Tailwind, variabel CSS)
@@ -236,11 +252,11 @@ SEFEST26WEBDESIGN_LosTresDisenadores/
     │
     ├── login/                  # Rute: /login
     │   ├── page.tsx            # Auth split-screen dengan animasi spring clip-path
-    │   └── components/
+    │   ── components/
     │       └── ForgotPasswordModal.tsx
     │
     ├── dashboard/              # Rute: /dashboard
-    │   └── page.tsx            # Analitik, metrik, deal, gamifikasi
+    │   ── page.tsx            # Analitik, metrik, deal, gamifikasi
     │
     ├── payment/                # Rute: /payment
     │   ├── page.tsx            # Alur checkout (pemilihan metode + ringkasan)
@@ -252,7 +268,7 @@ SEFEST26WEBDESIGN_LosTresDisenadores/
         └── page.tsx            # Timeline pickup 3 langkah dengan garis progress gradien
 ```
 
-
+---
 
 ## Standar Kode & Skalabilitas
 
@@ -283,6 +299,8 @@ SEFEST26WEBDESIGN_LosTresDisenadores/
 | **Manajemen state** | Saat ini ringan -- dapat berkembang secara alami ke Zustand atau Jotai untuk state lintas rute (misalnya, keranjang, token auth). |
 | **Testing** | Jest + React Testing Library untuk unit test; Playwright atau Cypress untuk alur E2E. |
 
+---
+
 ## Kontributor Proyek
 
 Proyek ini dirancang dan didevelop secara kolaboratif oleh tim **Los Tres Diseñadores**:
@@ -290,6 +308,7 @@ Proyek ini dirancang dan didevelop secara kolaboratif oleh tim **Los Tres Diseñ
 | [<img src="https://avatars.githubusercontent.com/u/170993776?v=4" width="100px;"/><br /><sub><b>@SuryaJayanata</b></sub>](https://github.com/SuryaJayanata) | [<img src="https://avatars.githubusercontent.com/u/184349613?v=4" width="100px;"/><br /><sub><b>@Marvellbrazil</b></sub>](https://github.com/Marvellbrazil) | [<img src="https://avatars.githubusercontent.com/u/222225219?v=4" width="100px;"/><br /><sub><b>@kjiovani</b></sub>](https://github.com/kjiovani) |
 | :---: | :---: | :---: |
 
+---
 
 <div align="center">
   <br/>
