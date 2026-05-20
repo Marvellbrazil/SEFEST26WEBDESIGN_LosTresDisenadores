@@ -635,7 +635,7 @@ export default function Hero() {
         >
           <div 
             ref={searchFieldRef}
-            className="flex items-center w-125 max-w-70 sm:max-w-75 bg-white rounded-full p-1 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.1)] border border-[#2D2A26]/5 focus-within:ring-4 focus-within:ring-[#F28F3B]/20 transition-all duration-300"
+            className="flex items-center w-125 max-w-70 sm:max-w-90 bg-white rounded-full p-1 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.1)] border border-[#2D2A26]/5 focus-within:ring-4 focus-within:ring-[#F28F3B]/20 transition-all duration-300"
           >
             <div className="flex-1 flex items-center gap-1.5 pl-3">
               <RiMapPinLine className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#F28F3B] shrink-0" />
