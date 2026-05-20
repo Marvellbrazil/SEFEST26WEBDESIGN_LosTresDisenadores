@@ -5,6 +5,12 @@
   --font-jakarta: var(--font-jakarta);
 }
 
+@layer components {
+  .highlight {
+    @apply bg-linear-to-r from-[#F28F3B] to-[#FF6B35] text-white px-5 sm:px-6 py-3 rounded-2xl sm:rounded-[20px] shadow-[0_15px_30px_rgba(242,143,59,0.25)] border-4 border-white transform inline-block;
+  }
+}
+
 :root {
   --background: #f4f3ee;
   --foreground: #2d2a26;

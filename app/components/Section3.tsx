@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable react-hooks/purity */
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
@@ -5,6 +7,7 @@ import { gsap } from 'gsap';
 import { motion, useMotionValue, useTransform, animate, useScroll, useSpring, AnimatePresence, useMotionTemplate } from 'framer-motion';
 import { Trash2, Flame, CloudRain, DollarSign, Play, X, ArrowUpRight } from 'lucide-react';
 import { RiLeafLine } from 'react-icons/ri';
+import Image from 'next/image';
 
 interface ChartProps {
   isHovered: boolean;
@@ -53,7 +56,7 @@ const MiniRingChart = ({ isHovered, color }: ChartProps) => (
   </motion.div>
 );
 
-const MiniTrendLine = ({ isHovered, color }: ChartProps) => (
+const MiniTrendLine = ({ isHovered }: ChartProps) => (
   <div className="w-20 h-8 sm:w-24 sm:h-10 mt-4 relative">
     <svg viewBox="0 0 100 40" className="w-full h-full overflow-visible">
       <motion.path
@@ -235,7 +238,7 @@ const TiltCard = ({ children, className, isDesktop }: { children: React.ReactNod
       style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
       className={`relative overflow-hidden group ${className}`}
     >
-      <div className="absolute -inset-[100%] bg-gradient-to-tr from-transparent via-white/40 to-transparent w-[300%] h-[300%] -rotate-45 -translate-x-[60%] pointer-events-none mix-blend-overlay" />
+      <div className="absolute -inset-full bg-linear-to-tr from-transparent via-white/40 to-transparent w-[300%] h-[300%] -rotate-45 translate-x-[-60%] pointer-events-none mix-blend-overlay" />
       {isDesktop && (
         <motion.div
           className="absolute inset-0 z-50 pointer-events-none opacity-60 mix-blend-overlay transition-opacity duration-300"
@@ -294,7 +297,7 @@ export default function Section3() {
         const centerY = top + height / 2;
         const distX = e.clientX - centerX;
         const distY = e.clientY - centerY;
-        const distance = Math.sqrt(distX ** 2 + distY ** 2);
+        const distance = Math.hypot(distX, distY);
 
         if (distance < 300) { 
           magnetX.set(distX * 0.4); 
@@ -323,7 +326,7 @@ export default function Section3() {
   }, [isDesktop, magnetX, magnetY, cursorX, cursorY]);
 
   return (
-    <div id="problem" ref={containerRef} className="relative w-full max-w-full overflow-x-hidden font-[family:var(--font-jakarta)] bg-[#F4F3EE] lg:h-[220vh] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+    <div id="problem" ref={containerRef} className="relative w-full max-w-full overflow-x-hidden font-(--font-jakarta) bg-[#F4F3EE] lg:h-[220vh] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none">
       <style jsx global>{`
         #problem *::-webkit-scrollbar {
           display: none !important;
@@ -341,7 +344,7 @@ export default function Section3() {
             scale: isHoveringVideo && !showModal ? 1 : 0,
             opacity: isHoveringVideo && !showModal ? 1 : 0,
           }}
-          className="fixed top-0 left-0 z-[150] w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-[#F28F3B] to-[#FF6B35] rounded-full flex flex-col items-center justify-center text-white shadow-[0_10px_30px_rgba(242,143,59,0.5)] pointer-events-none"
+          className="fixed top-0 left-0 z-150 w-20 h-20 sm:w-24 sm:h-24 bg-linear-to-br from-[#F28F3B] to-[#FF6B35] rounded-full flex flex-col items-center justify-center text-white shadow-[0_10px_30px_rgba(242,143,59,0.5)] pointer-events-none"
         >
           <Play fill="white" size={32} className="ml-1" />
           <span className="text-[10px] font-black uppercase tracking-widest mt-1">Play</span>
@@ -360,14 +363,14 @@ export default function Section3() {
           >
             <motion.div style={{ x: reel1X }} className="flex gap-6 w-max max-w-none -rotate-6 transform-gpu">
               {repeatedReel1.map((src, idx) => (
-                <div key={`reel1-${idx}`} className="w-[300px] md:w-[400px] h-[200px] md:h-[250px] rounded-3xl overflow-hidden shrink-0 shadow-sm border border-black/5 max-w-none">
+                <div key={`reel1-${idx}`} className="w-75 md:w-100 h-50 md:h-62.5 rounded-3xl overflow-hidden shrink-0 shadow-sm border border-black/5 max-w-none">
                   <img src={src} alt="Background Reel" className="w-full h-full object-cover max-w-none" />
                 </div>
               ))}
             </motion.div>
             <motion.div style={{ x: reel2X }} className="flex gap-6 w-max max-w-none -rotate-3 transform-gpu">
               {repeatedReel1.map((src, idx) => (
-                <div key={`reel2-${idx}`} className="w-[300px] md:w-[400px] h-[200px] md:h-[250px] rounded-3xl overflow-hidden shrink-0 shadow-sm border border-black/5 max-w-none">
+                <div key={`reel2-${idx}`} className="w-75 md:w-100 h-50 md:h-62.5 rounded-3xl overflow-hidden shrink-0 shadow-sm border border-black/5 max-w-none">
                   <img src={src} alt="Background Reel" className="w-full h-full object-cover max-w-none" />
                 </div>
               ))}
@@ -376,8 +379,8 @@ export default function Section3() {
 
           <div className="absolute inset-0 bg-[#F4F3EE]/85 z-0" />
           <div className="absolute inset-0 opacity-[0.2]" style={{ backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-          <motion.div animate={{ x: [0, 100, 0], y: [0, -50, 0] }} transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[5%] right-[5%] w-[300px] lg:w-[600px] h-[300px] lg:h-[600px] bg-[#F28F3B] rounded-full blur-[100px] lg:blur-[150px] opacity-20" />
-          <motion.div animate={{ x: [0, -100, 0], y: [0, 50, 0] }} transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[20%] left-[5%] w-[300px] lg:w-[500px] h-[300px] lg:h-[500px] bg-[#2D2A26] rounded-full blur-[100px] lg:blur-[150px] opacity-10" />
+          <motion.div animate={{ x: [0, 100, 0], y: [0, -50, 0] }} transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[5%] right-[5%] w-75 lg:w-150 h-75 lg:h-150 bg-[#F28F3B] rounded-full blur-[100px] lg:blur-[150px] opacity-20" />
+          <motion.div animate={{ x: [0, -100, 0], y: [0, 50, 0] }} transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[20%] left-[5%] w-75 lg:w-125 h-75 lg:h-125 bg-[#2D2A26] rounded-full blur-[100px] lg:blur-[150px] opacity-10" />
           
           <motion.div 
             initial={{ opacity: 0, scale: 0.5 }}
@@ -419,14 +422,14 @@ export default function Section3() {
               whileInView={{ scale: 1, opacity: 1, rotate: -1.5, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2, type: "spring", stiffness: 150, damping: 12 }}
-              className="text-[20px] sm:text-[32px] md:text-[40px] lg:text-[44px] bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-6 py-1.5 rounded-xl md:rounded-[20px] shadow-[0_15px_30px_rgba(242,143,59,0.25)] block mt-1.5 border-2 border-white transform"
+              className="highlight text-[20px] sm:text-[32px] md:text-[40px] lg:text-[44px] mt-2"
             >
               WE FACE
             </motion.span>
           </h2>
         </div>
 
-        <div className="relative w-full max-w-7xl mx-auto flex flex-col lg:block h-auto lg:h-[720px] justify-center z-20 pt-20 lg:pt-36 overflow-hidden">
+        <div className="relative w-full max-w-7xl mx-auto flex flex-col lg:block h-auto lg:h-180 justify-center z-20 pt-20 lg:pt-36 overflow-hidden">
           
           {isDesktop && (
             <svg viewBox="0 0 1200 800" className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible">
@@ -494,7 +497,7 @@ export default function Section3() {
             className="relative lg:absolute lg:left-1/2 lg:top-[50%] lg:-translate-x-1/2 lg:-translate-y-1/2 z-20 flex items-center justify-center mb-16 sm:mb-20 lg:mb-0 mt-8 sm:mt-12 lg:mt-0"
           >
             {isDesktop && (
-              <motion.div animate={{ rotate: 360 }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} className="absolute w-[280px] h-[280px] pointer-events-none opacity-20">
+              <motion.div animate={{ rotate: 360 }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} className="absolute w-70 h-70 pointer-events-none opacity-20">
                 <svg viewBox="0 0 200 200" className="w-full h-full fill-[#2D2A26]">
                   <path id="textPath" d="M 100, 100 m -75, 0 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0" fill="none" />
                   <text className="text-[14px] font-black uppercase tracking-[0.2em]">
@@ -504,7 +507,7 @@ export default function Section3() {
               </motion.div>
             )}
 
-            <div className="relative w-36 h-36 sm:w-44 sm:h-44 xl:w-48 xl:h-48 rounded-full bg-gradient-to-br from-[#F28F3B] to-[#FF6B35] shadow-[0_25px_50px_rgba(242,143,59,0.3)] flex flex-col items-center justify-center border-[4px] sm:border-[5px] border-white backdrop-blur-md cursor-none z-20 transition-transform duration-300">
+            <div className="relative w-36 h-36 sm:w-44 sm:h-44 xl:w-48 xl:h-48 rounded-full bg-linear-to-br from-[#F28F3B] to-[#FF6B35] shadow-[0_25px_50px_rgba(242,143,59,0.3)] flex flex-col items-center justify-center border-4 sm:border-[5px] border-white backdrop-blur-md cursor-none z-20 transition-transform duration-300">
               <div className="flex gap-4 sm:gap-5 xl:gap-6 mb-2 sm:mb-3">
                 <div className="w-7 h-7 sm:w-9 sm:h-9 xl:w-10 xl:h-10 bg-white rounded-full flex items-center justify-center shadow-inner overflow-hidden border border-black/5">
                   <div ref={leftEyeRef} className="flex items-center justify-center w-full h-full">
@@ -630,12 +633,14 @@ export default function Section3() {
                                   {card.fullExplanation}
                                 </p>
                                 <div className="w-full h-24 rounded-xl overflow-hidden shadow-md relative border border-white/20">
-                                  <img 
+                                  <Image
+                                    width={0}
+                                    height={0}
                                     src={card.bgImage} 
                                     alt={card.title} 
                                     className="w-full h-full object-cover transform scale-105 group-hover:scale-100 transition-transform duration-700"
                                   />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                                  <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
                                 </div>
                               </motion.div>
 
@@ -659,7 +664,7 @@ export default function Section3() {
         style={isDesktop ? { scale: sec2Scale, rotate: sec2Rotate, transformOrigin: "bottom center" } : {}}
         className="relative z-10 w-full max-w-full overflow-hidden lg:h-[120vh] flex items-center justify-center px-4 md:px-6 pt-16 pb-24 lg:py-0"
       >
-        <TiltCard isDesktop={isDesktop} className="w-full max-w-6xl mx-auto aspect-[4/3] sm:aspect-video rounded-[24px] sm:rounded-[32px] shadow-[0_20px_40px_-10px_rgba(0,0,0,0.2)] border border-white/50">
+        <TiltCard isDesktop={isDesktop} className="w-full max-w-6xl mx-auto aspect-4/3 sm:aspect-video rounded-3xl sm:rounded-4xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.2)] border border-white/50">
           <motion.div
             initial={{ opacity: 0, y: 100 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -671,9 +676,9 @@ export default function Section3() {
             className="w-full h-full lg:cursor-none transition-transform hover:scale-[1.01] duration-500 relative"
           >
             <div className="absolute inset-0 w-full h-full opacity-90 group-hover:opacity-100 transition-opacity duration-500">
-              <iframe className="w-full h-full pointer-events-none scale-105" src="https://www.youtube.com/embed/ishA6kry8nc?autoplay=1&mute=1&loop=1&playlist=ishA6kry8nc&controls=0&modestbranding=1&rel=0" allow="autoplay; encrypted-media" />
+              <iframe className="w-full h-full pointer-events-none scale-105" src="https://www.youtube.com/embed/ishA6kry8nc?autoplay=1&mute=1&loop=1&playlist=ishA6kry8nc&controls=0&modestbranding=1&rel=0" allow="autoplay; encrypted-media" title='Food Saving Education Video' />
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#2D2A26]/90 via-[#2D2A26]/20 to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-t from-[#2D2A26]/90 via-[#2D2A26]/20 to-transparent z-10 pointer-events-none" />
             
             <div className="absolute bottom-6 md:bottom-24 left-6 md:left-12 right-6 md:right-12 z-20 text-white pointer-events-none">
               <motion.div 
@@ -709,10 +714,10 @@ export default function Section3() {
 
       <AnimatePresence>
         {showModal && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[200] bg-[#F4F3EE]/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-10">
-            <button onClick={() => setShowModal(false)} className="absolute top-4 sm:top-6 right-4 sm:right-6 text-[#2D2A26] hover:text-[#F28F3B] transition-colors z-[210] bg-white p-2 sm:p-3 rounded-full shadow-lg hover:shadow-xl"><X size={20} className="sm:w-6 sm:h-6" /></button>
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="relative w-full max-w-6xl aspect-video rounded-[16px] sm:rounded-[32px] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.15)] border border-white/50">
-              <iframe className="w-full h-full bg-[#2D2A26]" src="https://www.youtube.com/embed/ishA6kry8nc?autoplay=1&mute=0&controls=1&rel=0" allow="autoplay; encrypted-media" allowFullScreen />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-200 bg-[#F4F3EE]/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-10">
+            <button onClick={() => setShowModal(false)} className="absolute top-4 sm:top-6 right-4 sm:right-6 text-[#2D2A26] hover:text-[#F28F3B] transition-colors z-210 bg-white p-2 sm:p-3 rounded-full shadow-lg hover:shadow-xl"><X size={20} className="sm:w-6 sm:h-6"/></button>
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="relative w-full max-w-6xl aspect-video rounded-2xl sm:rounded-4xl overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.15)] border border-white/50">
+              <iframe className="w-full h-full bg-[#2D2A26]" src="https://www.youtube.com/embed/ishA6kry8nc?autoplay=1&mute=0&controls=1&rel=0" allow="autoplay; encrypted-media" allowFullScreen title='Food Saving Education Video' />
             </motion.div>
           </motion.div>
         )}

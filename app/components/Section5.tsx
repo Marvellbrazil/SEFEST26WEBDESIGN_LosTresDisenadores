@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring, useMotionValueEvent, Transition } from 'framer-motion';
+import React, { useRef, useState } from 'react';
+import { motion, useScroll, useTransform, useSpring, useMotionValueEvent, Transition, MotionValue } from 'framer-motion';
 import { Cloud, Droplets, Map } from 'lucide-react';
+import { IconType } from 'react-icons';
 
 const IMPACT_FACTORS = {
   co2: 2.5,
@@ -10,7 +11,7 @@ const IMPACT_FACTORS = {
   land: 1.5,
 };
 
-const RunningAvatar = ({ progress, isReversing }: { progress: any, isReversing: boolean }) => {
+const RunningAvatar = ({ progress, isReversing }: { progress: MotionValue<number>, isReversing: boolean }) => {
   const xPos = useTransform(progress, [0, 1], ["0%", "100%"]);
   const runCycle = 0.5;
   
@@ -29,7 +30,7 @@ const RunningAvatar = ({ progress, isReversing }: { progress: any, isReversing: 
   return (
     <motion.div
       style={{ left: xPos, x: "-50%" }}
-      className="absolute bottom-[2px] lg:bottom-[3px] z-30 pointer-events-none flex flex-col items-center"
+      className="absolute bottom-0.5 lg:bottom-0.75 z-30 pointer-events-none flex flex-col items-center"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.8, y: 10 }}
@@ -39,7 +40,7 @@ const RunningAvatar = ({ progress, isReversing }: { progress: any, isReversing: 
           y: isReversing ? 0 : 10 
         }}
         transition={{ duration: 0.2 }}
-        className="absolute bottom-[85px] bg-[#2D2A26] text-white text-[10px] font-black uppercase tracking-wider px-3 py-2 rounded-2xl whitespace-nowrap shadow-xl border border-white/10 z-40"
+        className="absolute bottom-21.25 bg-[#2D2A26] text-white text-[10px] font-black uppercase tracking-wider px-3 py-2 rounded-2xl whitespace-nowrap shadow-xl border border-white/10 z-40"
       >
         <span>Ohh wait!</span>
         <div className="w-2 h-2 bg-[#2D2A26] rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2" />
@@ -86,13 +87,13 @@ const RunningAvatar = ({ progress, isReversing }: { progress: any, isReversing: 
   );
 };
 
-const MetricBox = ({ title, value, unit, icon: Icon, imageSrc, iconColor, position, style }: any) => {
+const MetricBox = ({ title, value, unit, icon: Icon, imageSrc, iconColor, position, style }: { title: string; value: MotionValue<string>; unit: string; icon: IconType; imageSrc: string; iconColor: string; position: React.CSSProperties; style: object }) => {
   return (
     <motion.div 
       style={{ ...position, ...style, x: "-50%" }}
-      className="absolute flex flex-col p-3 lg:p-4 bg-white/80 backdrop-blur-xl rounded-[20px] lg:rounded-[32px] shadow-2xl w-[110px] sm:w-[180px] lg:w-[260px] z-20 border border-white overflow-hidden"
+      className="absolute flex flex-col p-3 lg:p-4 bg-white/80 backdrop-blur-xl rounded-[20px] lg:rounded-4xl shadow-2xl w-27.5 sm:w-45 lg:w-65 z-20 border border-white overflow-hidden"
     >
-      <div className="hidden min-[400px]:block w-full h-16 sm:h-20 lg:h-32 mb-2 lg:mb-4 rounded-[12px] lg:rounded-2xl overflow-hidden relative bg-gray-100">
+      <div className="hidden min-[400px]:block w-full h-16 sm:h-20 lg:h-32 mb-2 lg:mb-4 rounded-xl lg:rounded-2xl overflow-hidden relative bg-gray-100">
         <img src={imageSrc} alt={title} className="w-full h-full object-cover" />
         <div className="absolute top-2 right-2 lg:top-3 lg:right-3 w-6 h-6 lg:w-8 lg:h-8 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-sm shadow-sm" style={{ color: iconColor }}>
           <Icon className="w-3 h-3 lg:w-4 lg:h-4" strokeWidth={2.5} />
@@ -181,7 +182,7 @@ export default function Section5() {
   };
 
   return (
-    <div ref={containerRef} className="relative h-[500vh] font-[family:var(--font-jakarta)]">
+    <div ref={containerRef} className="relative h-[500vh] font-(--font-jakarta)">
       
       <motion.section 
         style={{ backgroundColor: dynamicBgColor }}
@@ -208,7 +209,7 @@ export default function Section5() {
             className="relative font-black uppercase tracking-tighter leading-[0.85] text-[#2D2A26] text-[32px] min-[400px]:text-[38px]"
           >
             YOUR <br />
-            <span className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-2.5 py-0.5 rounded-[10px] shadow-[0_12px_24px_rgba(242,143,59,0.25)] border-2 border-white transform rotate-2 inline-block text-[26px] min-[400px]:text-[30px] mt-1.5">
+            <span className="highlight text-[26px] min-[400px]:text-[30px] mt-1.5">
               IMPACT
             </span>
           </motion.h2>
@@ -232,7 +233,7 @@ export default function Section5() {
             className="relative font-black uppercase tracking-tighter leading-[0.8] flex flex-col items-start text-[#2D2A26] text-[62px] xl:text-[72px]"
           >
             <span>YOUR</span>
-            <span className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-5 py-0.5 rounded-[16px] shadow-[0_15px_30px_rgba(242,143,59,0.25)] border-4 border-white transform rotate-2 inline-block text-[44px] xl:text-[54px] mt-2">
+            <span className="highlight text-[44px] xl:text-[54px] mt-2">
               IMPACT
             </span>
           </motion.h2>
@@ -245,7 +246,7 @@ export default function Section5() {
           transition={{ ...stickerSpringTransition, delay: 0.25 }}
           onMouseEnter={() => setIsHoveredMeals(true)}
           onMouseLeave={() => setIsHoveredMeals(false)}
-          className="absolute top-28 right-4 lg:top-32 lg:right-12 z-30 bg-white/80 backdrop-blur-xl rounded-[20px] lg:rounded-[32px] p-2 pr-3 lg:p-4 lg:pr-8 shadow-xl flex items-center gap-2 lg:gap-5 border border-white"
+          className="absolute top-28 right-4 lg:top-32 lg:right-12 z-30 bg-white/80 backdrop-blur-xl rounded-[20px] lg:rounded-4xl p-2 pr-3 lg:p-4 lg:pr-8 shadow-xl flex items-center gap-2 lg:gap-5 border border-white"
         >
           <motion.div 
             style={{ backgroundColor: dynamicEyeColor }}
@@ -290,7 +291,7 @@ export default function Section5() {
           </div>
         </motion.div>
 
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[100px] lg:-translate-y-[120px] w-full max-w-[90%] lg:max-w-3xl px-4 lg:px-8 z-10 text-center pointer-events-none h-24">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-25 lg:-translate-y-30 w-full max-w-[90%] lg:max-w-3xl px-4 lg:px-8 z-10 text-center pointer-events-none h-24">
           <motion.div style={{ opacity: stat1Opacity, y: stat1Y }} className="absolute inset-0 flex flex-col items-center justify-center">
             <p className="text-[#2D2A26]/80 text-base sm:text-2xl md:text-3xl lg:text-4xl font-medium leading-tight">
               This impact is equivalent to planting <br/>
@@ -312,7 +313,7 @@ export default function Section5() {
           </motion.div>
         </div>
 
-        <div className="relative w-[95%] lg:w-[98%] ml-auto h-[4px] lg:h-[6px] bg-[#2D2A26]/10 z-10 rounded-l-full mt-[10vh] lg:mt-[15vh]">
+        <div className="relative w-[95%] lg:w-[98%] ml-auto h-1 lg:h-1.5 bg-[#2D2A26]/10 z-10 rounded-l-full mt-[10vh] lg:mt-[15vh]">
           
           <div className="absolute top-1/2 left-[15%] w-3 h-3 lg:w-4 lg:h-4 -translate-y-1/2 -translate-x-1/2 rounded-full bg-[#2D2A26]/20" />
           <div className="absolute top-1/2 left-[50%] w-3 h-3 lg:w-4 lg:h-4 -translate-y-1/2 -translate-x-1/2 rounded-full bg-[#2D2A26]/20" />
@@ -320,7 +321,7 @@ export default function Section5() {
 
           <motion.div 
             style={{ scaleX: smoothProgress, originX: 0 }}
-            className="absolute inset-0 bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] rounded-l-full shadow-[0_0_20px_rgba(242,143,59,0.5)]"
+            className="absolute inset-0 bg-linear-to-r from-[#F28F3B] to-[#FF6B35] rounded-l-full shadow-[0_0_20px_rgba(242,143,59,0.5)]"
           />
           
           <RunningAvatar progress={smoothProgress} isReversing={isReversing} />

@@ -67,7 +67,7 @@ const cardsData: CardData[] = [
   {
     id: 4,
     title1: "Enjoy",
-    title2: "& Impact",
+    title2: "The Impact",
     description: "Enjoy your delicious rescued meal. Check your dashboard to see exactly how much CO2, water, and money you've saved by making a sustainable choice.",
     linkText: "View Dashboard",
     href: "/dashboard",
@@ -194,19 +194,16 @@ export default function Section4() {
   });
 
   return (
-    <section id="guide" ref={containerRef} className="relative w-full h-[400vh] bg-[#F4F3EE] font-[family:var(--font-jakarta)] select-none">
-
-      {/* Latar Belakang Pattern & Cahaya */}
+    <section id="guide" ref={containerRef} className="relative w-full h-[400vh] bg-[#F4F3EE] font-(--font-jakarta) select-none">
       <div className="fixed inset-0 z-0 opacity-[0.2] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none max-w-full">
-        <motion.div animate={{ x: [0, -50, 0], y: [0, 100, 0] }} transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[10%] left-[5%] w-[300px] lg:w-[500px] h-[300px] lg:h-[500px] bg-[#F28F3B] rounded-full blur-[140px] opacity-20" />
+        <motion.div animate={{ x: [0, -50, 0], y: [0, 100, 0] }} transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[10%] left-[5%] w-75 lg:w-125 h-[300px] lg:h-[500px] bg-[#F28F3B] rounded-full blur-[140px] opacity-20" />
         <motion.div animate={{ x: [0, 80, 0], y: [0, -80, 0] }} transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[20%] right-[5%] w-[300px] lg:w-[600px] h-[300px] lg:h-[600px] bg-[#2D2A26] rounded-full blur-[140px] opacity-10" />
       </div>
 
-      <div className="sticky top-0 h-screen w-full flex flex-col lg:flex-row max-w-[1400px] mx-auto px-6 md:px-10 z-10 pt-[10vh] pb-[5vh]">
+      <div className="sticky top-0 h-screen w-full flex flex-col lg:flex-row max-w-350 mx-auto px-6 md:px-10 z-10 pt-[10vh] pb-[5vh]">
         
-        {/* MOBILE HEADER - POSISI DIBAWAH KARENA STEP INFO TELAH DIHAPUS */}
-        <div className="lg:hidden w-full flex flex-col items-center text-center mb-6 flex-shrink-0 z-20">
+        <div className="lg:hidden w-full flex flex-col items-center text-center mb-6 shrink-0 z-20">
           <motion.div 
             initial={{ opacity: 0, scale: 0.4, rotate: -20, y: 30 }}
             whileInView={{ opacity: 1, scale: 1, rotate: -3, y: 0 }}
@@ -275,7 +272,7 @@ export default function Section4() {
                 whileInView={{ scale: 1, opacity: 1, rotate: 1.5, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.15, type: "spring", stiffness: 150, damping: 12 }}
-                className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-5 py-1 rounded-[18px] shadow-[0_15px_30px_rgba(242,143,59,0.25)] border-4 border-white inline-block text-[36px] xl:text-[44px]"
+                className="highlight text-[36px] xl:text-[44px]"
               >
                 WORKS
               </motion.span>

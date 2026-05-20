@@ -46,11 +46,11 @@ export default function Section6() {
   const [activeIdx, setActiveIdx] = useState(0);
 
   return (
-    <section id="partner" className="relative w-full min-h-screen bg-[#F4F3EE] font-[family:var(--font-jakarta)] py-12 sm:py-16 lg:py-24 flex flex-col justify-center overflow-hidden select-none">
+    <section id="partner" className="relative w-full min-h-screen bg-[#F4F3EE] font-(--font-jakarta) py-12 sm:py-16 lg:py-24 flex flex-col justify-center overflow-hidden select-none">
       
       <div className="absolute inset-0 z-0 opacity-[0.2]" style={{ backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
 
-      <div className="relative z-10 w-full max-w-[1300px] mx-auto px-5 md:px-10 lg:px-12 flex flex-col">
+      <div className="relative z-10 w-full max-w-325 mx-auto px-5 md:px-10 lg:px-12 flex flex-col">
         
         <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-8 lg:mb-12 gap-4 lg:gap-8">
           
@@ -78,7 +78,7 @@ export default function Section6() {
                 whileInView={{ scale: 1, opacity: 1, rotate: 2, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.15, type: "spring", stiffness: 150, damping: 12 }}
-                className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-3 py-0.5 rounded-[8px] min-[400px]:rounded-[12px] shadow-[0_12px_24px_rgba(242,143,59,0.25)] border-2 border-[#F4F3EE] transform inline-block text-[22px] min-[400px]:text-[28px] sm:text-[38px] mt-1.5"
+                className="highlight inline-block text-[22px] min-[400px]:text-[28px] sm:text-[38px] mt-1.5"
               >
                 BUSINESS
               </motion.span>
@@ -109,7 +109,7 @@ export default function Section6() {
                 whileInView={{ scale: 1, opacity: 1, rotate: 2, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.15, type: "spring", stiffness: 150, damping: 12 }}
-                className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-5 py-0.5 rounded-[16px] shadow-[0_15px_30px_rgba(242,143,59,0.25)] border-4 border-[#F4F3EE] transform inline-block text-[42px] xl:text-[52px] mt-2"
+                className="highlight text-[42px] xl:text-[52px] mt-3"
               >
                 BUSINESS
               </motion.span>
@@ -133,9 +133,14 @@ export default function Section6() {
           </motion.div>
         </div>
 
-        <div className="w-full h-[65vh] sm:h-[55vh] lg:h-[520px] flex flex-col lg:flex-row gap-3 lg:gap-5">
+        <div className="w-full h-[65vh] sm:h-[55vh] lg:h-130 flex flex-col lg:flex-row gap-3 lg:gap-5">
           {b2bFeatures.map((item, index) => {
             const isActive = activeIdx === index;
+            let activeFlex = 1;
+
+            if (isActive) {
+              activeFlex = typeof window !== 'undefined' && window.innerWidth >= 1024 ? 3.5 : 3;
+            }
 
             return (
               <motion.div
@@ -145,7 +150,7 @@ export default function Section6() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 animate={{ 
-                  flex: isActive ? (typeof window !== 'undefined' && window.innerWidth >= 1024 ? 3.5 : 3) : 1 
+                  flex: activeFlex
                 }}
                 transition={{ 
                   opacity: { duration: 0.6, delay: index * 0.15 },
@@ -154,7 +159,7 @@ export default function Section6() {
                 }}
                 onMouseEnter={() => setActiveIdx(index)}
                 onClick={() => setActiveIdx(index)}
-                className={`relative rounded-[20px] lg:rounded-[32px] overflow-hidden cursor-pointer group flex-shrink-0 ${!isActive && 'hover:shadow-xl'}`}
+                className={`relative rounded-[20px] lg:rounded-4xl overflow-hidden cursor-pointer group shrink-0 ${!isActive && 'hover:shadow-xl'}`}
               >
                 <motion.div 
                   className="absolute inset-0 bg-cover bg-center origin-center"
@@ -168,7 +173,7 @@ export default function Section6() {
 
                 <div className="absolute inset-0 bg-black/30 transition-opacity duration-500" />
                 <motion.div 
-                  className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"
+                  className="absolute inset-0 bg-linear-to-t from-black/95 via-black/40 to-transparent"
                   animate={{ opacity: isActive ? 0.95 : 0.6 }}
                 />
 
