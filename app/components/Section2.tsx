@@ -223,38 +223,7 @@ const Section2 = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-[#F4F3EE]/40 via-transparent to-[#F4F3EE] pointer-events-none z-[1]" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[500px] h-[320px] sm:h-[500px] bg-[#F28F3B] rounded-full blur-[120px] sm:blur-[160px] opacity-15 z-0 pointer-events-none" />
 
-      <div className="hidden lg:block absolute inset-0 z-10 pointer-events-none">
-        <motion.div 
-          style={isMounted ? { x: parallaxX, y: parallaxY } : {}}
-          className="absolute top-[25%] left-[12%] bg-white/80 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white flex items-center gap-2 shadow-xl shadow-black/[0.02]"
-        >
-          <RiEarthFill className="text-[#10B981]" size={16} />
-          <span className="text-[10px] font-black uppercase tracking-wider text-[#2D2A26]">Save Ecosystem</span>
-        </motion.div>
-
-        <motion.div 
-          style={isMounted ? { x: invertedParallaxX, y: invertedParallaxY } : {}}
-          className="absolute bottom-[35%] right-[10%] bg-white/80 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white flex items-center gap-2 shadow-xl shadow-black/[0.02]"
-        >
-          <RiSeedlingLine className="text-[#F28F3B]" size={16} />
-          <span className="text-[10px] font-black uppercase tracking-wider text-[#2D2A26]">Zero Waste</span>
-        </motion.div>
-      </div>
-
       <div className="relative w-full h-full md:h-screen flex flex-col justify-between items-center z-10 px-4">
-        
-        <div className="w-full flex justify-center mb-8 md:mb-0 md:absolute md:top-12 sm:top-16 md:left-1/2 md:-translate-x-1/2 z-30">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.4, rotate: -15, y: 30 }}
-            whileInView={{ opacity: 1, scale: 1, rotate: 0, y: 0 }}
-            viewport={{ once: true }}
-            transition={stickerSpringTransition}
-            className="flex items-center justify-center gap-2 bg-[#2D2A26] text-white px-4 py-2 rounded-md shadow-lg"
-          >
-            <RiLeafLine className="text-[#F28F3B]" />
-            <span className="text-white text-[10px] font-black uppercase tracking-[0.3em]">Global Impact</span>
-          </motion.div>
-        </div>
 
         <div className="w-full flex-1 flex flex-col justify-center items-center py-12 md:py-0 relative">
           
