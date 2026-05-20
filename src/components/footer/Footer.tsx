@@ -1,6 +1,7 @@
 'use client';
+
 import { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useSpring, useTransform, useMotionValue } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform, useMotionValue, animate, MotionValue } from 'framer-motion';
 import { 
   RiArrowRightUpLine, 
   RiMailLine, 
@@ -13,6 +14,76 @@ import {
 import { useFooter } from '../../hooks/useFooter';
 import { footerLinks, socials } from '../../constants/footer';
 
+interface ArrivingAvatarProps {
+  progress: MotionValue<number>;
+}
+
+const ArrivingAvatar = ({ progress }: ArrivingAvatarProps) => {
+  const xPos = useTransform(progress, [0, 1], ["100%", "0%"]); 
+  
+  const bubbleOpacity = useTransform(progress, [0, 0.05, 0.75, 0.85], [0, 1, 1, 0]);
+
+  const runCycle = 0.5;
+  const bounce = { duration: runCycle / 2, repeat: Infinity, ease: "easeInOut" as const };
+  const swing = { duration: runCycle, repeat: Infinity, ease: "easeInOut" as const };
+
+  return (
+    <motion.div
+      style={{ left: xPos, x: "-50%" }}
+      className="absolute bottom-[2px] z-30 pointer-events-none flex flex-col items-center"
+    >
+      <motion.div 
+        style={{ 
+          opacity: bubbleOpacity,
+          animationDuration: '2s'
+        }}
+        className="absolute bottom-[85px] bg-[#F28F3B] text-white text-[10px] font-black uppercase tracking-wider px-5 py-2.5 rounded-2xl w-max max-w-[240px] sm:max-w-none whitespace-normal text-center shadow-[0_4px_12px_rgba(242,143,59,0.3)] border border-white/10 flex flex-col items-center z-40 animate-bounce"
+      >
+        <span className="leading-tight">I'll handle it from here!</span>
+        <div className="w-2 h-2 bg-[#F28F3B] rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2" />
+      </motion.div>
+
+      <div style={{ transform: "scaleX(-1)" }}>
+        <motion.svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <motion.ellipse cx="50" cy="92" rx="20" ry="4" fill="black"
+            animate={{ rx: [20, 26, 20], opacity: [0.15, 0.05, 0.15] }}
+            transition={bounce}
+          />
+          <motion.g animate={{ y: [0, -8, 0] }} transition={bounce}>
+            <motion.rect x="36" y="42" width="12" height="24" rx="6" fill="#E5E7EB"
+              style={{ transformOrigin: "42px 48px" }}
+              animate={{ rotate: [-50, 50, -50] }}
+              transition={swing}
+            />
+            <motion.rect x="38" y="60" width="14" height="26" rx="7" fill="#E5E7EB"
+              style={{ transformOrigin: "45px 67px" }}
+              animate={{ rotate: [45, -45, 45] }}
+              transition={swing}
+            />
+            <rect x="22" y="38" width="22" height="30" rx="10" fill="#F28F3B" />
+            <rect x="22" y="46" width="22" height="4" fill="#FFFFFF" opacity="0.3" />
+            <rect x="34" y="24" width="36" height="46" rx="18" fill="#FFFFFF" />
+            <path d="M 34 42 L 34 42 Q 34 24 52 24 Q 70 24 70 42 Z" fill="#F28F3B" />
+            <rect x="60" y="32" width="18" height="6" rx="3" fill="#F28F3B" />
+            <rect x="60" y="40" width="18" height="10" rx="5" fill="#2D2A26" />
+            <path d="M 58 56 Q 63 60 68 56" stroke="#2D2A26" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+            <motion.rect x="52" y="60" width="14" height="26" rx="7" fill="#FFFFFF"
+              style={{ transformOrigin: "59px 67px" }}
+              animate={{ rotate: [-45, 45, -45] }}
+              transition={swing}
+            />
+            <motion.rect x="54" y="42" width="12" height="24" rx="6" fill="#FFFFFF"
+              style={{ transformOrigin: "60px 48px" }}
+              animate={{ rotate: [50, -50, 50] }}
+              transition={swing}
+            />
+          </motion.g>
+        </motion.svg>
+      </div>
+    </motion.div>
+  );
+};
+
 export default function Footer() {
   const { footerRef, isVisible, email, setEmail, isSubscribed, handleSubscribe, scrollToTop } = useFooter();
   const svgRef = useRef<SVGSVGElement>(null);
@@ -22,6 +93,20 @@ export default function Footer() {
     target: footerRef,
     offset: ["start end", "end end"]
   });
+
+  const autoProgress = useMotionValue(0);
+
+  useEffect(() => {
+    if (isVisible) {
+      const controls = animate(autoProgress, 1, {
+        duration: 15,
+        ease: "easeInOut"
+      });
+      return () => controls.stop();
+    } else {
+      autoProgress.set(0); 
+    }
+  }, [isVisible, autoProgress]);
 
   const footerY = useSpring(
     useTransform(scrollYProgress, [0, 1], ["-35%", "0%"]),
@@ -58,7 +143,7 @@ export default function Footer() {
   return (
     <footer 
       ref={footerRef} 
-      className="relative w-full bg-[#1a1a1a] overflow-hidden flex flex-col justify-between z-0"
+      className="relative w-full bg-[#1a1a1a] overflow-hidden flex flex-col justify-between z-0 select-none"
       style={{ boxShadow: "inset 0 20px 40px rgba(0,0,0,0.5)" }}
     >
       <div className="absolute inset-0 pointer-events-none z-0">
@@ -105,7 +190,7 @@ export default function Footer() {
                 </h3>
               </div>
               
-              <p className="text-white/50 text-sm md:text-base leading-relaxed mb-8 max-w-sm">
+              <p className="text-white/50 text-sm md:text-base leading-relaxed mb-8 max-w-sm font-medium">
                 Driving the transition towards a circular food economy. 
                 Every rescued meal counts towards a sustainable future.
               </p>
@@ -118,7 +203,7 @@ export default function Footer() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Join our newsletter"
-                    className="flex-1 bg-transparent text-sm text-white placeholder-white/20 outline-none py-2.5"
+                    className="flex-1 bg-transparent text-sm text-white placeholder-white/20 outline-none py-2.5 font-medium"
                     required
                   />
                   <motion.button
@@ -171,7 +256,7 @@ export default function Footer() {
             ))}
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-8 pb-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-8 pb-4 border-t border-white/5">
             <div className="flex items-center gap-3">
               {socials.map((social) => (
                 <motion.a
@@ -217,7 +302,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="relative w-full overflow-hidden mt-auto flex flex-col items-center justify-end select-none">
+        <div className="relative w-full overflow-hidden mt-auto flex flex-col items-center justify-end">
           <div className="w-full max-w-7xl mx-auto px-4 flex justify-center items-center translate-y-[8%]">
             <svg 
               ref={svgRef}
@@ -264,6 +349,26 @@ export default function Footer() {
                 SAVERISH
               </text>
             </svg>
+          </div>
+        </div>
+
+        <div className="w-full relative z-30 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mt-6 mb-8">
+          <div className="relative w-full h-[2px] bg-white/10 rounded-full">
+            
+            <motion.div 
+              style={{ scaleX: autoProgress, originX: 1 }}
+              className="absolute inset-0 bg-gradient-to-r from-[#FF6B35] to-[#F28F3B] rounded-full shadow-[0_0_15px_rgba(242,143,59,0.5)]"
+            />
+            
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 bg-[#F28F3B] rounded-full border-[3px] border-[#1a1a1a] shadow-[0_0_10px_rgba(242,143,59,0.8)] z-40 flex items-center justify-center">
+               <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+            </div>
+            
+            <div className="absolute left-0 -top-6 text-[10px] font-black uppercase tracking-[0.2em] text-[#F28F3B]">
+              Zero Waste Reached
+            </div>
+
+            <ArrivingAvatar progress={autoProgress} />
           </div>
         </div>
 

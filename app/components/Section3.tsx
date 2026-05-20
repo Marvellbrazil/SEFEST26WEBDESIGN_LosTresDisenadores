@@ -6,80 +6,102 @@ import { motion, useMotionValue, useTransform, animate, useScroll, useSpring, An
 import { Trash2, Flame, CloudRain, DollarSign, Play, X } from 'lucide-react';
 import { RiLeafLine } from 'react-icons/ri';
 
-const MiniBarChart = () => (
+interface ChartProps {
+  isHovered: boolean;
+  color: string;
+}
+
+const MiniBarChart = ({ isHovered, color }: ChartProps) => (
   <div className="flex items-end gap-1.5 sm:gap-2 h-10 mt-4">
     {[40, 70, 50, 90, 60].map((height, i) => (
       <motion.div 
         key={i}
         initial={{ height: 0 }}
-        whileInView={{ height: `${height}%` }}
-        viewport={{ once: true }}
-        transition={{ duration: 1, delay: 0.5 + (i * 0.1), ease: "easeOut" }}
-        className="w-3 sm:w-4 bg-[#F28F3B] rounded-t-sm"
+        animate={{ 
+          height: isHovered ? [`${height}%`, `${Math.random() * 50 + 50}%`, `${height}%`] : `${height}%`,
+          backgroundColor: isHovered ? '#FFFFFF' : color 
+        }}
+        transition={{ 
+          duration: isHovered ? 0.3 : 1, 
+          delay: isHovered ? i * 0.05 : 0.5 + (i * 0.1),
+          repeat: isHovered ? Infinity : 0,
+          ease: isHovered ? "circInOut" : "easeOut"
+        }}
+        className="w-3 sm:w-4 rounded-t-sm"
       />
     ))}
   </div>
 );
 
-const MiniRingChart = () => (
-  <div className="relative w-10 h-10 sm:w-12 sm:h-12 mt-2">
+const MiniRingChart = ({ isHovered, color }: ChartProps) => (
+  <motion.div 
+    animate={{ rotate: isHovered ? 360 : 0 }}
+    transition={{ duration: isHovered ? 1.5 : 1, repeat: isHovered ? Infinity : 0, ease: "linear" }}
+    className="relative w-10 h-10 sm:w-12 sm:h-12 mt-2"
+  >
     <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-      <path className="text-[#2D2A26]/10" strokeWidth="4" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+      <path className="text-white/20" strokeWidth="4" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
       <motion.path 
-        initial={{ strokeDasharray: "0, 100" }}
-        whileInView={{ strokeDasharray: "75, 100" }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
-        className="text-[#2D2A26]" strokeWidth="4" strokeDasharray="75, 100" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" 
+        animate={{ 
+          strokeDasharray: isHovered ? ["10, 100", "90, 100", "10, 100"] : "75, 100",
+          color: isHovered ? '#FFFFFF' : color
+        }}
+        transition={{ duration: isHovered ? 1 : 1.5, repeat: isHovered ? Infinity : 0, ease: "easeInOut" }}
+        className="text-[#2D2A26]" strokeWidth="4" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" 
       />
     </svg>
-  </div>
+  </motion.div>
 );
 
-const MiniTrendLine = () => (
+const MiniTrendLine = ({ isHovered, color }: ChartProps) => (
   <div className="w-20 h-8 sm:w-24 sm:h-10 mt-4 relative">
     <svg viewBox="0 0 100 40" className="w-full h-full overflow-visible">
       <motion.path
-        initial={{ pathLength: 0 }}
-        whileInView={{ pathLength: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }}
+        animate={{ 
+          pathLength: isHovered ? [0.2, 1, 0.2] : 1,
+          stroke: isHovered ? '#FFFFFF' : '#2D2A26'
+        }}
+        transition={{ duration: isHovered ? 0.8 : 1.5, repeat: isHovered ? Infinity : 0, ease: "easeInOut" }}
         d="M0,40 Q20,30 40,35 T80,15 T100,0"
-        fill="none"
-        stroke="#2D2A26"
-        strokeWidth="3"
-        strokeLinecap="round"
+        fill="none" strokeWidth="3" strokeLinecap="round"
       />
       <motion.circle 
-        initial={{ scale: 0, opacity: 0 }}
-        whileInView={{ scale: 1, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 2 }}
-        cx="100" cy="0" r="4" fill="#F28F3B" 
+        animate={{ 
+          scale: isHovered ? [1, 1.5, 1] : 1,
+          fill: isHovered ? '#FFFFFF' : '#F28F3B'
+        }}
+        transition={{ duration: isHovered ? 0.4 : 2, repeat: isHovered ? Infinity : 0 }}
+        cx="100" cy="0" r="4" 
       />
     </svg>
   </div>
 );
 
-const MiniGaugeChart = () => (
+const MiniGaugeChart = ({ isHovered, color }: ChartProps) => (
   <div className="relative w-14 h-7 sm:w-16 sm:h-8 mt-4 overflow-visible">
     <svg viewBox="0 0 100 50" className="w-full h-full overflow-visible">
-      <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#F28F3B" strokeOpacity="0.2" strokeWidth="8" strokeLinecap="round" />
+      <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke={isHovered ? "rgba(255,255,255,0.3)" : "rgba(242,143,59,0.2)"} strokeWidth="8" strokeLinecap="round" />
       <motion.path 
-        initial={{ pathLength: 0 }}
-        whileInView={{ pathLength: 0.85 }} 
-        viewport={{ once: true }}
-        transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
-        d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#F28F3B" strokeWidth="8" strokeLinecap="round" 
+        animate={{ 
+          stroke: isHovered ? '#FFFFFF' : '#F28F3B', 
+          pathLength: isHovered ? [0.4, 0.9, 0.4] : 0.85 
+        }}
+        transition={{ duration: isHovered ? 0.5 : 1.5, repeat: isHovered ? Infinity : 0, ease: "easeInOut" }}
+        d="M 10 50 A 40 40 0 0 1 90 50" fill="none" strokeWidth="8" strokeLinecap="round" 
       />
       <motion.line 
-        initial={{ rotate: -90, transformOrigin: "50px 50px" }}
-        whileInView={{ rotate: 60, transformOrigin: "50px 50px" }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.5, delay: 0.5, type: "spring", bounce: 0.4 }}
-        x1="50" y1="50" x2="20" y2="20" stroke="#2D2A26" strokeWidth="3" strokeLinecap="round" 
+        animate={{ 
+          rotate: isHovered ? [20, 100, 20] : 60,
+          stroke: isHovered ? '#FFFFFF' : '#2D2A26'
+        }}
+        transition={{ duration: isHovered ? 0.3 : 1.5, repeat: isHovered ? Infinity : 0, type: isHovered ? "tween" : "spring", bounce: 0.4 }}
+        style={{ transformOrigin: "50px 50px" }}
+        x1="50" y1="50" x2="20" y2="20" strokeWidth="3" strokeLinecap="round" 
       />
-      <circle cx="50" cy="50" r="6" fill="#2D2A26" />
+      <motion.circle 
+        cx="50" cy="50" r="6" 
+        animate={{ fill: isHovered ? '#FFFFFF' : '#2D2A26' }} 
+      />
     </svg>
   </div>
 );
@@ -91,12 +113,16 @@ const problemCardData = [
     value: 1300,
     unit: "Million Tons",
     description: "Global waste produced annually.",
+    fullExplanation: "Sepertiga makanan global terbuang sia-sia karena logistik buruk dan standar retail berlebih. Ini memicu krisis pangan serius di tengah populasi kelaparan.",
+    bgImage: "https://images.unsplash.com/photo-1553787499-6f9133860278?q=80&w=600",
     color: "#F28F3B",
     icon: <Trash2 size={24} />,
-    pos: { left: "6%", top: "25%" }, 
+    pos: { left: "15%", top: "20%" }, 
     rotation: -4,
     floatDelay: 0,
-    Visual: MiniBarChart
+    Visual: MiniBarChart,
+    cablePath: "M 200 320 C 350 320, 450 460, 600 460",
+    nodeX: 200, nodeY: 320
   },
   {
     id: 2,
@@ -104,12 +130,16 @@ const problemCardData = [
     value: 3.3,
     unit: "Billion Tons",
     description: "CO2 equivalent gases released.",
+    fullExplanation: "Proses pertanian intensif, pembukaan lahan hutan, dan rantai distribusi global yang panjang menghasilkan miliaran ton emisi gas rumah kaca berbahaya ke atmosfer.",
+    bgImage: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=600",
     color: "#2D2A26",
     icon: <CloudRain size={24} />,
-    pos: { right: "6%", top: "20%" }, 
+    pos: { right: "14%", top: "18%" }, 
     rotation: 5,
     floatDelay: 0.5,
-    Visual: MiniRingChart
+    Visual: MiniRingChart,
+    cablePath: "M 1000 290 C 850 290, 750 460, 600 460",
+    nodeX: 1000, nodeY: 290
   },
   {
     id: 3,
@@ -117,12 +147,16 @@ const problemCardData = [
     value: 940,
     unit: "Billion USD",
     description: "Value lost due to discarded food.",
+    fullExplanation: "Pembuangan makanan memicu kerugian finansial global raksasa, menguapkan nilai investasi air bersih, tenaga kerja, dan subsidi energi secara cuma-cuma.",
+    bgImage: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=600",
     color: "#2D2A26",
     icon: <DollarSign size={24} />,
-    pos: { left: "10%", bottom: "16%" }, 
+    pos: { left: "16%", bottom: "5%" }, 
     rotation: 3,
     floatDelay: 1,
-    Visual: MiniTrendLine
+    Visual: MiniTrendLine,
+    cablePath: "M 250 690 C 400 690, 450 460, 600 460",
+    nodeX: 250, nodeY: 690
   },
   {
     id: 4,
@@ -130,12 +164,16 @@ const problemCardData = [
     value: 25,
     unit: "Times Potency",
     description: "Methane traps heat far faster.",
+    fullExplanation: "Tumpukan sampah makanan organik di TPA membusuk tanpa oksigen, menghasilkan gas metana dengan daya rusak atmosfer 25 kali lipat lebih agresif dari CO2.",
+    bgImage: "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?q=80&w=600",
     color: "#F28F3B",
     icon: <Flame size={24} />,
-    pos: { right: "10%", bottom: "14%" },
+    pos: { right: "16%", bottom: "5%" },
     rotation: -5,
     floatDelay: 1.5,
-    Visual: MiniGaugeChart 
+    Visual: MiniGaugeChart,
+    cablePath: "M 950 690 C 800 690, 750 460, 600 460",
+    nodeX: 950, nodeY: 690
   }
 ];
 
@@ -286,7 +324,7 @@ export default function Section3() {
   }, [isDesktop, magnetX, magnetY, cursorX, cursorY]);
 
   return (
-    <div id="problem" ref={containerRef} className="relative w-full font-[family:var(--font-jakarta)] bg-[#F4F3EE] lg:h-[250vh]">
+    <div id="problem" ref={containerRef} className="relative w-full max-w-full overflow-x-hidden font-[family:var(--font-jakarta)] bg-[#F4F3EE] lg:h-[250vh]">
       
       {isDesktop && (
         <motion.div
@@ -302,7 +340,13 @@ export default function Section3() {
         </motion.div>
       )}
 
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none flex flex-col justify-center gap-10 opacity-15 grayscale">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.5 }}
+        className="absolute inset-0 z-0 overflow-hidden pointer-events-none flex flex-col justify-center gap-10"
+      >
         <motion.div style={{ x: reel1X }} className="flex gap-6 w-max -rotate-6 transform-gpu">
           {repeatedReel1.map((src, idx) => (
             <div key={`reel1-${idx}`} className="w-[300px] md:w-[400px] h-[200px] md:h-[250px] rounded-3xl overflow-hidden shrink-0 shadow-sm border border-black/5">
@@ -317,120 +361,277 @@ export default function Section3() {
             </div>
           ))}
         </motion.div>
-      </div>
-
-      <div className="absolute inset-0 z-0 opacity-[0.2] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-      <motion.div animate={{ x: [0, 100, 0], y: [0, -50, 0] }} transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[5%] right-[5%] w-[300px] lg:w-[600px] h-[300px] lg:h-[600px] bg-[#F28F3B] rounded-full blur-[100px] lg:blur-[150px] z-0 pointer-events-none opacity-20" />
-      <motion.div animate={{ x: [0, -100, 0], y: [0, 50, 0] }} transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[20%] left-[5%] w-[300px] lg:w-[500px] h-[300px] lg:h-[500px] bg-[#2D2A26] rounded-full blur-[100px] lg:blur-[150px] z-0 pointer-events-none opacity-10" />
-
-      <motion.div animate={{ y: [0, -30, 0], rotate: [0, 15, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="hidden lg:block absolute top-[30%] left-[25%] text-[#F28F3B]/10 z-0 pointer-events-none">
-        <RiLeafLine size={80} />
       </motion.div>
 
-      <section className="lg:sticky lg:top-0 w-full min-h-screen z-10 flex flex-col pt-24 lg:pt-0 overflow-hidden px-4 lg:px-0">
+      <div className="absolute inset-0 z-0 overflow-hidden max-w-full pointer-events-none">
+        <div className="absolute inset-0 bg-[#F4F3EE]/80 z-0" />
+        <div className="absolute inset-0 opacity-[0.2]" style={{ backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+        <motion.div animate={{ x: [0, 100, 0], y: [0, -50, 0] }} transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[5%] right-[5%] w-[300px] lg:w-[600px] h-[300px] lg:h-[600px] bg-[#F28F3B] rounded-full blur-[100px] lg:blur-[150px] opacity-20" />
+        <motion.div animate={{ x: [0, -100, 0], y: [0, 50, 0] }} transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[20%] left-[5%] w-[300px] lg:w-[500px] h-[300px] lg:h-[500px] bg-[#2D2A26] rounded-full blur-[100px] lg:blur-[150px] opacity-10" />
+      </div>
+
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.5 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1 }}
+        className="hidden lg:block absolute top-[30%] left-[25%] text-[#F28F3B]/10 z-0 pointer-events-none"
+      >
+        <motion.div animate={{ y: [0, -30, 0], rotate: [0, 15, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}>
+          <RiLeafLine size={80} />
+        </motion.div>
+      </motion.div>
+
+      <section className="lg:sticky lg:top-0 w-full max-w-full overflow-x-hidden min-h-screen z-10 flex flex-col pt-24 lg:pt-0 px-4 lg:px-0">
         
-        <div className="relative lg:absolute lg:top-12 xl:top-16 w-full text-center z-30 mb-8 lg:mb-0">
-          <motion.div initial={{ opacity: 0, y: -20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="inline-flex items-center gap-2 px-4 py-2 bg-white/40 backdrop-blur-sm border border-white/40 rounded-full mb-4 sm:mb-6">
-            <span className="w-2 h-2 rounded-full bg-[#F28F3B] animate-pulse" />
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#2D2A26]/50">The Global Crisis</span>
+        <div className="relative lg:absolute lg:top-24 w-full flex flex-col items-center justify-center text-center z-30 mb-8 lg:mb-0 select-none">
+          <motion.div 
+            initial={{ rotate: -10, scale: 0, y: -20 }} 
+            whileInView={{ rotate: -3, scale: 1, y: 0 }} 
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, type: "spring" }}
+            className="bg-[#2D2A26] text-white text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-md shadow-md mb-3"
+          >
+            The Critical Chaos
           </motion.div>
-          <motion.h2 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-5xl sm:text-6xl md:text-[80px] font-black uppercase tracking-tighter leading-none text-[#2D2A26] drop-shadow-sm">
-            The Problem <br className="lg:hidden" /><span className="text-[#F28F3B]">We Face.</span>
-          </motion.h2>
+          
+          <h2 className="relative font-black uppercase tracking-tighter leading-[0.75] flex flex-col items-center">
+            <motion.span 
+              initial={{ y: 50, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, type: "spring", bounce: 0.3 }}
+              className="text-[55px] sm:text-[90px] md:text-[110px] lg:text-[130px] text-[#2D2A26] block tracking-tight"
+            >
+              THE PROBLEM
+            </motion.span>
+            
+            <motion.span 
+              initial={{ scale: 0.8, opacity: 0, rotate: 10 }}
+              whileInView={{ scale: 1, opacity: 1, rotate: -1.5 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2, type: "spring" }}
+              className="text-[28px] sm:text-[44px] md:text-[56px] lg:text-[64px] bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-8 py-2 rounded-2xl md:rounded-[24px] shadow-[0_20px_40px_rgba(242,143,59,0.3)] block mt-2 border-4 border-white transform"
+            >
+              WE FACE
+            </motion.span>
+          </h2>
         </div>
 
-        <div className="relative w-full max-w-7xl mx-auto flex flex-col lg:block h-auto lg:h-[800px] items-center justify-center pb-20 lg:pb-0 z-20">
+        <div className="relative w-full max-w-7xl mx-auto flex flex-col lg:block h-auto lg:h-[800px] justify-center pb-20 lg:pb-0 z-20 pt-32 lg:pt-40">
           
+          {isDesktop && (
+            <svg viewBox="0 0 1200 800" className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible">
+              <defs>
+                {problemCardData.map((card) => (
+                  <linearGradient key={`grad-${card.id}`} id={`cableGrad-${card.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#F28F3B" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor={card.color} stopOpacity="1" />
+                  </linearGradient>
+                ))}
+              </defs>
+              
+              {problemCardData.map((card) => {
+                const isHovered = hoveredCard === card.id;
+                return (
+                  <motion.g 
+                    key={`cable-group-${card.id}`}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, delay: card.floatDelay }}
+                  >
+                    <path d={card.cablePath} fill="none" stroke="#2D2A26" strokeWidth="2" strokeOpacity="0.1" />
+                    <motion.path 
+                      d={card.cablePath} 
+                      fill="none" 
+                      stroke={`url(#cableGrad-${card.id})`}
+                      strokeWidth={isHovered ? "4" : "0"}
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: isHovered ? 1 : 0, strokeDasharray: isHovered ? "10, 5" : "0" }}
+                      transition={{ duration: 0.5, ease: "easeInOut" }}
+                      className="drop-shadow-[0_0_8px_rgba(242,143,59,0.5)]"
+                    />
+                    {isHovered && (
+                      <motion.path 
+                        d={card.cablePath} 
+                        fill="none" 
+                        stroke="#FFFFFF"
+                        strokeWidth="2"
+                        strokeDasharray="15, 150"
+                        animate={{ strokeDashoffset: [-165, 0] }}
+                        transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+                      />
+                    )}
+                    <circle cx={card.nodeX} cy={card.nodeY} r="8" fill="#2D2A26" fillOpacity="0.1" />
+                    <motion.circle 
+                      cx={card.nodeX} cy={card.nodeY} r="4" 
+                      fill={isHovered ? card.color : "#2D2A26"} 
+                      animate={{ scale: isHovered ? [1, 1.5, 1] : 1, opacity: isHovered ? 1 : 0.3 }}
+                      transition={{ duration: 1, repeat: isHovered ? Infinity : 0 }}
+                    />
+                  </motion.g>
+                );
+              })}
+            </svg>
+          )}
+
           <motion.div 
             ref={smileyContainerRef}
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, type: "spring", bounce: 0.5, delay: 0.3 }}
             style={isDesktop ? { x: smoothMagnetX, y: smoothMagnetY } : {}}
-            className="relative lg:absolute lg:left-1/2 lg:top-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2 z-20 flex items-center justify-center mb-10 lg:mb-0 mt-8 lg:mt-0"
+            className="relative lg:absolute lg:left-1/2 lg:top-[58%] lg:-translate-x-1/2 lg:-translate-y-1/2 z-20 flex items-center justify-center mb-10 lg:mb-0 mt-8 lg:mt-0"
           >
             {isDesktop && (
-              <motion.div 
-                animate={{ rotate: 360 }} 
-                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[350px] h-[350px] pointer-events-none opacity-20"
-              >
+              <motion.div animate={{ rotate: 360 }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} className="absolute w-[350px] h-[350px] pointer-events-none opacity-20">
                 <svg viewBox="0 0 200 200" className="w-full h-full fill-[#2D2A26]">
                   <path id="textPath" d="M 100, 100 m -75, 0 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0" fill="none" />
                   <text className="text-[14px] font-black uppercase tracking-[0.2em]">
-                    <textPath href="#textPath" startOffset="0%">
-                      SAVE FOOD • PROTECT PLANET • REDUCE WASTE • 
-                    </textPath>
+                    <textPath href="#textPath" startOffset="0%">SAVE FOOD • PROTECT PLANET • REDUCE WASTE • </textPath>
                   </text>
                 </svg>
               </motion.div>
             )}
 
-            <div className="relative w-40 h-40 sm:w-48 sm:h-48 xl:w-60 xl:h-60 rounded-full bg-gradient-to-br from-[#F28F3B] to-[#FF6B35] shadow-[0_30px_60px_rgba(242,143,59,0.3)] flex flex-col items-center justify-center border-[4px] sm:border-[6px] border-white backdrop-blur-md cursor-none z-10">
+            <div className="relative w-40 h-40 sm:w-48 sm:h-48 xl:w-60 xl:h-60 rounded-full bg-gradient-to-br from-[#F28F3B] to-[#FF6B35] shadow-[0_30px_60px_rgba(242,143,59,0.3)] flex flex-col items-center justify-center border-[4px] sm:border-[6px] border-white backdrop-blur-md cursor-none z-10 transition-transform duration-300">
               <div className="flex gap-5 sm:gap-6 xl:gap-8 mb-3 sm:mb-4">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 xl:w-12 xl:h-12 bg-white rounded-full flex items-center justify-center shadow-inner overflow-hidden border border-black/5">
-                  <div ref={leftEyeRef} className="w-3 h-3 sm:w-4 sm:h-4 xl:w-5 xl:h-5 bg-[#2D2A26] rounded-full" />
+                  <div ref={leftEyeRef} className="flex items-center justify-center w-full h-full">
+                    <motion.div animate={{ scale: hoveredCard ? 2.5 : 1 }} transition={{ duration: 0.3, type: "spring", bounce: 0.5 }} className="w-3 h-3 sm:w-4 sm:h-4 xl:w-5 xl:h-5 bg-[#2D2A26] rounded-full" />
+                  </div>
                 </div>
                 <div className="w-8 h-8 sm:w-10 sm:h-10 xl:w-12 xl:h-12 bg-white rounded-full flex items-center justify-center shadow-inner overflow-hidden border border-black/5">
-                  <div ref={rightEyeRef} className="w-3 h-3 sm:w-4 sm:h-4 xl:w-5 xl:h-5 bg-[#2D2A26] rounded-full" />
+                  <div ref={rightEyeRef} className="flex items-center justify-center w-full h-full">
+                    <motion.div animate={{ scale: hoveredCard ? 2.5 : 1 }} transition={{ duration: 0.3, type: "spring", bounce: 0.5 }} className="w-3 h-3 sm:w-4 sm:h-4 xl:w-5 xl:h-5 bg-[#2D2A26] rounded-full" />
+                  </div>
                 </div>
               </div>
-              <div className="w-12 sm:w-16 xl:w-20 h-3 sm:h-4 xl:h-5 bg-[#2D2A26] rounded-full mt-2 opacity-80" />
+              <motion.div 
+                animate={{ width: hoveredCard ? "1.5rem" : "3rem", height: hoveredCard ? "2rem" : "0.75rem", borderRadius: hoveredCard ? "50%" : "9999px" }}
+                transition={{ duration: 0.3, type: "spring", bounce: 0.5 }}
+                className="mt-2 opacity-80 xl:h-5 sm:h-4 bg-[#2D2A26]" 
+              />
             </div>
           </motion.div>
 
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:block relative z-30 px-4 lg:px-0 h-full">
-            {problemCardData.map((card, idx) => (
-              <motion.div 
-                key={card.id}
-                onMouseEnter={() => setHoveredCard(card.id)}
-                onMouseLeave={() => setHoveredCard(null)}
-                style={isDesktop ? { position: 'absolute', ...card.pos, zIndex: 30, width: '100%', maxWidth: '340px', perspective: '1000px' } : {}}
-                className="w-full relative lg:absolute"
-              >
+          <div className="w-full max-w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:block relative z-30 px-4 sm:px-6 lg:px-0 h-full">
+            {problemCardData.map((card, idx) => {
+              const isHovered = hoveredCard === card.id;
+
+              return (
                 <motion.div 
-                  initial={{ opacity: 0, y: 30 }} 
-                  whileInView={{ opacity: 1, y: 0, rotate: isDesktop ? card.rotation : 0 }} 
-                  viewport={{ once: true, margin: "-5%" }} 
-                  transition={{ duration: 0.6, delay: isDesktop ? 0.2 + idx * 0.1 : 0 }}
+                  key={card.id}
+                  onMouseEnter={() => setHoveredCard(card.id)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  style={isDesktop ? { position: 'absolute', ...card.pos, zIndex: isHovered ? 40 : 30, width: '100%', maxWidth: '340px', perspective: '1000px' } : {}}
+                  className="w-full relative lg:absolute"
                 >
-                  <motion.div
-                    animate={isDesktop ? { y: [0, -15, 0] } : {}}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: card.floatDelay }}
+                  <motion.div 
+                    initial={{ opacity: 0, y: 50, scale: 0.9 }} 
+                    whileInView={{ opacity: 1, y: 0, scale: 1, rotate: isDesktop ? card.rotation : 0 }} 
+                    viewport={{ once: true, margin: "-5%" }} 
+                    transition={{ duration: 0.8, delay: isDesktop ? 0.4 + idx * 0.15 : 0.2, type: "spring", bounce: 0.4 }}
                   >
-                    <TiltCard 
-                      isDesktop={isDesktop}
-                      className={`
-                        bg-white/80 backdrop-blur-3xl border-2 p-5 sm:p-6 transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.05)]
-                        ${hoveredCard === card.id ? 'border-[#F28F3B]/80 bg-white shadow-[0_20px_60px_rgba(242,143,59,0.25)] scale-[1.02]' : 'border-white/80 hover:border-white'}
-                      `}
+                    <motion.div
+                      animate={isDesktop ? { y: [0, -15, 0] } : {}}
+                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: card.floatDelay }}
                     >
-                      <div style={{ transform: isDesktop ? "translateZ(40px)" : "none" }} className="flex flex-col h-full">
-                        
-                        <div className="flex items-start justify-between mb-3">
-                          <div className={`p-2.5 sm:p-3 rounded-2xl shadow-inner transition-colors duration-300 ${hoveredCard === card.id ? 'bg-[#F28F3B]/10' : 'bg-[#F4F3EE]'}`} style={{ color: card.color }}>
-                            {card.icon}
-                          </div>
-                          <div className="h-10 sm:h-12 flex items-center">
-                            <card.Visual />
-                          </div>
-                        </div>
+                      <TiltCard isDesktop={isDesktop} className="w-full">
+                        <motion.div
+                          animate={{
+                            backgroundColor: isHovered ? card.color : "#FFFFFF",
+                            borderColor: isHovered ? card.color : "#E4E4E7",
+                            scale: isHovered ? 1.03 : 1,
+                          }}
+                          transition={{ duration: 0.3, ease: "easeOut" }}
+                          className="flex flex-col h-full relative border-2 p-5 sm:p-6 rounded-[24px] sm:rounded-[32px] shadow-[0_12px_40px_rgba(0,0,0,0.06)] overflow-hidden"
+                        >
+                          <motion.div 
+                            animate={{ color: isHovered ? "#FFFFFF" : "#2D2A26" }}
+                            style={{ transform: isDesktop ? "translateZ(40px)" : "none" }} 
+                            className="flex flex-col h-full relative z-10"
+                          >
+                            <div className="flex items-start justify-between mb-3">
+                              <motion.div 
+                                animate={{ 
+                                  backgroundColor: isHovered ? "rgba(255,255,255,0.2)" : "rgba(244,243,238,1)",
+                                  color: isHovered ? "#FFFFFF" : card.color,
+                                  rotate: isHovered ? [0, -10, 10, -10, 0] : 0
+                                }}
+                                transition={{ duration: 0.5, repeat: isHovered ? Infinity : 0, repeatDelay: 1 }}
+                                className="p-2.5 sm:p-3 rounded-2xl shadow-inner"
+                              >
+                                {card.icon}
+                              </motion.div>
+                              <div className="h-10 sm:h-12 flex items-center">
+                                <card.Visual isHovered={isHovered} color={card.color} />
+                              </div>
+                            </div>
 
-                        <div className="mt-1">
-                          <h3 className="text-[10px] sm:text-[11px] font-black text-[#2D2A26]/50 uppercase tracking-[0.15em] mb-1">{card.title}</h3>
-                          <div className="flex items-baseline gap-1 mb-1">
-                            <span className="text-3xl sm:text-4xl font-black text-[#2D2A26] tracking-tighter leading-none drop-shadow-sm">
-                              <AnimatedNumber value={card.value} />
-                            </span>
-                          </div>
-                          <p className="text-[9px] sm:text-[10px] font-bold text-[#F28F3B] uppercase tracking-wider mb-2">{card.unit}</p>
-                          <div className="w-full h-px bg-gradient-to-r from-[#2D2A26]/10 to-transparent mb-2" />
-                          <p className="text-[#2D2A26]/60 text-xs sm:text-sm font-medium leading-relaxed">{card.description}</p>
-                        </div>
+                            <div className="mt-1">
+                              <motion.h3 
+                                animate={{ color: isHovered ? "rgba(255,255,255,0.7)" : "rgba(45,42,38,0.5)" }}
+                                className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.15em] mb-1"
+                              >
+                                {card.title}
+                              </motion.h3>
+                              <div className="flex items-baseline gap-1 mb-1">
+                                <span className="text-3xl sm:text-4xl font-black tracking-tighter leading-none drop-shadow-sm">
+                                  <AnimatedNumber value={card.value} />
+                                </span>
+                              </div>
+                              <motion.p 
+                                animate={{ color: isHovered ? "#FFFFFF" : "#F28F3B" }}
+                                className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider mb-2"
+                              >
+                                {card.unit}
+                              </motion.p>
+                              <motion.div 
+                                animate={{ background: isHovered ? "linear-gradient(90deg, rgba(255,255,255,0.3) 0%, transparent 100%)" : "linear-gradient(90deg, rgba(45,42,38,0.1) 0%, transparent 100%)" }}
+                                className="w-full h-px mb-2" 
+                              />
+                              <motion.p 
+                                animate={{ color: isHovered ? "rgba(255,255,255,0.9)" : "rgba(45,42,38,0.6)" }}
+                                className="text-xs sm:text-sm font-medium leading-relaxed"
+                              >
+                                {card.description}
+                              </motion.p>
 
-                      </div>
-                    </TiltCard>
+                              <motion.div
+                                initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                                animate={{ 
+                                  height: isHovered ? "auto" : 0, 
+                                  opacity: isHovered ? 1 : 0,
+                                  marginTop: isHovered ? 16 : 0
+                                }}
+                                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                                className="overflow-hidden flex flex-col gap-3"
+                              >
+                                <p className="text-[13px] leading-relaxed text-white/90 font-medium bg-black/10 p-3 rounded-xl border border-white/10">
+                                  {card.fullExplanation}
+                                </p>
+                                <div className="w-full h-28 rounded-xl overflow-hidden shadow-md relative border border-white/20">
+                                  <img 
+                                    src={card.bgImage} 
+                                    alt={card.title} 
+                                    className="w-full h-full object-cover transform scale-105 group-hover:scale-100 transition-transform duration-700"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                                </div>
+                              </motion.div>
+
+                            </div>
+                          </motion.div>
+                        </motion.div>
+                      </TiltCard>
+                    </motion.div>
                   </motion.div>
                 </motion.div>
-              </motion.div>
-            ))}
+              );
+            })}
           </div>
 
         </div>
@@ -440,9 +641,13 @@ export default function Section3() {
 
       <motion.section 
         style={isDesktop ? { scale: sec2Scale, rotate: sec2Rotate, transformOrigin: "bottom center" } : {}}
-        className="relative z-10 w-full min-h-[70vh] lg:h-screen bg-[#F4F3EE] flex items-center justify-center px-4 md:px-6 py-10 lg:py-0 overflow-hidden lg:shadow-[0_-20px_50px_rgba(0,0,0,0.1)]"
+        className="relative z-10 w-full max-w-full overflow-hidden min-h-[70vh] lg:h-screen bg-[#F4F3EE] flex items-center justify-center px-4 md:px-6 py-10 lg:py-0 lg:shadow-[0_-20px_50px_rgba(0,0,0,0.1)]"
       >
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10%" }}
+          transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
           onMouseEnter={() => setIsHoveringVideo(true)}
           onMouseLeave={() => setIsHoveringVideo(false)}
           onClick={() => setShowModal(true)}
@@ -481,7 +686,7 @@ export default function Section3() {
               <Play fill="white" size={24} className="ml-1" />
             </div>
           )}
-        </div>
+        </motion.div>
       </motion.section>
 
       <AnimatePresence>

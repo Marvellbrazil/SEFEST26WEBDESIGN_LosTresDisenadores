@@ -1,11 +1,32 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring, useMotionTemplate, MotionValue } from 'framer-motion';
 import { Search, CreditCard, ShoppingBag, Leaf, ArrowRight, Clock, ShieldCheck, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 
-const cardsData = [
+interface CardData {
+  id: number;
+  title1: string;
+  title2: string;
+  info: string;
+  description: string;
+  linkText: string;
+  href?: string;
+  image: string;
+  icon: React.ReactNode;
+  accentColor: string;
+  stats: string;
+  statIcon: React.ReactNode;
+}
+
+interface ComponentProps {
+  card: CardData;
+  index: number;
+  progress: MotionValue<number>;
+}
+
+const cardsData: CardData[] = [
   {
     id: 1,
     title1: "Browse",
@@ -14,7 +35,7 @@ const cardsData = [
     description: "Explore our interactive map or list to find bakeries, cafes, and restaurants near you offering perfectly good surplus food at 50-70% off.",
     linkText: "Find Food Near Me",
     image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800",
-    icon: <Search size={24} />,
+    icon: <Search size={28} />,
     accentColor: "#F28F3B",
     stats: "Real-time Map",
     statIcon: <Search size={16} />
@@ -28,7 +49,7 @@ const cardsData = [
     linkText: "Payment Options", 
     href: "/payment",
     image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=800",
-    icon: <CreditCard size={24} />,
+    icon: <CreditCard size={28} />,
     accentColor: "#2D2A26",
     stats: "100% Secure",
     statIcon: <ShieldCheck size={16} />
@@ -42,7 +63,7 @@ const cardsData = [
     linkText: "Pickup Guide", 
     href: "/pickup-guide",
     image: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?q=80&w=800",
-    icon: <ShoppingBag size={24} />,
+    icon: <ShoppingBag size={28} />,
     accentColor: "#F28F3B",
     stats: "Quick & Easy",
     statIcon: <Clock size={16} />
@@ -56,106 +77,121 @@ const cardsData = [
     linkText: "View Dashboard",
     href: "/dashboard",
     image: "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=800",
-    icon: <Leaf size={24} />,
+    icon: <Leaf size={28} />,
     accentColor: "#2D2A26",
     stats: "Track Impact",
     statIcon: <BarChart3 size={16} />
   }
 ];
 
-const StackCard = ({ card, index, progress, totalCards, isMobile }: any) => {
-  const targetScale = 1 - (totalCards - index) * 0.04;
-  const scale = useTransform(progress, [index * 0.25, 1], [1, targetScale]);
+const SmoothImageCard = ({ card, index, progress }: ComponentProps) => {
+  const continuousIndex = useTransform(progress, [0, 1], [0, cardsData.length - 1]);
+  const d = useTransform(continuousIndex, (v: number) => index - v);
 
-  const stickyTop = isMobile 
-    ? `calc(10vh + ${index * 20}px)` 
-    : `calc(12vh + ${index * 32}px)`;
+  const y = useTransform(d, [-3, -2, -1, 0, 1, 2, 3], [-600, -400, -200, 0, 200, 400, 600]);
+
+  const x = useTransform(d, [-1, 0, 1], [10, -40, 10]);
+
+  const rotate = useTransform(d, [-1, 0, 1], [-4, 0, 4]);
+
+  const scale = useTransform(d, [-1, 0, 1], [0.85, 1.05, 0.85]);
+
+  const zIndex = useTransform(d, (v) => Math.round(100 - Math.abs(v) * 10));
+
+  const grayscaleAmount = useTransform(d, [-1, 0, 1], [100, 0, 100]);
+  const imageFilter = useMotionTemplate`grayscale(${grayscaleAmount}%)`;
+
+  const overlayOpacity = useTransform(d, [-1, 0, 1], [0.2, 0, 0.2]);
+
+  const shadowOpacity = useTransform(d, [-1, 0, 1], [0.05, 0.3, 0.05]);
+  const boxShadow = useMotionTemplate`0 30px 60px -15px rgba(0,0,0,${shadowOpacity})`;
 
   return (
-    <div 
-      className="sticky w-full flex items-center justify-center pt-8"
-      style={{ top: stickyTop }}
+    <motion.div
+      className="absolute right-4 lg:right-10 w-[90%] max-w-[280px] lg:max-w-[320px] h-[220px] lg:h-[420px] rounded-[24px] lg:rounded-[32px] overflow-hidden border-[1px] border-white/20 bg-[#2D2A26] will-change-transform top-[calc(50%-110px)] lg:top-[calc(50%-210px)]"
+      style={{
+        y, x, rotate, scale, zIndex, boxShadow,
+        transformOrigin: "center right",
+      }}
     >
+      <motion.img 
+        src={card.image} 
+        className="w-full h-full object-cover" 
+        alt={card.title1} 
+        style={{ filter: imageFilter }}
+      />
+      
       <motion.div 
-        style={{ scale, transformOrigin: "top center" }}
-        className="w-full max-w-5xl h-auto md:h-[65vh] min-h-[500px] bg-white/90 backdrop-blur-3xl rounded-[32px] md:rounded-[48px] border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.08)] flex flex-col md:flex-row overflow-hidden relative group transition-colors duration-500 hover:border-white"
-      >
-        <div className="w-full md:w-1/2 h-[260px] sm:h-[300px] md:h-full relative overflow-hidden p-3 md:p-4">
-          <div className="w-full h-full rounded-[24px] md:rounded-[36px] overflow-hidden relative">
-            <motion.img 
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              src={card.image}
-              alt={card.title1}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#2D2A26]/80 via-[#2D2A26]/10 to-transparent pointer-events-none" />
-            
-            <div className="absolute bottom-5 left-5 right-5 md:bottom-6 md:left-6 md:right-6 flex items-center justify-between">
-              <div className="bg-white/20 backdrop-blur-md border border-white/20 text-white px-4 py-2.5 rounded-2xl shadow-lg">
-                <p className="text-[9px] md:text-[10px] uppercase tracking-wider font-bold opacity-80 mb-0.5">Action</p>
-                <div className="flex items-center gap-2">
-                  {card.statIcon}
-                  <span className="text-xs md:text-sm font-black">{card.stats}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        className="absolute inset-0 bg-black pointer-events-none"
+        style={{ opacity: overlayOpacity }}
+      />
+      
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+      
+      <div className="absolute bottom-5 left-5 lg:bottom-6 lg:left-6 flex items-center gap-2">
+        <div style={{ color: card.accentColor === "#2D2A26" ? "#FFFFFF" : card.accentColor }}>{card.statIcon}</div>
+        <span className="text-white font-bold text-xs lg:text-sm tracking-wide">{card.stats}</span>
+      </div>
+    </motion.div>
+  );
+};
 
-        <div className="w-full md:w-1/2 h-full p-6 sm:p-8 md:p-12 flex flex-col justify-between relative bg-gradient-to-br from-white/40 to-transparent">
-          
-          <div className="absolute top-6 right-8 pointer-events-none select-none">
-            <span className="text-[70px] md:text-[120px] font-black leading-none text-[#2D2A26] opacity-[0.04]">
-              0{index + 1}
-            </span>
-          </div>
+const SmoothTextContent = ({ card, index, progress }: ComponentProps) => {
+  const continuousIndex = useTransform(progress, [0, 1], [0, cardsData.length - 1]);
+  const d = useTransform(continuousIndex, (v: number) => index - v);
 
-          <div className="relative z-10 flex-1 flex flex-col justify-center mt-2 md:mt-0">
-            <div className="hidden md:flex w-12 h-12 md:w-14 md:h-14 rounded-2xl mb-6 md:mb-8 items-center justify-center text-white shadow-lg" style={{ backgroundColor: card.accentColor }}>
-              {card.icon}
-            </div>
-            
-            <p className="text-[9px] md:text-xs font-black uppercase tracking-[0.2em] mb-2 md:mb-4" style={{ color: card.accentColor }}>
-              {card.info}
-            </p>
-            
-            <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#2D2A26] uppercase tracking-tighter leading-[0.95] mb-4 md:mb-6">
-              {card.title1}<br />
-              <span style={{ color: card.accentColor }}>{card.title2}</span>
-            </h3>
-            
-            <p className="text-[#2D2A26]/60 text-xs sm:text-sm md:text-base font-medium leading-relaxed max-w-sm">
-              {card.description}
-            </p>
-          </div>
+  const opacity = useTransform(d, [-0.6, 0, 0.6], [0, 1, 0]);
+  const y = useTransform(d, [-1, 0, 1], [-80, 0, 80]);
+  const pointerEvents = useTransform(d, (v) => Math.abs(v) < 0.3 ? "auto" : "none");
 
-          <div className="mt-8 md:mt-10 relative z-10 flex flex-col sm:flex-row gap-5 md:gap-6 border-t border-[#2D2A26]/10 pt-6 md:pt-8">
-            <Link 
-              href={card.href || "#"} 
-              className="flex items-center justify-center gap-2 px-6 py-3 md:px-8 md:py-4 rounded-full font-bold text-[10px] md:text-xs uppercase tracking-wider transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group/btn text-white w-full sm:w-auto"
-              style={{ backgroundColor: card.accentColor }}
-            >
-              {card.linkText}
-              <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-            </Link>
-          </div>
-        </div>
-      </motion.div>
-    </div>
+  return (
+    <motion.div
+      className="absolute inset-0 flex flex-col justify-center items-start w-full h-full"
+      style={{ opacity, y, pointerEvents }}
+    >
+      <div className="absolute left-[-10px] top-1/2 -translate-y-1/2 pointer-events-none overflow-hidden z-0">
+        <span 
+          className="text-[140px] sm:text-[180px] md:text-[250px] font-black leading-none text-transparent"
+          style={{ WebkitTextStroke: '3px rgba(45,42,38,0.05)' }}
+        >
+          0{index + 1}
+        </span>
+      </div>
+
+      <div className="relative z-10 w-full lg:pl-6">
+        <p className="text-[11px] sm:text-xs font-black uppercase tracking-[0.25em] mb-4" style={{ color: card.accentColor }}>
+          {card.info}
+        </p>
+        
+        <h3 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-[#2D2A26] uppercase tracking-tighter leading-[0.85] mb-5">
+          {card.title1}<br />
+          <span className="bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(135deg, ${card.accentColor}, ${card.accentColor}90)` }}>
+            {card.title2}
+          </span>
+        </h3>
+        
+        <p className="text-[#2D2A26]/75 text-sm sm:text-base md:text-lg font-medium leading-relaxed max-w-md mb-8">
+          {card.description}
+        </p>
+
+        <Link 
+          href={card.href || "#"} 
+          className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-300 hover:-translate-y-1 group/btn text-white w-max shadow-xl"
+          style={{ 
+            background: `linear-gradient(to right, ${card.accentColor}, ${card.accentColor}ee)`,
+            boxShadow: `0 10px 30px ${card.accentColor}40`
+          }}
+        >
+          {card.linkText}
+          <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover/btn:translate-x-1.5" />
+        </Link>
+      </div>
+    </motion.div>
   );
 };
 
 export default function Section4() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -163,61 +199,67 @@ export default function Section4() {
   });
 
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
+    stiffness: 70,
+    damping: 20,
+    mass: 1,
     restDelta: 0.001
   });
 
   return (
-    <section id="guide" ref={containerRef} className="relative w-full bg-[#F4F3EE] font-[family:var(--font-jakarta)] pb-[20vh] pt-[10vh]">
+    <section id="guide" ref={containerRef} className="relative w-full h-[400vh] bg-[#F4F3EE] font-[family:var(--font-jakarta)] select-none">
 
-      <div 
-        className="absolute inset-0 z-0 opacity-[0.2] pointer-events-none"
-        style={{
-          backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)',
-          backgroundSize: '40px 40px'
-        }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#F4F3EE]/40 to-[#F4F3EE] pointer-events-none z-[1]" />
+      {/* Latar Belakang Pattern & Cahaya */}
+      <div className="fixed inset-0 z-0 opacity-[0.2] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none max-w-full">
+        <motion.div animate={{ x: [0, -50, 0], y: [0, 100, 0] }} transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[10%] left-[5%] w-[300px] lg:w-[500px] h-[300px] lg:h-[500px] bg-[#F28F3B] rounded-full blur-[140px] opacity-20" />
+        <motion.div animate={{ x: [0, 80, 0], y: [0, -80, 0] }} transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[20%] right-[5%] w-[300px] lg:w-[600px] h-[300px] lg:h-[600px] bg-[#2D2A26] rounded-full blur-[140px] opacity-10" />
+      </div>
 
-      <motion.div 
-        animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.15, 0.1] }} 
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-[#F28F3B] rounded-full blur-[120px] md:blur-[160px] z-0 pointer-events-none" 
-      />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8">
+      <div className="sticky top-0 h-screen w-full flex flex-col lg:flex-row max-w-[1300px] mx-auto px-6 md:px-10 z-10 pt-[10vh] pb-[5vh]">
         
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="flex flex-col items-center justify-center mb-[8vh] md:mb-[10vh]"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-md border border-white/50 rounded-full shadow-sm mb-4 md:mb-6">
-            <span className="w-2 h-2 rounded-full bg-[#F28F3B] animate-pulse" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2D2A26]/60">Step by Step Guide</span>
+        <motion.div className="lg:hidden w-full flex flex-col items-center text-center mb-6 flex-shrink-0 z-20">
+          <div className="bg-[#2D2A26] text-white text-[10px] font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-md shadow-lg mb-2 w-max">
+            Step By Step Guide
           </div>
-          <h2 className="text-[40px] sm:text-[60px] md:text-[80px] lg:text-[110px] font-black uppercase tracking-tighter text-[#2D2A26] leading-[0.9] md:leading-[0.85] text-center">
-            How It <span className="text-[#F28F3B]">Works</span>
+          <h2 className="relative font-black uppercase tracking-tighter leading-[0.85] text-[#2D2A26] text-[40px] sm:text-[50px]">
+            HOW IT <span className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-3 py-1 rounded-[12px] shadow-[0_15px_30px_rgba(242,143,59,0.25)] border-2 border-[#F4F3EE] transform rotate-1.5 inline-block text-[28px] sm:text-[36px]">WORKS</span>
           </h2>
         </motion.div>
 
-        <div className="relative w-full h-[350vh] md:h-[400vh]">
-          {cardsData.map((card, index) => (
-            <StackCard 
-              key={card.id} 
-              card={card} 
-              index={index} 
-              progress={smoothProgress} 
-              totalCards={cardsData.length} 
-              isMobile={isMobile}
-            />
-          ))}
+        <div 
+          className="w-full lg:w-1/2 h-[35vh] lg:h-full flex items-center justify-center relative border-b lg:border-b-0 lg:border-r border-black/5"
+          style={{ WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)' }}
+        >
+          <div className="relative w-full h-0 flex justify-end">
+            {cardsData.map((card, index) => (
+              <SmoothImageCard key={card.id} card={card} index={index} progress={smoothProgress} />
+            ))}
+          </div>
         </div>
 
+        <div className="w-full lg:w-1/2 h-[45vh] lg:h-full flex flex-col justify-center lg:pl-16 relative">
+          
+          <motion.div className="hidden lg:flex flex-col items-start mb-6 relative z-20">
+            <div className="bg-[#2D2A26] text-white text-[10px] font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-md shadow-lg mb-3 w-max">
+              Step By Step Guide
+            </div>
+            <h2 className="relative font-black uppercase tracking-tighter leading-none flex flex-row items-center gap-x-4 text-[#2D2A26] text-[52px] xl:text-[64px]">
+              <span>HOW IT</span>
+              <span className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-5 py-1 rounded-[18px] shadow-[0_15px_30px_rgba(242,143,59,0.25)] border-4 border-[#F4F3EE] transform rotate-1.5 inline-block text-[36px] xl:text-[44px]">
+                WORKS
+              </span>
+            </h2>
+          </motion.div>
+          
+          <div className="relative w-full h-[320px] lg:h-[400px]">
+            {cardsData.map((card, index) => (
+              <SmoothTextContent key={card.id} card={card} index={index} progress={smoothProgress} />
+            ))}
+          </div>
+
+        </div>
       </div>
+
     </section>
   );
 }

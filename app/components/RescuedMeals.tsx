@@ -166,11 +166,11 @@ const rescuedMeals = [
 
 function StarRating({ rating }: { rating: number }) {
   return (
-    <div className="flex items-center gap-0.5 sm:gap-1">
+    <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
-          className={`w-2 h-2 sm:w-3 sm:h-3 ${star <= Math.round(rating) ? "text-[#F28F3B] fill-[#F28F3B]" : "text-[#2D2A26]/20 fill-[#2D2A26]/20"}`}
+          className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${star <= Math.round(rating) ? "text-[#F28F3B] fill-[#F28F3B]" : "text-[#2D2A26]/20 fill-[#2D2A26]/20"}`}
         />
       ))}
     </div>
@@ -189,17 +189,17 @@ export default function RescuedMeals() {
   const visibleMeals = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
 
-  return (
-    <section id="marketplace" className="relative w-full bg-[#F4F3EE] py-24 lg:py-32 overflow-hidden font-[family:var(--font-jakarta)]">
-      
-      <div 
-        className="absolute inset-0 z-0 opacity-[0.2] pointer-events-none"
-        style={{
-          backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)',
-          backgroundSize: '40px 40px'
-        }}
-      />
+  const stickerSpringTransition = {
+    type: "spring" as const,
+    stiffness: 150,
+    damping: 12,
+    mass: 0.8
+  };
 
+  return (
+    <section id="marketplace" className="relative w-full bg-[#F4F3EE] py-24 lg:py-32 overflow-hidden font-[family:var(--font-jakarta)] select-none">
+      
+      <div className="absolute inset-0 z-0 opacity-[0.2] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#2D2A26 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#F28F3B] rounded-full blur-[150px] opacity-10 pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#2D2A26] rounded-full blur-[150px] opacity-[0.03] pointer-events-none" />
 
@@ -211,37 +211,60 @@ export default function RescuedMeals() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10">
         
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12 sm:mb-16"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-md border border-white/50 rounded-full shadow-sm mb-6">
-            <ShoppingBag size={14} className="text-[#F28F3B]" />
-            <span className="text-[#2D2A26]/60 font-bold text-[10px] uppercase tracking-[0.2em]">
-              Live Marketplace
+        <div className="lg:hidden w-full flex flex-col items-center text-center mb-10">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.4, rotate: -15, y: 30 }}
+            whileInView={{ opacity: 1, scale: 1, rotate: 0, y: 0 }}
+            viewport={{ once: true }}
+            transition={stickerSpringTransition}
+            className="bg-[#2D2A26] text-white text-[9px] min-[400px]:text-[10px] font-black uppercase tracking-[0.3em] px-3.5 py-1.5 rounded-md shadow-md mb-3 w-max"
+          >
+            Live Marketplace
+          </motion.div>
+          <motion.h2 
+            initial={{ opacity: 0, scale: 0.7, y: 40 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ ...stickerSpringTransition, delay: 0.1 }}
+            className="relative font-black uppercase tracking-tighter leading-[0.85] text-[#2D2A26] text-[36px] min-[400px]:text-[44px]"
+          >
+            RESCUE MEALS <br />
+            <span className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-4 py-0.5 rounded-[12px] shadow-[0_15px_30px_rgba(242,143,59,0.25)] border-2 border-white transform rotate-1.5 inline-block text-[26px] min-[400px]:text-[32px] mt-2">
+              NEAR YOU
             </span>
-            <span className="w-2 h-2 bg-[#F28F3B] rounded-full animate-pulse ml-1" />
-          </div>
+          </motion.h2>
+        </div>
 
-          <h2 className="text-[#2D2A26] text-[40px] sm:text-[60px] md:text-[80px] uppercase tracking-tighter leading-[0.9] font-black mb-6">
-            Rescue Meals <br />
-            <span className="text-[#F28F3B]">Near You.</span>
-          </h2>
-          <p className="text-[#2D2A26]/60 text-sm sm:text-base md:text-lg max-w-xl mx-auto font-medium leading-relaxed">
-            Freshly listed surplus food from your favorite local stores. 
-            Updated in real-time, ready for pickup.
-          </p>
-        </motion.div>
+        <div className="hidden lg:flex flex-col items-center text-center mb-16">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.4, rotate: -12, y: 40 }}
+            whileInView={{ opacity: 1, scale: 1, rotate: 0, y: 0 }}
+            viewport={{ once: true }}
+            transition={stickerSpringTransition}
+            className="bg-[#2D2A26] text-white text-[10px] font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-md shadow-md mb-4 w-max"
+          >
+            Live Marketplace
+          </motion.div>
+          <motion.h2 
+            initial={{ opacity: 0, scale: 0.8, y: 50, rotate: 5 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0, rotate: 0 }}
+            viewport={{ once: true }}
+            transition={{ ...stickerSpringTransition, delay: 0.15 }}
+            className="relative font-black uppercase tracking-tighter leading-[0.8] flex flex-col items-center text-[#2D2A26] text-[72px] xl:text-[80px]"
+          >
+            <span>RESCUE MEALS</span>
+            <span className="bg-gradient-to-r from-[#F28F3B] to-[#FF6B35] text-white px-5 py-0.5 rounded-[18px] shadow-[0_15px_30px_rgba(242,143,59,0.25)] border-4 border-white transform rotate-1.5 inline-block text-[50px] xl:text-[60px] mt-2">
+              NEAR YOU
+            </span>
+          </motion.h2>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="flex gap-2 sm:gap-3 overflow-x-auto pb-6 mb-8 justify-start lg:justify-center px-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
+          transition={{ ...stickerSpringTransition, delay: 0.25 }}
+          className="flex gap-2 sm:gap-3 overflow-x-auto pb-6 mb-10 justify-start lg:justify-center px-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
         >
           {categories.map((cat) => (
             <motion.button
@@ -251,10 +274,10 @@ export default function RescuedMeals() {
                 setVisibleCount(8);
               }}
               whileTap={{ scale: 0.95 }}
-              className={`shrink-0 snap-center px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-widest transition-all duration-300 ${
+              className={`shrink-0 snap-center px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-widest transition-all duration-300 border ${
                 activeCategory === cat
-                  ? "bg-[#2D2A26] text-white shadow-xl"
-                  : "bg-white/60 backdrop-blur-md text-[#2D2A26]/60 hover:bg-white border border-white/50"
+                  ? "bg-[#2D2A26] border-[#2D2A26] text-white shadow-xl"
+                  : "bg-white/60 backdrop-blur-md text-[#2D2A26]/60 hover:bg-white border-white/50"
               }`}
             >
               {cat}
@@ -275,9 +298,9 @@ export default function RescuedMeals() {
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: -20 }}
-                transition={{ duration: 0.4, delay: idx * 0.05, type: "spring", bounce: 0.3 }}
+                transition={{ duration: 0.5, delay: idx * 0.05, type: "spring", bounce: 0.3 }}
                 whileHover={{ y: -8 }}
-                className="group bg-white/70 backdrop-blur-xl rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] border border-white/60 transition-all duration-500 flex flex-col p-2"
+                className="group bg-white/70 backdrop-blur-xl rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_30px_60px_-15px_rgba(242,143,59,0.15)] border border-white/60 transition-all duration-500 flex flex-col p-2"
               >
                 <div className="relative overflow-hidden rounded-[16px] sm:rounded-[24px] aspect-[4/3] bg-[#2D2A26]/5">
                   <img
@@ -299,7 +322,7 @@ export default function RescuedMeals() {
                     -{meal.discount}%
                   </div>
 
-                  <div className="hidden sm:flex absolute bottom-3 left-3 right-3 items-center gap-3 text-[9px] font-bold uppercase tracking-wider text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
+                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2 text-[9px] font-bold uppercase tracking-wider text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-2 group-hover:translate-y-0">
                     <span className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-1 rounded-lg">
                       <MapPin size={10} />
                       {meal.distance}
@@ -316,9 +339,9 @@ export default function RescuedMeals() {
                     <h3 className="font-black text-[#2D2A26] text-xs sm:text-lg uppercase tracking-tighter leading-tight truncate pr-2">
                       {meal.store}
                     </h3>
-                    <div className="flex items-center gap-1 bg-[#F28F3B]/10 px-1.5 py-1 sm:px-2 sm:py-1 rounded-lg shrink-0">
+                    <div className="flex items-center gap-1 bg-[#F28F3B]/10 px-1.5 py-1 rounded-lg shrink-0">
                       <StarRating rating={meal.rating} />
-                      <span className="text-[8px] sm:text-[9px] text-[#F28F3B] font-bold">
+                      <span className="text-[8px] sm:text-[9px] text-[#F28F3B] font-black">
                         {meal.rating}
                       </span>
                     </div>
@@ -331,13 +354,13 @@ export default function RescuedMeals() {
                     <span className="w-1 h-1 rounded-full bg-[#2D2A26]/20 shrink-0" />
                     <span className="flex items-center gap-1 text-[8px] sm:text-[10px] text-[#2D2A26]/50 font-bold shrink-0">
                       <Leaf className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#F28F3B]" />
-                      {meal.co2Saved}
+                      {meal.co2Saved} saved
                     </span>
                   </div>
 
                   <div className="flex-1" />
 
-                  <div className="pt-3 sm:pt-4 mt-1 sm:mt-2 border-t border-[#2D2A26]/5 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+                  <div className="pt-3 sm:pt-4 mt-1 sm:mt-2 border-t border-[#2D2A26]/5 flex flex-col sm:flex-row sm:items-end justify-between gap-2.5">
                     <div>
                       <p className="hidden sm:block text-[9px] text-[#2D2A26]/40 font-bold uppercase tracking-wider mb-1">
                         Total Price
@@ -352,7 +375,7 @@ export default function RescuedMeals() {
                       </div>
                     </div>
                     
-                    <button className="bg-[#2D2A26] hover:bg-[#F28F3B] text-white text-[9px] sm:text-xs font-bold uppercase tracking-wider px-3 py-2 sm:px-5 sm:py-3 rounded-xl transition-all duration-300 group-hover:shadow-[0_10px_20px_rgba(242,143,59,0.2)] w-full sm:w-auto text-center">
+                    <button className="bg-[#2D2A26] hover:bg-[#F28F3B] text-white text-[9px] sm:text-xs font-bold uppercase tracking-widest px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl transition-all duration-300 group-hover:shadow-[0_10px_20px_rgba(242,143,59,0.2)] w-full sm:w-auto text-center shadow-md">
                       Rescue
                     </button>
                   </div>

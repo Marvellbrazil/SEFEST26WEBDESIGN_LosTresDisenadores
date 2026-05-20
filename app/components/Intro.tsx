@@ -17,7 +17,7 @@ export default function Intro({ setFinished }: IntroProps) {
 
   useEffect(() => {
     if (index < words.length) {
-      const timer = setTimeout(() => setIndex((prev) => prev + 1), 600);
+      const timer = setTimeout(() => setIndex((prev) => prev + 1), 1000);
       return () => clearTimeout(timer);
     }
     if (index === words.length && !showLogo) {
@@ -27,10 +27,12 @@ export default function Intro({ setFinished }: IntroProps) {
 
   useEffect(() => {
     if (showLogo) {
-      const timer = setTimeout(() => setIsExiting(true), 1800);
+      const timer = setTimeout(() => setIsExiting(true), 2400);
       return () => clearTimeout(timer);
     }
   }, [showLogo]);
+
+  const currentWordLetters = words[index] ? words[index].split('') : [];
 
   return (
     <motion.div
@@ -60,44 +62,83 @@ export default function Intro({ setFinished }: IntroProps) {
             className="relative z-10 flex items-center justify-center overflow-hidden h-32 md:h-48 perspective-[1000px]"
           >
             <AnimatePresence mode="popLayout">
-              <motion.h1
-                key={`word-${index}`}
-                initial={{ opacity: 0, y: 80, rotateX: -60, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -80, rotateX: 60, scale: 1.1 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[#F4F3EE] text-[15vw] md:text-[10vw] font-black uppercase tracking-tighter leading-none"
-                style={{ WebkitTextStroke: index % 2 === 0 ? '0px transparent' : '3px #F4F3EE', color: index % 2 === 0 ? '#F4F3EE' : 'transparent' }}
+              <motion.div 
+                key={`word-track-${index}`}
+                className="flex items-center justify-center gap-[0.01em]"
               >
-                {words[index]}
-              </motion.h1>
+                {currentWordLetters.map((char, charIdx) => (
+                  <div key={`${index}-${charIdx}`} className="overflow-hidden inline-block py-2">
+                    <motion.span
+                      initial={{ y: "105%", rotate: 8 }}
+                      animate={{ y: 0, rotate: 0 }}
+                      exit={{ y: "-105%", rotate: -8 }}
+                      transition={{ 
+                        type: "spring", 
+                        stiffness: 200, 
+                        damping: 16,
+                        delay: charIdx * 0.03
+                      }}
+                      className="inline-block text-[#F4F3EE] text-[15vw] md:text-[10vw] font-black uppercase tracking-tighter leading-none"
+                      style={{ 
+                        WebkitTextStroke: index % 2 === 0 ? '0px transparent' : '3px #F4F3EE', 
+                        color: index % 2 === 0 ? '#F4F3EE' : 'transparent' 
+                      }}
+                    >
+                      {char}
+                    </motion.span>
+                  </div>
+                ))}
+              </motion.div>
             </AnimatePresence>
           </motion.div>
         ) : (
           <motion.div
             key="logo-container"
-            initial={{ opacity: 0, scale: 0.7, filter: 'blur(20px)', y: 40 }}
-            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)', y: 0 }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, scaleY: 0.3, scaleX: 1.4, y: 150 }}
+            animate={{ opacity: 1, scaleY: 1, scaleX: 1, y: 0 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 240, 
+              damping: 12,
+              mass: 0.6,
+              delay: 0.05
+            }}
             className="relative z-10 flex flex-col items-center"
           >
             <motion.div
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 0.25 }}
-              transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[40vw] bg-[#F4F3EE] rounded-full blur-[100px] z-0"
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ 
+                scale: [1, 1.1, 1], 
+                opacity: [0.2, 0.35, 0.2] 
+              }}
+              transition={{ 
+                duration: 2.5, 
+                repeat: Infinity, 
+                ease: "easeInOut" 
+              }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[45vw] h-[45vw] bg-[#F4F3EE] rounded-full blur-[90px] z-0 pointer-events-none"
             />
             
-            <div className="relative z-10 w-[55%] max-w-[320px] md:max-w-[450px]">
+            <motion.div 
+              animate={{ 
+                rotate: [0, -6, 6, -4, 4, 0, 0, 0],
+                y: [0, 0, 0, 0, 0, 0, -10, 0]
+              }}
+              transition={{ 
+                rotate: { duration: 0.8, ease: "easeOut", delay: 0.4 },
+                y: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1.2 } 
+              }}
+              className="relative z-10 w-[55%] max-w-[320px] md:max-w-[450px] p-2"
+            >
               <Image 
                 src="/HD.png" 
                 alt="Logo" 
                 width={500} 
                 height={500} 
                 priority={true} 
-                className="w-full h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.25)]" 
+                className="w-full h-auto object-contain drop-shadow-[0_15px_35px_rgba(0,0,0,0.18)]" 
               />
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
