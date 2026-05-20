@@ -43,10 +43,9 @@
 - [Tech Stack & Prasyarat](#tech-stack--prasyarat)
 - [Panduan Instalasi Langkah demi Langkah](#panduan-instalasi-langkah-demi-langkah)
 - [Alur Kerja Sistem](#alur-kerja-sistem)
-- [Perjalanan Pengguna Secara Menyeluruh](#perjalanan-pengguna-secara-menyeluruh)
 - [Struktur Direktori Proyek](#struktur-direktori-proyek)
 - [Standar Kode & Skalabilitas](#standar-kode--skalabilitas)
-
+- [Kontributor Proyek](#kontributor-proyek)
 
 
 ## Gambaran Proyek & Keselarasan SDG

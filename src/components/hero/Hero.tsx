@@ -302,7 +302,7 @@ const marqueeTexts = [
 const floatingCards = [
   {
     id: 'card-1',
-    position: 'top-[15%] left-[5%] xl:left-[10%]',
+    position: 'top-[15%] left-[10%] xl:left-[8%]',
     parallaxFactor: 25,
     delay: 0,
     content: (
@@ -327,7 +327,7 @@ const floatingCards = [
   },
   {
     id: 'card-2',
-    position: 'top-[12%] right-[5%] xl:right-[10%]',
+    position: 'top-[16%] right-[5%] xl:right-[10%]',
     parallaxFactor: -20,
     delay: 0.2,
     content: (
@@ -659,26 +659,6 @@ export default function Hero() {
           </p>
         </motion.div>
 
-        <motion.div 
-          variants={itemFadeUpVariants}
-          ref={scrollIndicatorRef}
-          style={{ x: mouseSpringX, y: mouseSpringY }}
-          className="hidden md:flex flex-col items-center gap-2 mt-4 select-none pointer-events-auto transition-transform"
-        >
-          <div className="w-6 h-10 rounded-full border-2 border-[#2D2A26]/20 flex justify-center pt-1.5 relative overflow-hidden backdrop-blur-[2px]">
-            <motion.div 
-              animate={{ 
-                y: [0, 14, 0],
-                opacity: [1, 0.4, 1]
-              }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="w-1.5 h-1.5 bg-[#F28F3B] rounded-full shadow-[0_0_6px_#F28F3B]"
-            />
-          </div>
-          <span className="text-[8px] font-black uppercase tracking-[0.25em] text-[#2D2A26]/30">
-            Scroll down
-          </span>
-        </motion.div>
       </motion.div>
 
       <div className="w-full bg-[#2D2A26] py-3 sm:py-2 overflow-hidden border-t border-b border-white/5 relative z-40 block shadow-[0_-15px_40px_rgba(0,0,0,0.05)] whitespace-nowrap">

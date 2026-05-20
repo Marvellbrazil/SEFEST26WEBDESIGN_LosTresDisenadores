@@ -11,6 +11,7 @@ import {
   RiStore2Line,
   RiPhoneLine,
   RiMapPinLine,
+  RiIdCardLine,
 } from "react-icons/ri";
 import Link from "next/link";
 import ForgotPasswordModal from "./components/ForgotPasswordModal";
@@ -95,16 +96,44 @@ export default function LoginPage() {
           </div>
 
           <form className="space-y-4 max-w-md">
-            <div className="space-y-3">
-              <div className="relative">
-                <RiMailLine className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 size-5" />
-                <input type="email" placeholder="EMAIL ADDRESS" className="w-full bg-white/70 backdrop-blur-md border border-white focus:border-[#F28F3B] rounded-2xl py-4.5 pl-14 pr-6 text-[11px] font-black tracking-widest text-[#2D2A26] outline-none transition-all shadow-sm focus:ring-0" />
-              </div>
-              <div className="relative">
-                <RiLockLine className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 size-5" />
-                <input type="password" placeholder="PASSWORD" className="w-full bg-white/70 backdrop-blur-md border border-white focus:border-[#F28F3B] rounded-2xl py-4.5 pl-14 pr-6 text-[11px] font-black tracking-widest text-[#2D2A26] outline-none transition-all shadow-sm focus:ring-0" />
-              </div>
-            </div>
+            <AnimatePresence mode="wait">
+              {role === "buyer" && (
+                <motion.div key="buyer-signin" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }} className="space-y-3">
+                  <div className="relative">
+                    <RiMailLine className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 size-5" />
+                    <input type="email" placeholder="EMAIL ADDRESS" className="w-full bg-white/70 backdrop-blur-md border border-white focus:border-[#F28F3B] rounded-2xl py-4.5 pl-14 pr-6 text-[11px] font-black tracking-widest text-[#2D2A26] outline-none transition-all shadow-sm focus:ring-0" />
+                  </div>
+                  <div className="relative">
+                    <RiLockLine className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 size-5" />
+                    <input type="password" placeholder="PASSWORD" className="w-full bg-white/70 backdrop-blur-md border border-white focus:border-[#F28F3B] rounded-2xl py-4.5 pl-14 pr-6 text-[11px] font-black tracking-widest text-[#2D2A26] outline-none transition-all shadow-sm focus:ring-0" />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence mode="wait">
+              {role === "seller" && (
+                <motion.div key="seller-signin" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }} className="space-y-3">
+                  <div className="relative">
+                    <RiMailLine className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 size-5" />
+                    <input type="email" placeholder="BUSINESS EMAIL ADDRESS" className="w-full bg-white/70 backdrop-blur-md border border-white focus:border-[#F28F3B] rounded-2xl py-4.5 pl-14 pr-6 text-[11px] font-black tracking-widest text-[#2D2A26] outline-none transition-all shadow-sm focus:ring-0" />
+                  </div>
+                  <div className="relative">
+                    <RiLockLine className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 size-5" />
+                    <input type="password" placeholder="PASSWORD" className="w-full bg-white/70 backdrop-blur-md border border-white focus:border-[#F28F3B] rounded-2xl py-4.5 pl-14 pr-6 text-[11px] font-black tracking-widest text-[#2D2A26] outline-none transition-all shadow-sm focus:ring-0" />
+                  </div>
+                  <div className="relative">
+                    <RiStore2Line className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 size-5" />
+                    <input type="text" placeholder="STORE / BUSINESS NAME" className="w-full bg-white/70 backdrop-blur-md border border-white focus:border-[#F28F3B] rounded-2xl py-4.5 pl-14 pr-6 text-[11px] font-black tracking-widest text-[#2D2A26] outline-none transition-all shadow-sm focus:ring-0" />
+                  </div>
+                  <div className="relative">
+                    <RiIdCardLine className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 size-5" />
+                    <input type="text" placeholder="STORE ID" className="w-full bg-white/70 backdrop-blur-md border border-white focus:border-[#F28F3B] rounded-2xl py-4.5 pl-14 pr-6 text-[11px] font-black tracking-widest text-[#2D2A26] outline-none transition-all shadow-sm focus:ring-0" />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <div className="flex justify-end">
               <button type="button" onClick={() => setIsForgotOpen(true)} className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-[#F28F3B] transition-colors">
                 Forgot Password?
@@ -114,7 +143,7 @@ export default function LoginPage() {
               Sign In
             </button>
             <p className="lg:hidden text-center text-[10px] font-black uppercase tracking-widest text-gray-400 mt-6">
-              Don&apos;t have an account? <button type="button" onClick={() => setIsLogin(false)} className="text-[#F28F3B] hover:text-[#2D2A26] transition-colors">Sign Up</button>
+              Don't have an account? <button type="button" onClick={() => setIsLogin(false)} className="text-[#F28F3B] hover:text-[#2D2A26] transition-colors">Sign Up</button>
             </p>
           </form>
         </div>
@@ -238,7 +267,7 @@ export default function LoginPage() {
                   Already a <span className="text-[#F28F3B]">Rescuer?</span>
                 </motion.h3>
                 <motion.p custom={3} variants={contentVariants} initial="hidden" animate="visible" exit="exit" className="text-[10px] font-bold text-white/70 mb-8 leading-relaxed uppercase tracking-[0.4em] max-w-sm drop-shadow-md">
-                  Sign in to continue your journey <br /> and check out today&apos;s flash sales nearby.
+                  Sign in to continue your journey <br /> and check out today's flash sales nearby.
                 </motion.p>
                 <motion.button custom={4} variants={contentVariants} initial="hidden" animate="visible" exit="exit" onClick={() => setIsLogin(true)} className="group relative overflow-hidden border-2 border-white/20 hover:border-[#F28F3B] px-12 py-4.5 rounded-full text-[10px] font-black uppercase tracking-[0.3em] transition-all duration-300">
                   <span className="relative z-10 transition-colors group-hover:text-white">Sign In Now</span>

@@ -61,82 +61,139 @@ const Section2 = () => {
       const textContainer = textRef.current;
       const bottomCard = bottomTextRef.current;
       if (!container || !textContainer) return;
-      
+
+      const isMobile = window.innerWidth < 768;
       const letters = container.querySelectorAll('.letter');
       const arrowPaths = arrowRef.current ? arrowRef.current.querySelectorAll('path') : [];
 
-      const pinnedDistance = window.innerWidth < 768 ? 2000 : 3500;
+      if (!isMobile) {
+        const pinnedDistance = 3500;
+        const scrollTween = gsap.timeline({
+          scrollTrigger: {
+            trigger: container,
+            start: "top top",
+            end: () => `+=${pinnedDistance}`,
+            scrub: 1.2,
+            pin: true,
+            pinSpacing: true,
+            invalidateOnRefresh: true,
+          }
+        });
 
-      const scrollTween = gsap.timeline({
-        scrollTrigger: {
-          trigger: container,
-          start: "top top",
-          end: () => `+=${pinnedDistance}`,
-          scrub: 1.2,
-          pin: true,
-          pinSpacing: true,
-          invalidateOnRefresh: true,
-        }
-      });
+        scrollTween
+          .fromTo(textContainer,
+            { x: "100vw" },
+            { x: "50vw", ease: "none", duration: 1 }
+          )
+          .to(textContainer,
+            { x: () => -(textContainer.scrollWidth - window.innerWidth / 2), ease: "none", duration: 2 }
+          );
 
-      scrollTween
-        .fromTo(textContainer,
-          { x: "100vw" },
-          { x: "50vw", ease: "none", duration: 1 }
-        )
-        .to(textContainer,
-          { x: () => -(textContainer.scrollWidth - window.innerWidth / 2), ease: "none", duration: 2 }
-        );
-
-      if (bottomCard) {
-        gsap.fromTo(bottomCard,
-          { scale: 0.85, opacity: 0, y: 50 },
-          {
-            scale: 1,
-            opacity: 1,
-            y: 0,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: textContainer,
-              containerAnimation: scrollTween,
-              start: "left 40%",
-              end: "left 10%",
-              scrub: 1
+        if (bottomCard) {
+          gsap.fromTo(bottomCard,
+            { scale: 0.85, opacity: 0, y: 50 },
+            {
+              scale: 1,
+              opacity: 1,
+              y: 0,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: textContainer,
+                containerAnimation: scrollTween,
+                start: "left 40%",
+                end: "left 10%",
+                scrub: 1
+              }
             }
-          }
-        );
+          );
+        }
+
+        letters.forEach((letter: Element) => {
+          gsap.from(letter, {
+            yPercent: (Math.random() - 0.5) * 500,
+            rotation: (Math.random() - 0.5) * 90,
+            ease: "elastic.out(1.5, 0.4)",
+            scrollTrigger: {
+              trigger: letter,
+              containerAnimation: scrollTween,
+              start: 'left 95%',
+              end: 'left 45%',
+              scrub: 0.6
+            }
+          });
+        });
+
+        arrowPaths.forEach((arrowPath: SVGPathElement) => {
+          const pathLen = arrowPath.getTotalLength();
+          gsap.set(arrowPath, { strokeDasharray: pathLen, strokeDashoffset: pathLen });
+          gsap.to(arrowPath, {
+            strokeDashoffset: 0,
+            duration: 1.5,
+            scrollTrigger: {
+              trigger: arrowPath,
+              containerAnimation: scrollTween,
+              start: 'left 90%',
+              end: 'left 50%',
+              scrub: 0.8
+            }
+          });
+        });
+      } else {
+        if (bottomCard) {
+          gsap.fromTo(bottomCard,
+            { scale: 0.9, opacity: 0, y: 40 },
+            {
+              scale: 1,
+              opacity: 1,
+              y: 0,
+              ease: "back.out(1.5)",
+              scrollTrigger: {
+                trigger: bottomCard,
+                start: "top 90%",
+                end: "top 75%",
+                scrub: true
+              }
+            }
+          );
+        }
+
+        letters.forEach((letter: Element, idx: number) => {
+          gsap.fromTo(letter,
+            { y: 60, opacity: 0, scale: 0.5, rotate: (Math.random() - 0.5) * 30 },
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              rotate: 0,
+              ease: "elastic.out(1.5, 0.5)",
+              scrollTrigger: {
+                trigger: letter,
+                start: "top 95%",
+                end: "top 80%",
+                scrub: 0.5
+              }
+            }
+          );
+        });
+
+        if (arrowRef.current) {
+          gsap.fromTo(arrowRef.current,
+            { scale: 0.5, opacity: 0, rotate: -20 },
+            {
+              scale: 1,
+              opacity: 1,
+              rotate: 0,
+              ease: "back.out(1.7)",
+              scrollTrigger: {
+                trigger: arrowRef.current,
+                start: "top 85%",
+                end: "top 70%",
+                scrub: true
+              }
+            }
+          );
+        }
       }
-
-      letters.forEach((letter: Element) => {
-        gsap.from(letter, {
-          yPercent: (Math.random() - 0.5) * 400,
-          rotation: (Math.random() - 0.5) * 60,
-          ease: "elastic.out(1.2, 0.8)",
-          scrollTrigger: {
-            trigger: letter,
-            containerAnimation: scrollTween,
-            start: 'left 95%',
-            end: 'left 50%',
-            scrub: 0.8
-          }
-        });
-      });
-
-      arrowPaths.forEach((arrowPath: SVGPathElement) => {
-        const pathLen = arrowPath.getTotalLength();
-        gsap.set(arrowPath, { strokeDasharray: pathLen, strokeDashoffset: pathLen });
-        gsap.to(arrowPath, {
-          strokeDashoffset: 0,
-          duration: 1.5,
-          scrollTrigger: {
-            trigger: arrowPath,
-            containerAnimation: scrollTween,
-            start: 'left 90%',
-            end: 'left 50%',
-            scrub: 0.8
-          }
-        });
-      });
 
     }, sectionRef);
 
@@ -153,7 +210,7 @@ const Section2 = () => {
   return (
     <section 
       ref={sectionRef} 
-      className="relative w-full h-screen bg-[#F4F3EE] overflow-hidden font-[family:var(--font-jakarta)] select-none"
+      className="relative w-full h-auto min-h-screen md:h-screen bg-[#F4F3EE] overflow-hidden font-[family:var(--font-jakarta)] select-none py-24 md:py-0"
       onMouseMove={handleMouseMove}
     >
       <div 
@@ -164,51 +221,17 @@ const Section2 = () => {
         }}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-[#F4F3EE]/40 via-transparent to-[#F4F3EE] pointer-events-none z-[1]" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#F28F3B] rounded-full blur-[160px] opacity-15 z-0 pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[500px] h-[320px] sm:h-[500px] bg-[#F28F3B] rounded-full blur-[120px] sm:blur-[160px] opacity-15 z-0 pointer-events-none" />
 
-      <div className="hidden lg:block absolute inset-0 z-10 pointer-events-none">
-        <motion.div 
-          style={isMounted ? { x: parallaxX, y: parallaxY } : {}}
-          className="absolute top-[25%] left-[12%] bg-white/80 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white flex items-center gap-2 shadow-xl shadow-black/[0.02]"
-        >
-          <RiEarthFill className="text-[#10B981]" size={16} />
-          <span className="text-[10px] font-black uppercase tracking-wider text-[#2D2A26]">Save Ecosystem</span>
-        </motion.div>
+      <div className="relative w-full h-full md:h-screen flex flex-col justify-between items-center z-10 px-4">
 
-        <motion.div 
-          style={isMounted ? { x: invertedParallaxX, y: invertedParallaxY } : {}}
-          className="absolute bottom-[35%] right-[10%] bg-white/80 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white flex items-center gap-2 shadow-xl shadow-black/[0.02]"
-        >
-          <RiSeedlingLine className="text-[#F28F3B]" size={16} />
-          <span className="text-[10px] font-black uppercase tracking-wider text-[#2D2A26]">Zero Waste</span>
-        </motion.div>
-      </div>
-
-      <div className="relative w-full h-screen overflow-hidden z-10">
-        
-        <div className="absolute top-12 sm:top-16 left-1/2 -translate-x-1/2 z-30">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.4, rotate: -15, y: 30 }}
-            whileInView={{ opacity: 1, scale: 1, rotate: 0, y: 0 }}
-            viewport={{ once: true }}
-            transition={stickerSpringTransition}
-            className="flex items-center justify-center gap-2 bg-[#2D2A26] text-white px-4 py-2 rounded-md shadow-lg"
-          >
-            <RiLeafLine className="text-[#F28F3B]" />
-            <span className="text-white text-[10px] font-black uppercase tracking-[0.3em]">Global Impact</span>
-          </motion.div>
-        </div>
-
-        <div 
-          ref={textRef}
-          className="absolute top-1/2 left-0 -translate-y-1/2 whitespace-nowrap flex items-center"
-          style={{ paddingLeft: '0', paddingRight: '50vw' }}
-        >
-          <div className="absolute -top-16 md:-top-24 left-1/2 -translate-x-1/2 drop-shadow-[0_15px_30px_rgba(242,143,59,0.25)]">
+        <div className="w-full flex-1 flex flex-col justify-center items-center py-12 md:py-0 relative">
+          
+          <div className="w-full max-w-4xl flex justify-center mb-6 md:mb-0 md:absolute md:-top-24 md:left-1/2 md:-translate-x-1/2 drop-shadow-[0_15px_30px_rgba(242,143,59,0.25)] z-20">
             <svg 
               ref={arrowRef}
               xmlns="http://www.w3.org/2000/svg" 
-              className="w-20 sm:w-28 md:w-32 lg:w-[200px]"
+              className="w-16 sm:w-24 md:w-32 lg:w-[200px]"
               viewBox="0 0 386 127" 
               fill="none"
             >
@@ -217,22 +240,29 @@ const Section2 = () => {
             </svg>
           </div>
           
-          <h2 className="text-[44px] sm:text-[76px] md:text-[100px] lg:text-[150px] font-black uppercase tracking-tighter leading-none flex items-center">
-            {words.map((item, idx) => (
-              <span
-                key={idx}
-                className="letter inline-block"
-                style={{ color: item.color }}
-              >
-                {item.letter === ' ' ? '\u00A0' : item.letter}
-              </span>
-            ))}
-          </h2>
+          <div 
+            ref={textRef}
+            className="w-full md:absolute md:top-1/2 md:left-0 md:-translate-y-1/2 whitespace-normal md:whitespace-nowrap flex items-center justify-center md:justify-start"
+            style={{ paddingLeft: '0', paddingRight: typeof window !== 'undefined' && window.innerWidth >= 768 ? '50vw' : '0' }}
+          >
+            <h2 className="text-[34px] sm:text-[64px] md:text-[100px] lg:text-[150px] font-black uppercase tracking-tighter leading-[0.95] md:leading-none flex flex-wrap md:flex-nowrap items-center justify-center text-center md:text-left gap-y-1">
+              {words.map((item, idx) => (
+                <span
+                  key={idx}
+                  className="letter inline-block"
+                  style={{ color: item.color }}
+                >
+                  {item.letter === ' ' ? '\u00A0' : item.letter}
+                </span>
+              ))}
+            </h2>
+          </div>
+
         </div>
 
         <div 
           ref={bottomTextRef}
-          className="absolute left-1/2 bottom-[10%] sm:bottom-[15%] -translate-x-1/2 text-center z-20 w-full px-4"
+          className="w-full px-4 mb-4 md:mb-0 md:absolute md:left-1/2 md:bottom-[12%] md:-translate-x-1/2 text-center z-20"
         >
           <div className="bg-white/80 backdrop-blur-xl border border-white p-5 sm:p-6 md:p-8 rounded-[24px] sm:rounded-[32px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] max-w-[280px] sm:max-w-md md:max-w-2xl mx-auto transition-all duration-500 hover:shadow-[0_30px_60px_-15px_rgba(242,143,59,0.1)]">
             <p className="text-[#2D2A26]/80 text-xs sm:text-sm md:text-base lg:text-lg font-medium leading-relaxed">
