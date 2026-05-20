@@ -39,9 +39,6 @@
   <!-- LIVE DEMO LINK -->
   <div style="background-color: #F28F3B; border-radius: 14px; padding: 3px; display: inline-block;">
     <div style="background-color: #F4F3EE; border-radius: 12px; padding: 16px 40px; text-align: center;">
-      <p style="font-size: 0.6rem; font-weight: 900; letter-spacing: 0.4em; text-transform: uppercase; color: #F28F3B; margin: 0 0 6px 0;">
-        Live Demo
-      </p>
       <a href="https://saverish.web.id" target="_blank" style="font-size: 1.4rem; font-weight: 900; color: #2D2A26; text-decoration: none; border-bottom: 3px solid #F28F3B; padding-bottom: 2px;">
         saverish.web.id
       </a>
