@@ -14,6 +14,7 @@ export function useLenis(options?: ConstructorParameters<typeof Lenis>[0]) {
       easing: options?.easing ?? ((t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))),
       ...options,
     });
+    (window as any).__lenis = lenisRef.current;
 
     function raf(time: number) {
       lenisRef.current?.raf(time);
