@@ -1,35 +1,28 @@
 "use client";
 
 import { motion, AnimatePresence, useSpring, useScroll } from "framer-motion";
+import { useState, useEffect } from "react";
 import {
   RiSearchLine,
   RiCloseLine,
   RiMapPinLine,
   RiMenuLine,
   RiShoppingBag3Line,
-  RiUser3Line,
-  RiHeartLine,
   RiLeafLine,
   RiArrowRightLine,
 } from "react-icons/ri";
 import { useNavbar } from "../../hooks/useNavbar";
 import Link from "next/link";
 import Image from "next/image";
+import { CiLogin } from "react-icons/ci";
 
 const localNavLinks = [
   { label: "Home", href: "#hero" },
   { label: "Problem", href: "#problem" },
   { label: "Guide", href: "#guide" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Metrics", href: "#metrics" },
+  { label: "Business", href: "#partner" },
   { label: "Marketplace", href: "#marketplace" },
   { label: "FAQ", href: "#faq-section" },
-];
-
-const locations = [
-  { name: "Surabaya", code: "SUB" },
-  { name: "Jakarta", code: "JKT" },
-  { name: "Bandung", code: "BDG" },
 ];
 
 export default function Navbar() {
@@ -39,15 +32,47 @@ export default function Navbar() {
     setIsMobileOpen,
     isSearchOpen,
     setIsSearchOpen,
-    activeDropdown,
-    handleDropdownEnter,
-    handleDropdownLeave,
+    // activeDropdown,
+    // handleDropdownEnter,
+    // handleDropdownLeave,
     selectedLocation,
     setSelectedLocation,
     searchQuery,
     setSearchQuery,
     searchInputRef,
   } = useNavbar();
+
+  const [activeSection, setActiveSection] = useState("");
+
+  useEffect(() => {
+    let rafId: number;
+
+    const check = () => {
+      let bestId = "";
+      let bestDist = Infinity;
+      const navHeight = 80;
+
+      for (const link of localNavLinks) {
+        const id = link.href.replace("#", "");
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.bottom > navHeight && rect.top < window.innerHeight) {
+          const dist = Math.abs(rect.top - navHeight);
+          if (dist < bestDist) {
+            bestDist = dist;
+            bestId = id;
+          }
+        }
+      }
+
+      if (bestId) setActiveSection(bestId);
+      rafId = requestAnimationFrame(check);
+    };
+
+    rafId = requestAnimationFrame(check);
+    return () => cancelAnimationFrame(rafId);
+  }, []);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -62,8 +87,12 @@ export default function Navbar() {
   ) => {
     e.preventDefault();
     const targetId = href.replace("#", "");
-    const elem = document.getElementById(targetId);
-    elem?.scrollIntoView({ behavior: "smooth" });
+    const lenis = (window as any).__lenis;
+    if (lenis) {
+      lenis.scrollTo(`#${targetId}`);
+    } else {
+      document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+    }
     setIsMobileOpen(false);
   };
 
@@ -71,26 +100,26 @@ export default function Navbar() {
     <>
       <motion.div
         style={{ scaleX }}
-        className="fixed top-0 left-0 right-0 h-[4px] bg-[#F28F3B] origin-left z-[300]"
+        className="fixed top-0 left-0 right-0 h-1 bg-[#F28F3B] origin-left z-300"
       />
 
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className={`fixed left-1/2 -translate-x-1/2 w-full z-[100] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] flex justify-center ${
+        className={`fixed left-1/2 -translate-x-1/2 w-full z-100 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] flex justify-center ${
           isScrolled
             ? "top-4 max-w-6xl px-4"
             : "top-0 max-w-full px-6 md:px-10 py-6 md:py-8"
         }`}
       >
         <div
-          className={`w-full flex items-center justify-between transition-all duration-700 ${
+          className={`w-full grid grid-cols-2 xl:grid-cols-3 items-center transition-all duration-700 ${
             isScrolled
               ? "bg-white/80 backdrop-blur-2xl border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] rounded-full px-6 py-3"
               : "bg-white/40 backdrop-blur-md border-b border-[#2D2A26]/5 px-4 py-3 rounded-[24px] md:rounded-none md:bg-transparent md:backdrop-blur-none md:border-none"
           }`}
         >
-          <div className="flex items-center gap-10 lg:gap-14">
+          <div className="flex justify-start">
             <a
               href="#hero"
               onClick={(e) => handleScrollTo(e, "#hero")}
@@ -113,40 +142,38 @@ export default function Navbar() {
                 Saverish<span className="text-[#F28F3B]">.</span>
               </span>
             </a>
+          </div>
 
-            <div className="hidden xl:flex items-center gap-1">
-              {localNavLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={(e) => handleScrollTo(e, link.href)}
-                  className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest text-[#2D2A26]/70 hover:text-[#2D2A26] hover:bg-[#2D2A26]/5 transition-all duration-300"
-                >
-                  {link.label}
-                </a>
-              ))}
+          <div className="hidden xl:flex justify-center">
+            <div className="flex items-center gap-1">
+              {localNavLinks.map((link) => {
+                const isActive = activeSection === link.href.replace("#", "");
+                return (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    onClick={(e) => handleScrollTo(e, link.href)}
+                    className={`relative overflow-hidden flex items-center gap-1 px-4 py-4 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors duration-200 ${
+                      isActive
+                        ? "text-white"
+                        : "text-[#2D2A26]/70 hover:text-[#2D2A26] hover:bg-[#2D2A26]/5"
+                    }`}
+                  >
+                    <motion.div
+                      className="absolute inset-0 highlight rotate-4"
+                      animate={{ opacity: isActive ? 1 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    />
+                    <span className={`relative z-10 ${
+                      isActive ? "rotate-4" : ""
+                    }`}>{link.label}</span>
+                  </a>
+                );
+              })}
             </div>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4">
-            <div className="hidden lg:flex items-center bg-[#2D2A26]/5 hover:bg-[#2D2A26]/10 transition-colors rounded-full px-4 py-2 cursor-pointer group relative">
-              <RiMapPinLine className="size-4 text-[#F28F3B]" />
-              <span className="text-[10px] font-black uppercase tracking-widest ml-2 text-[#2D2A26]">
-                {selectedLocation.name || "Surabaya"}
-              </span>
-              <div className="absolute top-full right-0 mt-4 bg-white/90 backdrop-blur-3xl rounded-[24px] shadow-2xl border border-white/60 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 min-w-[180px] z-[110] p-2">
-                {locations.map((loc) => (
-                  <button
-                    key={loc.code}
-                    onClick={() => setSelectedLocation(loc)}
-                    className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-colors text-[#2D2A26]/60 hover:bg-[#F4F3EE] hover:text-[#2D2A26]"
-                  >
-                    {loc.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-
+          <div className="flex justify-end items-center gap-2 md:gap-4">
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setIsSearchOpen(true)}
@@ -164,9 +191,9 @@ export default function Navbar() {
             </div>
 
             <Link href="/login">
-              <button className="hidden md:flex items-center gap-2 px-8 py-3.5 rounded-full text-[10px] uppercase tracking-widest font-black transition-all bg-[#2D2A26] text-white hover:bg-[#F28F3B] hover:shadow-[0_10px_20px_rgba(242,143,59,0.3)] shadow-xl shadow-black/5">
-                <RiUser3Line size={16} />
-                <span>Sign In</span>
+              <button className="hidden md:flex items-center gap-2 px-3 py-3.5 rounded-full text-[10px] uppercase tracking-widest font-black transition-all bg-[#2D2A26] text-white hover:bg-[#F28F3B] hover:shadow-[0_10px_20px_rgba(242,143,59,0.3)] shadow-xl shadow-black/5">
+                <CiLogin size={16} />
+                <span className={isScrolled ? "hidden" : ""}>Sign In</span>
               </button>
             </Link>
 
@@ -255,7 +282,11 @@ export default function Navbar() {
                     <a
                       href={link.href}
                       onClick={(e) => handleScrollTo(e, link.href)}
-                      className="text-[40px] font-black uppercase tracking-tighter text-[#2D2A26] hover:text-[#F28F3B] transition-colors flex items-center justify-between group"
+                      className={`text-[40px] font-black uppercase tracking-tighter transition-colors flex items-center justify-between group ${
+                        activeSection === link.href.replace("#", "")
+                          ? "text-[#F28F3B]"
+                          : "text-[#2D2A26] hover:text-[#F28F3B]"
+                      }`}
                     >
                       {link.label}
                       <RiArrowRightLine className="text-[#F28F3B]" />
