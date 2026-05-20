@@ -18,6 +18,7 @@
 
   <br/>
 
+  <!-- BADGES -->
   <p align="center">
     <img src="https://img.shields.io/badge/Next.js%2016-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js 16" />
     <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
@@ -35,24 +36,17 @@
 
   <br/>
 
-  <table align="center" style="border-collapse: separate; border-spacing: 0; width: 100%; max-width: 500px;">
-    <tr>
-      <td style="background: linear-gradient(135deg, #F28F3B 0%, #FF6B35 50%, #F28F3B 100%); border-radius: 16px; padding: 2px;">
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr>
-            <td style="background: #F4F3EE; border-radius: 14px; padding: 20px 32px; text-align: center;">
-              <p style="font-size: 0.6rem; font-weight: 900; letter-spacing: 0.4em; text-transform: uppercase; color: #F28F3B; margin: 0 0 8px 0;">
-                Live Demo
-              </p>
-              <a href="https://saverish.web.id" target="_blank" style="font-size: 1.5rem; font-weight: 900; color: #2D2A26; text-decoration: none; letter-spacing: -0.02em; border-bottom: 3px solid #F28F3B; padding-bottom: 2px;">
-                saverish.web.id
-              </a>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+  <!-- LIVE DEMO LINK -->
+  <div style="background-color: #F28F3B; border-radius: 14px; padding: 3px; display: inline-block;">
+    <div style="background-color: #F4F3EE; border-radius: 12px; padding: 16px 40px; text-align: center;">
+      <p style="font-size: 0.6rem; font-weight: 900; letter-spacing: 0.4em; text-transform: uppercase; color: #F28F3B; margin: 0 0 6px 0;">
+        Live Demo
+      </p>
+      <a href="https://saverish.web.id" target="_blank" style="font-size: 1.4rem; font-weight: 900; color: #2D2A26; text-decoration: none; border-bottom: 3px solid #F28F3B; padding-bottom: 2px;">
+        saverish.web.id
+      </a>
+    </div>
+  </div>
 
   <br/>
 </div>
@@ -172,15 +166,15 @@ Saverish mengadopsi alur penyelamatan makanan yang terintegrasi dari eksplorasi 
        │
 [2. Autentikasi] ──> Masuk ke Halaman Login ──> Pilih mode Sign In atau Sign Up ──> Transisi animasi geser dinamis
        │
-[3. Dashboard] ──> Masuk ke Ruang Kendali ─> Lihat grafik dampak lingkungan, metrik penyelamatan, & penawaran terdekat
+[3. Dashboard] ──> Masuk ke Ruang Kendali ──> Lihat grafik dampak lingkungan, metrik penyelamatan, & penawaran terdekat
        │
-[4. Pemesanan] ──> Pilih Surplus Box dari merchant ──> Tambahkan ke keranjang ──> Lanjut ke Checkout
+[4. Pemesanan] ─> Pilih Surplus Box dari merchant ──> Tambahkan ke keranjang ──> Lanjut ke Checkout
        │
-[5. Pembayaran] ──> Pilih metode pembayaran di Halaman Payment ──> Review ringkasan pesanan ──> Konfirmasi & Bayar
+[5. Pembayaran] ─> Pilih metode pembayaran di Halaman Payment ──> Review ringkasan pesanan ──> Konfirmasi & Bayar
        │
 [6. Pengambilan] ──> Ikuti panduan pickup 3 langkah di Halaman Pickup Guide ──> Datang ke merchant ──> Tunjukkan Order ID ──> Tandai "Collected"
        │
-[7. Pembaruan Dampak] ──> Kembali ke Dashboard ──> Eco-Points bertambah ──> CO2 Offset ter-update ──> Goal progress meningkat
+[7. Pembaruan Dampak] ──> Kembali ke Dashboard ──> Eco-Points bertambah ─> CO2 Offset ter-update ──> Goal progress meningkat
 ```
 
 ---
@@ -191,8 +185,8 @@ Saverish mengadopsi alur penyelamatan makanan yang terintegrasi dari eksplorasi 
 SEFEST26WEBDESIGN_LosTresDisenadores/
 ├── .git/
 ├── .gitignore
-├── .hintrc
-── .next/
+── .hintrc
+├── .next/
 ├── eslint.config.mjs
 ├── next-env.d.ts
 ├── next.config.ts              # Konfigurasi Next.js (pola gambar remote untuk Unsplash)
@@ -234,9 +228,9 @@ SEFEST26WEBDESIGN_LosTresDisenadores/
 │   │   └── navbar.ts
 │   └── utils/                  # Fungsi utilitas
 │       ├── animation.ts
-│       └── device.ts
+│       ── device.ts
 │
-── app/                        # Next.js App Router -- semua rute & halaman
+└── app/                        # Next.js App Router -- semua rute & halaman
     ├── globals.css             # CSS global (direktif Tailwind, variabel CSS)
     ├── layout.tsx              # Layout root (font, metadata, tag OG)
     ├── page.tsx                # Landing page (Intro -> Hero -> Section -> FAQ -> Footer)
@@ -244,9 +238,9 @@ SEFEST26WEBDESIGN_LosTresDisenadores/
     ├── components/             # Komponen khusus Landing Page
     │   ├── data/               # File data statis
     │   │   ├── howItWorks.ts
-    │   │   ├── impactData.ts
-    │   │   ├── index.ts
-    │   │   └── problemCards.ts
+│   │   ├── impactData.ts
+│   │   ├── index.ts
+│   │   └── problemCards.ts
     │   ├── CustomCursor.tsx
     │   ├── FAQ.tsx
     │   ├── Footer.tsx
